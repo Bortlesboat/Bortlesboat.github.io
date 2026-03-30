@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Satoshi API",
+    "description": "Bitcoin network intelligence API. Real-time mempool analysis, fee estimation, and block inspection.",
+    "url": "https://github.com/Bortlesboat/bitcoin-api",
+    "tags": ["Python", "Bitcoin", "FastAPI"]
+  },
+  {
+    "name": "bitcoin-mcp",
+    "description": "Model Context Protocol server for Bitcoin data. 32+ tools, 42 tests, published on PyPI.",
+    "url": "https://github.com/Bortlesboat/bitcoin-mcp",
+    "tags": ["Python", "MCP", "Bitcoin"]
+  },
+  {
+    "name": "x402 Lightning",
+    "description": "Lightning Network implementation for the HTTP 402 payment protocol. 39 tests, Alby interop verified.",
+    "url": "https://github.com/coinbase/x402/pull/1873",
+    "tags": ["TypeScript", "Lightning", "x402"]
+  },
+  {
+    "name": "BAIP-1",
+    "description": "Bitcoin Automation Improvement Proposals. Framework for standardizing Bitcoin automation patterns.",
+    "url": "https://github.com/Bortlesboat/baip-python",
+    "tags": ["Python", "Bitcoin", "Standards"]
+  },
+  {
+    "name": "Bitcoin Core",
+    "description": "Contributor to bitcoin/bitcoin. Test coverage, documentation, and functional test improvements.",
+    "url": "https://github.com/bitcoin/bitcoin/pulls?q=is%3Apr+author%3ABortlesboat",
+    "tags": ["Python", "C++", "Bitcoin Core"]
+  },
+  {
+    "name": "OSS Portfolio",
+    "description": "280+ PRs across 60+ repos including CPython, Goldman Sachs gs-quant, Microsoft qlib, and scipy.",
+    "url": "https://github.com/Bortlesboat",
+    "tags": ["Python", "Open Source", "Finance"]
+  }
+]
