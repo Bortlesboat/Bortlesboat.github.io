@@ -1,38 +1,38 @@
 [
   {
     "name": "Satoshi API",
-    "description": "Bitcoin network intelligence API. Real-time mempool analysis, fee estimation, and block inspection.",
+    "description": "A REST API for querying the Bitcoin network. Provides real-time mempool analysis, smart fee estimation, block inspection, and transaction decoding \u2014 designed to make Bitcoin node data accessible to any developer.",
     "url": "https://github.com/Bortlesboat/bitcoin-api",
-    "tags": ["Python", "Bitcoin", "FastAPI"]
+    "tags": ["Python", "FastAPI", "Bitcoin"]
   },
   {
     "name": "bitcoin-mcp",
-    "description": "Model Context Protocol server for Bitcoin data. 32+ tools, 42 tests, published on PyPI.",
+    "description": "Model Context Protocol server that gives AI assistants direct access to Bitcoin network data. 32+ tools for querying blocks, transactions, and fees. Published on PyPI with 42 tests.",
     "url": "https://github.com/Bortlesboat/bitcoin-mcp",
     "tags": ["Python", "MCP", "Bitcoin"]
   },
   {
     "name": "x402 Lightning",
-    "description": "Lightning Network implementation for the HTTP 402 payment protocol. 39 tests, Alby interop verified.",
+    "description": "Added Lightning Network payment support to Coinbase's x402 protocol \u2014 enabling instant micropayments over HTTP. First external contributor to get a PR merged. 39 tests with Alby wallet interop.",
     "url": "https://github.com/coinbase/x402/pull/1873",
-    "tags": ["TypeScript", "Lightning", "x402"]
+    "tags": ["TypeScript", "Lightning", "Coinbase"]
   },
   {
     "name": "BAIP-1",
-    "description": "Bitcoin Automation Improvement Proposals. Framework for standardizing Bitcoin automation patterns.",
+    "description": "Bitcoin Automation Improvement Proposals \u2014 a standards framework for defining repeatable Bitcoin automation patterns. Includes a Python reference implementation with 61 tests and CI.",
     "url": "https://github.com/Bortlesboat/baip-python",
-    "tags": ["Python", "Bitcoin", "Standards"]
+    "tags": ["Python", "Standards", "Bitcoin"]
   },
   {
     "name": "Bitcoin Core",
-    "description": "Contributor to bitcoin/bitcoin. Test coverage, documentation, and functional test improvements.",
+    "description": "Contributor to bitcoin/bitcoin, the reference implementation used by tens of thousands of nodes. Focused on test coverage improvements and functional test infrastructure.",
     "url": "https://github.com/bitcoin/bitcoin/pulls?q=is%3Apr+author%3ABortlesboat",
     "tags": ["Python", "C++", "Bitcoin Core"]
   },
   {
-    "name": "OSS Portfolio",
-    "description": "280+ PRs across 60+ repos including CPython, Goldman Sachs gs-quant, Microsoft qlib, and scipy.",
+    "name": "OSS Contributions",
+    "description": "Patches accepted by CPython, Goldman Sachs gs-quant, Microsoft qlib, scipy, and dozens more. Bug fixes, test coverage, and documentation across the Python ecosystem.",
     "url": "https://github.com/Bortlesboat",
-    "tags": ["Python", "Open Source", "Finance"]
+    "tags": ["Python", "Finance", "Open Source"]
   }
 ]
