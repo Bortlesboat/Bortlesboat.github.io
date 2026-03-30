@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#111118"/>
+
+  <!-- Orange accent line -->
+  <line x1="80" y1="90" x2="180" y2="90" stroke="#f7931a" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Name -->
+  <text x="80" y="280" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="700" fill="#ffffff" letter-spacing="-0.5px">
+    Andrew Barnes
+  </text>
+
+  <!-- Tagline -->
+  <text x="80" y="360" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="400" fill="#8e8ea0" letter-spacing="0px">
+    FP&amp;A Analyst &amp; Bitcoin Infrastructure Builder
+  </text>
+
+  <!-- Website URL bottom-right -->
+  <text x="1120" y="600" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="400" fill="#8e8ea0" text-anchor="end">
+    bortlesboat.github.io
+  </text>
+</svg>
