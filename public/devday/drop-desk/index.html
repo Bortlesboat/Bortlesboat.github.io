@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drop Desk - OpenAI DevDay 2026 Submission</title>
+    <meta
+      name="description"
+      content="A playable TCG restock strategy game built with GPT-5.5/Codex and Image Gen for #OpenAIDevDay2026."
+    />
+    <meta name="theme-color" content="#17130f" />
+    <meta property="og:title" content="Drop Desk" />
+    <meta
+      property="og:description"
+      content="Rank TCG restocks before demand cools. Built with GPT-5.5/Codex and Image Gen."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bortlesboat.github.io/devday/drop-desk/" />
+    <meta property="og:image" content="https://bortlesboat.github.io/devday/drop-desk/assets/tcg-drop-desk.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Drop Desk" />
+    <meta name="twitter:description" content="A playable TCG restock strategy game for #OpenAIDevDay2026." />
+    <link rel="canonical" href="https://bortlesboat.github.io/devday/drop-desk/" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell" aria-label="Drop Desk game">
+      <header class="mast">
+        <div>
+          <p class="eyebrow">#OpenAIDevDay2026</p>
+          <h1>Drop Desk</h1>
+        </div>
+        <p class="build-note">GPT-5.5/Codex + Image Gen.</p>
+      </header>
+
+      <section class="game-stage">
+        <canvas id="game" width="1280" height="720" aria-label="Drop Desk canvas game"></canvas>
+      </section>
+
+      <section class="controls" aria-label="Game controls">
+        <button id="startBtn" type="button">Start</button>
+        <button id="lockBtn" type="button">Lock picks</button>
+        <button id="resetBtn" type="button">Reset</button>
+      </section>
+    </main>
+
+    <script src="./game.js"></script>
+  </body>
+</html>

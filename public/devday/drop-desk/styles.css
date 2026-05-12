@@ -1,0 +1,151 @@
+:root {
+  color-scheme: dark;
+  --ink: #fff4df;
+  --muted: #dec392;
+  --quiet: #9e8460;
+  --paper: #fff0c4;
+  --coal: #17130f;
+  --panel: #251a12;
+  --edge: #6a4725;
+  --yellow: #ffc44f;
+  --teal: #47c9b4;
+  --coral: #f4765c;
+  --green: #8ed66f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background:
+    radial-gradient(circle at 82% 4%, rgba(244, 118, 92, 0.16), transparent 32rem),
+    radial-gradient(circle at 12% 16%, rgba(71, 201, 180, 0.12), transparent 34rem),
+    linear-gradient(145deg, #15110e, #23160f 48%, #11100f);
+  color: var(--ink);
+  font-family: "Aptos", "Segoe UI Variable", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0;
+}
+
+button {
+  appearance: none;
+  background: linear-gradient(180deg, #ffe082, var(--yellow));
+  border: 1px solid #ad741e;
+  color: #2b1807;
+  cursor: pointer;
+  font-family: "Cascadia Mono", Consolas, ui-monospace, monospace;
+  font-size: 0.86rem;
+  font-weight: 800;
+  min-height: 2.75rem;
+  padding: 0.75rem 1.15rem;
+}
+
+button:hover {
+  filter: brightness(1.06);
+}
+
+button:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 3px;
+}
+
+.shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: clamp(0.8rem, 2vw, 1.25rem);
+  min-height: 100vh;
+  padding: clamp(0.85rem, 2.8vw, 2rem);
+}
+
+.mast {
+  align-items: end;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 auto;
+  max-width: 1180px;
+  width: 100%;
+}
+
+.eyebrow {
+  color: var(--teal);
+  font-family: "Cascadia Mono", Consolas, ui-monospace, monospace;
+  font-size: clamp(0.7rem, 1vw, 0.84rem);
+  font-weight: 800;
+  margin: 0 0 0.25rem;
+}
+
+h1 {
+  font-family: "Cascadia Mono", Consolas, ui-monospace, monospace;
+  font-size: clamp(1.65rem, 4vw, 3.15rem);
+  line-height: 1;
+  margin: 0;
+}
+
+.build-note {
+  color: var(--muted);
+  font-size: clamp(0.82rem, 1.4vw, 1rem);
+  margin: 0;
+  max-width: 22rem;
+  text-align: right;
+}
+
+.game-stage {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 0;
+  width: 100%;
+}
+
+canvas {
+  aspect-ratio: 16 / 9;
+  background: #17130f;
+  border: 1px solid rgba(255, 244, 223, 0.18);
+  box-shadow: 0 1.25rem 5rem rgba(0, 0, 0, 0.36);
+  display: block;
+  max-height: min(72vh, calc(100vh - 11rem));
+  max-width: min(1180px, 100%);
+  touch-action: none;
+  width: 100%;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 1180px;
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  .shell {
+    grid-template-rows: auto auto auto;
+    min-height: auto;
+  }
+
+  .mast {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .build-note {
+    text-align: left;
+  }
+
+  canvas {
+    max-height: none;
+  }
+
+  .controls button {
+    flex: 1 1 8rem;
+  }
+}
