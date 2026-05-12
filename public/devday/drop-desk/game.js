@@ -9,7 +9,7 @@
 
   const WIDTH = 1280;
   const HEIGHT = 720;
-  const MAX_DAYS = 4;
+  const MAX_DAYS = 3;
   const board = { x: 514, y: 142, w: 436, h: 384 };
   const scout = { x: 48, y: 142, w: 390, h: 456 };
   const ledger = { x: 1004, y: 142, w: 228, h: 456 };
@@ -44,40 +44,33 @@
   ];
   const briefDeck = [
     {
-      title: "Release Radar",
-      text: "Launch buzz favors bundles and elite kits.",
+      title: "Tip: bundles",
+      text: "Bundles and elite kits are glowing. Pick them.",
       featuredLabels: ["bundle", "elite kit"],
       trait: "queue",
-      bonus: 58,
-    },
-    {
-      title: "Local Arbitrage",
-      text: "Local buyers are clearing boosters and displays.",
-      featuredLabels: ["booster", "display"],
-      trait: "local",
-      bonus: 52,
-    },
-    {
-      title: "Chase Spike",
-      text: "Chase demand is hot. High risk can still pay.",
-      featuredLabels: ["elite kit", "display"],
-      trait: "chase",
       bonus: 64,
     },
     {
-      title: "Promo Week",
-      text: "Promo chatter lifts bundles and boosters.",
-      featuredLabels: ["booster", "bundle"],
-      trait: "promo",
-      bonus: 48,
+      title: "Tip: shelves",
+      text: "Boosters and displays are hot today.",
+      featuredLabels: ["booster", "display"],
+      trait: "local",
+      bonus: 58,
+    },
+    {
+      title: "Tip: chase",
+      text: "Chase picks are popping. Follow the teal cards.",
+      featuredLabels: ["elite kit", "display"],
+      trait: "chase",
+      bonus: 68,
     },
   ];
   const eventDeck = [
-    { name: "Queue Skip", good: true, amount: 34, text: "Early queue slot landed." },
-    { name: "Cart Hold", good: true, amount: 24, text: "Checkout hold protected margin." },
-    { name: "Listing Flood", good: false, amount: -32, text: "Extra listings cooled resale." },
-    { name: "Shipping Drag", good: false, amount: -26, text: "Shipping fees clipped the drop." },
-    { name: "Collector Ping", good: true, amount: 42, text: "Collector ping turned one pick fast." },
+    { name: "Lucky Buyer", good: true, amount: 34, text: "A collector grabbed one fast." },
+    { name: "Clean Cart", good: true, amount: 24, text: "Checkout went smooth." },
+    { name: "Small Fee", good: false, amount: -14, text: "A fee clipped the drop." },
+    { name: "Late Pickup", good: false, amount: -12, text: "One buyer was slow." },
+    { name: "Bonus Ping", good: true, amount: 42, text: "A buyer ping boosted the desk." },
   ];
 
   const state = {
@@ -85,8 +78,8 @@
     day: 1,
     maxDays: MAX_DAYS,
     score: 0,
-    target: 720,
-    cash: 140,
+    target: 480,
+    cash: 150,
     timeLeft: 45,
     heat: 0.24,
     momentum: 0.5,
@@ -94,7 +87,12 @@
     bestStreak: 0,
     scoutBrief: null,
     selectedId: null,
-    message: "Read the scout brief. Build a combo. Lock the drop.",
+    simpleRules: {
+      goal: "Pick 3 cards, match TIP, beat $480 in 3 drops.",
+      pickLimit: 3,
+      dropsToWin: 3,
+    },
+    message: "Pick 3 glowing TIP cards. Beat $480.",
     items: [],
     picks: [],
     history: [],
@@ -130,7 +128,7 @@
     state.mode = "playing";
     state.day = 1;
     state.score = 0;
-    state.cash = 140;
+    state.cash = 150;
     state.heat = 0.24;
     state.momentum = 0.5;
     state.streak = 0;
@@ -146,7 +144,7 @@
     state.mode = "title";
     state.day = 1;
     state.score = 0;
-    state.cash = 140;
+    state.cash = 150;
     state.timeLeft = 45;
     state.heat = 0.24;
     state.momentum = 0.5;
@@ -154,7 +152,7 @@
     state.bestStreak = 0;
     state.scoutBrief = null;
     state.selectedId = null;
-    state.message = "Read the scout brief. Build a combo. Lock the drop.";
+    state.message = "Pick 3 glowing TIP cards. Beat $480.";
     state.items = [];
     state.picks = [];
     state.history = [];
@@ -210,40 +208,40 @@
   }
 
   function comboFor(items) {
-    if (!items.length) return { name: "No combo", bonus: 0, detail: "Pick products to build a combo." };
+    if (!items.length) return { name: "Pick 3", bonus: 0, detail: "TIP cards glow teal." };
     const labelSet = new Set(items.map((item) => item.label));
     const traitSet = new Set(items.map((item) => item.trait));
     const briefHits = items.filter((item) => item.briefFit).length;
     if (items.length >= 3 && briefHits >= 3) {
-      return { name: "Brief Sweep", bonus: state.scoutBrief.bonus + 28, detail: "All three picks match today's brief." };
+      return { name: "Tip Match", bonus: state.scoutBrief.bonus + 28, detail: "All 3 picks match the tip." };
     }
     if (items.length >= 3 && labelSet.size >= 3) {
-      return { name: "Balanced Shelf", bonus: 46, detail: "Three product types spread risk." };
+      return { name: "Variety", bonus: 38, detail: "3 product types. Nice spread." };
     }
     if (items.length >= 3 && labelSet.size === 1) {
-      return { name: "Deep Stack", bonus: 38, detail: "One product line, full allocation." };
+      return { name: "Stack", bonus: 32, detail: "One product line, big swing." };
     }
     if (items.length >= 2 && traitSet.has(state.scoutBrief.trait)) {
-      return { name: "Signal Match", bonus: 30, detail: `Two picks follow the ${state.scoutBrief.trait} signal.` };
+      return { name: "Good Pair", bonus: 26, detail: "Two picks follow the tip." };
     }
     if (briefHits >= 2) {
-      return { name: "Brief Pair", bonus: 24, detail: "Two picks match the scout note." };
+      return { name: "Tip Pair", bonus: 26, detail: "Two teal cards. Solid." };
     }
-    return { name: "Loose Picks", bonus: 8, detail: "Small execution bonus." };
+    return { name: "Fun Money", bonus: 14, detail: "Any 3 picks can win." };
   }
 
   function riskEvent(items, combo) {
     const avgRisk = items.reduce((sum, item) => sum + item.risk, 0) / Math.max(1, items.length);
     const roll = rand();
-    if (roll < avgRisk * 0.42) {
-      const event = eventDeck.find((candidate) => !candidate.good && candidate.name === (avgRisk > 0.42 ? "Listing Flood" : "Shipping Drag"));
+    if (roll < avgRisk * 0.2) {
+      const event = eventDeck.find((candidate) => !candidate.good && candidate.name === (avgRisk > 0.42 ? "Small Fee" : "Late Pickup"));
       return { ...event, amount: Math.round(event.amount * (0.8 + avgRisk)), riskRoll: Number(roll.toFixed(2)) };
     }
-    if (roll > 0.78 - state.momentum * 0.18 || combo.name === "Brief Sweep") {
+    if (roll > 0.66 - state.momentum * 0.18 || combo.name === "Tip Match") {
       const event = pick(eventDeck.filter((candidate) => candidate.good));
       return { ...event, amount: Math.round(event.amount + state.streak * 8), riskRoll: Number(roll.toFixed(2)) };
     }
-    return { name: "Clean Fill", good: true, amount: 12, text: "No surprise costs hit the desk.", riskRoll: Number(roll.toFixed(2)) };
+    return { name: "Clean Fill", good: true, amount: 18, text: "No surprise costs hit the desk.", riskRoll: Number(roll.toFixed(2)) };
   }
 
   function gradeHint(score) {
@@ -255,10 +253,10 @@
 
   function finalRank() {
     const ratio = state.score / state.target;
-    if (ratio >= 1.35) return { label: "S", score: Math.round(ratio * 100), text: "Invite-worthy desk run." };
-    if (ratio >= 1) return { label: "A", score: Math.round(ratio * 100), text: "Target cleared with a clean sheet." };
-    if (ratio >= 0.78) return { label: "B", score: Math.round(ratio * 100), text: "Close run. Better combo timing wins it." };
-    return { label: "C", score: Math.round(ratio * 100), text: "Scout signals were left on the table." };
+    if (ratio >= 1.35) return { label: "S", score: Math.round(ratio * 100), text: "Easy win. Nice desk." };
+    if (ratio >= 1) return { label: "A", score: Math.round(ratio * 100), text: "Target cleared." };
+    if (ratio >= 0.78) return { label: "B", score: Math.round(ratio * 100), text: "Close. One better TIP pick wins." };
+    return { label: "C", score: Math.round(ratio * 100), text: "Run it back and chase teal." };
   }
 
   function pickItem(item) {
@@ -269,11 +267,11 @@
       return;
     }
     if (state.picks.length >= 3) {
-      state.message = "Desk limit is three picks. Lock or swap.";
+      state.message = "Pick limit is 3. Lock or swap.";
       return;
     }
     if (item.cost > state.cash + 20) {
-      state.message = "That restock strains the cash desk.";
+      state.message = "That card is too pricey this run.";
       return;
     }
     item.picked = true;
@@ -303,7 +301,7 @@
     state.streak = result > 45 ? state.streak + 1 : result < 0 ? 0 : state.streak;
     state.bestStreak = Math.max(state.bestStreak, state.streak);
     state.momentum = clamp(state.momentum + result / 520 + combo.bonus / 460 + event.amount / 600 - missed / 500, 0.12, 1);
-    state.cash = Math.max(45, state.cash - spent + Math.max(0, result) + 105 + state.streak * 12);
+    state.cash = Math.max(60, state.cash - spent + Math.max(0, result) + 120 + state.streak * 12);
     const row = {
       day: state.day,
       result,
@@ -383,7 +381,7 @@
     ctx.fillText("Drop Desk", 48, 62);
     ctx.fillStyle = colors.muted;
     ctx.font = "600 17px Aptos, Segoe UI, sans-serif";
-    ctx.fillText("Read the signal. Build the combo. Survive the drop.", 50, 92);
+    ctx.fillText("Pick 3 glowing TIP cards. Beat $480.", 50, 92);
     ctx.fillStyle = "rgba(23, 19, 15, 0.8)";
     ctx.fillRect(514, 42, 396, 50);
     ctx.strokeStyle = colors.edge;
@@ -405,7 +403,7 @@
     ctx.font = "800 22px Cascadia Mono, Consolas, monospace";
     ctx.fillText(`${Math.max(0, Math.ceil(state.timeLeft))}s`, 1096, 68);
     ctx.fillStyle = colors.teal;
-    ctx.fillText(`${Math.round(state.momentum * 100)}m`, 1158, 68);
+    ctx.fillText(`${Math.round(state.momentum * 100)}%`, 1158, 68);
   }
 
   function itemLayout() {
@@ -430,14 +428,14 @@
     ctx.fillText(item.label.toUpperCase(), x + 24, y + 23);
     ctx.fillStyle = item.briefFit ? colors.teal : colors.muted;
     ctx.font = compact ? "700 10px Aptos, Segoe UI, sans-serif" : "700 12px Aptos, Segoe UI, sans-serif";
-    ctx.fillText(`${item.trait} ${money(item.cost)}`, x + 24, y + 43);
+    ctx.fillText(`${item.briefFit ? "TIP" : item.trait} ${money(item.cost)}`, x + 24, y + 43);
     if (!compact) {
       ctx.fillStyle = item.demand > 0.68 ? colors.coral : colors.teal;
       ctx.fillRect(x + 24, y + 57, Math.max(8, (w - 42) * item.demand), 4);
       ctx.fillStyle = colors.quiet;
       ctx.font = "700 11px Aptos, Segoe UI, sans-serif";
-      ctx.fillText(`${money(expectedProfit(item))} EV`, x + w - 58, y + 23);
-      ctx.fillText(`${Math.round(item.risk * 100)}r`, x + w - 42, y + 45);
+      ctx.fillText(money(expectedProfit(item)), x + w - 54, y + 23);
+      ctx.fillText(item.risk > 0.48 ? "spicy" : "safe", x + w - 50, y + 45);
     }
     ctx.restore();
   }
@@ -529,7 +527,7 @@
     ctx.fillText(state.message, 68, y + 3);
     ctx.fillStyle = colors.quiet;
     ctx.font = "600 13px Aptos, Segoe UI, sans-serif";
-    ctx.fillText("Click cards to toggle picks. Space locks the drop. R resets. F fullscreen.", 760, y + 3);
+    ctx.fillText("Click 3 cards. Space locks. R restarts. F fullscreen.", 800, y + 3);
   }
 
   function drawOverlay() {
@@ -543,7 +541,7 @@
       ctx.fillText("Drop Desk", 416, 272);
       ctx.fillStyle = colors.ink;
       ctx.font = "700 22px Aptos, Segoe UI, sans-serif";
-      ctx.fillText("Four drops. Read the brief, stack combos, dodge risk.", 418, 318);
+      ctx.fillText("Three quick drops. Pick glowing TIP cards. Win $480.", 418, 318);
       ctx.fillStyle = colors.teal;
       ctx.font = "800 18px Cascadia Mono, Consolas, monospace";
       ctx.fillText("Press Start or Enter", 418, 368);
@@ -671,6 +669,7 @@
       momentum: Number(state.momentum.toFixed(3)),
       streak: state.streak,
       bestStreak: state.bestStreak,
+      simpleRules: state.simpleRules,
       scoutBrief: state.scoutBrief,
       picks: state.picks,
       activeCombo: comboFor(pickedItems()),

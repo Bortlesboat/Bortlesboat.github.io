@@ -84,6 +84,11 @@ try {
   const started = await readState();
   if (started.mode !== "playing") throw new Error(`Expected playing mode, got ${started.mode}`);
   if (started.visibleItems.length !== 8) throw new Error(`Expected 8 items, got ${started.visibleItems.length}`);
+  if (started.maxDays !== 3) throw new Error(`Expected a simple 3-drop run, got ${started.maxDays}`);
+  if (started.target > 500) throw new Error(`Expected friendly target at or below $500, got ${started.target}`);
+  if (!started.simpleRules?.goal || !started.simpleRules.goal.includes("Pick 3")) {
+    throw new Error(`Expected simple rules goal, got ${JSON.stringify(started.simpleRules)}`);
+  }
   if (!started.scoutBrief?.title || !Array.isArray(started.scoutBrief?.featuredLabels)) {
     throw new Error(`Expected v2 scout brief, got ${JSON.stringify(started.scoutBrief)}`);
   }
@@ -120,6 +125,7 @@ try {
   }
   const finished = await readState();
   if (!["won", "lost"].includes(finished.mode)) throw new Error(`Expected finished mode, got ${finished.mode}`);
+  if (finished.mode !== "won") throw new Error(`Expected basic verifier route to be winnable, got ${finished.mode}`);
   if (!finished.finalRank || !finished.finalRank.label || typeof finished.finalRank.score !== "number") {
     throw new Error(`Expected v2 final rank, got ${JSON.stringify(finished.finalRank)}`);
   }
