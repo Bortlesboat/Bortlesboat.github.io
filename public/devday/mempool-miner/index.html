@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mempool Miner - OpenAI DevDay 2026 Submission</title>
+    <meta
+      name="description"
+      content="A playable Bitcoin fee-market game built with GPT-5.5/Codex and Image Gen for #OpenAIDevDay2026."
+    />
+    <meta name="theme-color" content="#14120f" />
+    <meta property="og:title" content="Mempool Miner" />
+    <meta
+      property="og:description"
+      content="Pack transactions into blocks before fee pressure spikes. Built with GPT-5.5/Codex and Image Gen."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bortlesboat.github.io/devday/mempool-miner/" />
+    <meta
+      property="og:image"
+      content="https://bortlesboat.github.io/devday/mempool-miner/assets/mempool-control-room.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Mempool Miner" />
+    <meta
+      name="twitter:description"
+      content="A playable Bitcoin fee-market game for #OpenAIDevDay2026."
+    />
+    <link rel="canonical" href="https://bortlesboat.github.io/devday/mempool-miner/" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell" aria-label="Mempool Miner game">
+      <section class="mast">
+        <div>
+          <p class="eyebrow">#OpenAIDevDay2026</p>
+          <h1>Mempool Miner</h1>
+        </div>
+        <p class="build-note">GPT-5.5/Codex + Image Gen.</p>
+      </section>
+
+      <section class="game-stage">
+        <canvas id="game" width="1280" height="720" aria-label="Mempool Miner canvas game"></canvas>
+      </section>
+
+      <section class="controls" aria-label="Game controls">
+        <button id="startBtn" type="button">Start</button>
+        <button id="mineBtn" type="button">Mine block</button>
+        <button id="resetBtn" type="button">Reset</button>
+      </section>
+    </main>
+
+    <script src="./game.js"></script>
+  </body>
+</html>
