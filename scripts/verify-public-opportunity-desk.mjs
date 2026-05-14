@@ -88,6 +88,7 @@ async function inspectViewport(name, viewport) {
       hasPipeline: Boolean(document.querySelector("#pipeline")),
       hasValidation: Boolean(document.querySelector("#validation")),
       hasMonitor: Boolean(document.querySelector("#monitor")),
+      hasFdotReadiness: Boolean(document.querySelector("#fdot-readiness")),
       hasScenarios: Boolean(document.querySelector("#scenarios")),
       hasPricing: Boolean(document.querySelector("#pricing")),
       hasStart: Boolean(document.querySelector("#start")),
@@ -144,6 +145,26 @@ async function inspectViewport(name, viewport) {
         text.includes("JAA state and local government consulting") &&
         text.includes("JEA Grant Consulting Services RFQ 106132") &&
         text.includes("FloridaCommerce CPTA 2026-2027"),
+      fdotCards: document.querySelectorAll("#fdot-readiness .pipeline-card").length,
+      fdotRows: document.querySelectorAll("#fdot-readiness tbody tr").length,
+      hasFdotReadinessSummary: text.includes("Second lane: FDOT contractor readiness") &&
+        text.includes("Northeast Florida expansion scan") &&
+        text.includes("official rows") &&
+        text.includes("FDOT rows") &&
+        text.includes("not income proof") &&
+        text.includes("no FDOT-specific send gate exists yet"),
+      hasFdotPacketRows: text.includes("FDOT E21R4-R0 stormwater systems") &&
+        text.includes("FDOT E21R6-R0 St. Johns concrete repair") &&
+        text.includes("FDOT E22A4-R0 districtwide sod BDI") &&
+        text.includes("Clay Utility ITB 25/26-A03 residuals hauling"),
+      hasFdotReadinessChecks: text.includes("official package status") &&
+        text.includes("portal submission readiness") &&
+        text.includes("license/work-class/BDI fit") &&
+        text.includes("insurance, bonding, MOT") &&
+        text.includes("5 readiness checks"),
+      hasFdotGate: text.includes("No FDOT-specific send gate exists yet") &&
+        text.includes("does not authorize contractor contact") &&
+        text.includes("Approve one qualified grant-admin validation ask"),
       scenarioCards: document.querySelectorAll("#scenarios .scenario").length,
       hasScenarioSpecifics: text.includes("JSEB-ready") &&
         text.includes("Subcontractor-first") &&
@@ -168,6 +189,14 @@ async function inspectViewport(name, viewport) {
         sourceLinks.includes("JEA Informal") &&
         sourceLinks.includes("JEA Professional Forecast") &&
         sourceLinks.includes("St. Johns County") &&
+        sourceLinks.includes("FDOT D2 Lettings") &&
+        sourceLinks.includes("FDOT D2 Contracts") &&
+        sourceLinks.includes("Clay Utility Procurement") &&
+        sourceLinks.includes("Clay County OpenGov") &&
+        sourceLinks.includes("Nassau Procurement") &&
+        sourceLinks.includes("Flagler Procurement") &&
+        sourceLinks.includes("Putnam Schools") &&
+        sourceLinks.includes("Putnam Tax Deeds") &&
         sourceLinks.includes("JSEB") &&
         sourceLinks.includes("UNF APEX") &&
         sourceLinks.includes("Avon Park CDBG-DR") &&
@@ -202,6 +231,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasPipeline) failures.push(`${name}: missing #pipeline section`);
   if (!report.hasValidation) failures.push(`${name}: missing #validation section`);
   if (!report.hasMonitor) failures.push(`${name}: missing #monitor section`);
+  if (!report.hasFdotReadiness) failures.push(`${name}: missing #fdot-readiness section`);
   if (!report.hasScenarios) failures.push(`${name}: missing #scenarios section`);
   if (!report.hasPricing) failures.push(`${name}: missing #pricing section`);
   if (!report.hasStart) failures.push(`${name}: missing #start section`);
@@ -220,6 +250,12 @@ async function inspectViewport(name, viewport) {
   if (!report.hasMonitorOps) failures.push(`${name}: missing monitor ops/config copy`);
   if (!report.hasReviewerBrief) failures.push(`${name}: missing reviewer brief gate copy`);
   if (!report.hasMonitorTopRows) failures.push(`${name}: missing generated monitor top rows`);
+  if (report.fdotCards !== 4) failures.push(`${name}: expected 4 FDOT readiness cards, saw ${report.fdotCards}`);
+  if (report.fdotRows !== 4) failures.push(`${name}: expected 4 FDOT readiness rows, saw ${report.fdotRows}`);
+  if (!report.hasFdotReadinessSummary) failures.push(`${name}: missing FDOT readiness summary`);
+  if (!report.hasFdotPacketRows) failures.push(`${name}: missing FDOT packet rows`);
+  if (!report.hasFdotReadinessChecks) failures.push(`${name}: missing FDOT readiness checks`);
+  if (!report.hasFdotGate) failures.push(`${name}: missing FDOT no-send gate copy`);
   if (report.scenarioCards !== 6) failures.push(`${name}: expected 6 scenario cards, saw ${report.scenarioCards}`);
   if (!report.hasScenarioSpecifics) failures.push(`${name}: missing scenario-specific copy`);
   if (!report.hasNoChargeValidation) failures.push(`${name}: missing no-charge validation copy`);
@@ -228,7 +264,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasNoAwardPromises) failures.push(`${name}: missing award-promise boundary`);
   if (!report.hasNoSubmission) failures.push(`${name}: missing bid-submission boundary`);
   if (!report.hasOfficialSources) failures.push(`${name}: missing expected official source links`);
-  if (report.sourceLinkCount < 27) failures.push(`${name}: expected at least 27 source links, saw ${report.sourceLinkCount}`);
+  if (report.sourceLinkCount < 35) failures.push(`${name}: expected at least 35 source links, saw ${report.sourceLinkCount}`);
   if (!report.requestLink.includes("Trade%20or%20service")) failures.push(`${name}: request link missing prefilled intake body`);
   if (report.horizontalOverflow > 1) failures.push(`${name}: horizontal overflow ${report.horizontalOverflow}px`);
   if (errors.length) failures.push(`${name}: console/page errors ${errors.join(" | ")}`);
