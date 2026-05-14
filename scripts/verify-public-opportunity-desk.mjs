@@ -72,6 +72,7 @@ async function inspectViewport(name, viewport) {
   await page.waitForSelector("#fit-grader [data-grader-score]", { timeout: 5000 });
   await page.waitForSelector("#source-graph .source-ladder", { timeout: 5000 });
   await page.waitForSelector("#fresh-queue .opportunity-table", { timeout: 5000 });
+  await page.waitForSelector("#resilience-cdbg .opportunity-table", { timeout: 5000 });
   await page.waitForSelector("#feedback-signal [data-feedback-mailto]", { timeout: 5000 });
   await page.waitForTimeout(250);
 
@@ -103,6 +104,7 @@ async function inspectViewport(name, viewport) {
       hasFdotReadiness: Boolean(document.querySelector("#fdot-readiness")),
       hasSourceGraph: Boolean(document.querySelector("#source-graph")),
       hasFreshQueue: Boolean(document.querySelector("#fresh-queue")),
+      hasResilienceCdbg: Boolean(document.querySelector("#resilience-cdbg")),
       hasScenarios: Boolean(document.querySelector("#scenarios")),
       hasFitGrader: Boolean(document.querySelector("#fit-grader")),
       hasFeedbackSignal: Boolean(document.querySelector("#feedback-signal")),
@@ -336,6 +338,46 @@ async function inspectViewport(name, viewport) {
         text.includes("No invoice or payment request") &&
         text.includes("No spend or paid smoke") &&
         text.includes("not income proof"),
+      resilienceCdbgCards: document.querySelectorAll("#resilience-cdbg .pipeline-card").length,
+      resilienceCdbgRows: document.querySelectorAll("#resilience-cdbg tbody tr").length,
+      resilienceCdbgModuleRows: document.querySelectorAll("#resilience-cdbg .source-ladder li").length,
+      hasResilienceCdbgSummary: text.includes("Resilience/CDBG grant-readiness reviewer brief") &&
+        text.includes("9 official source facts") &&
+        text.includes("4 scenario briefs") &&
+        text.includes("10 readiness modules") &&
+        text.includes("12 flaw challenges") &&
+        text.includes("Proof status $0") &&
+        text.includes("Charge now: false") &&
+        text.includes("not income proof"),
+      hasResilienceCdbgScenarios: text.includes("DEP Resilient Florida") &&
+        text.includes("FDEM BRIC") &&
+        text.includes("Avon Park RFP 26-05") &&
+        text.includes("JAA 26-21-25001") &&
+        text.includes("JAA 26-22-25001") &&
+        text.includes("FloridaCommerce 2023/2024 Storms IRP"),
+      hasResilienceCdbgModules: text.includes("Source freshness and status ledger") &&
+        text.includes("Eligibility gate") &&
+        text.includes("GIS and vulnerability evidence map") &&
+        text.includes("Benefit-cost analysis readiness") &&
+        text.includes("Environmental and historic preservation readiness") &&
+        text.includes("CDBG-DR documentation and existing-grant scope") &&
+        text.includes("Procurement standards and conflict boundary") &&
+        text.includes("Portal and package gate map") &&
+        text.includes("Reviewer proof boundary"),
+      hasResilienceCdbgReviewerAsk: text.includes("Would this no-charge readiness brief be useful") &&
+        text.includes("deadline, portal, eligibility, evidence, and credential blockers") &&
+        text.includes("too generic or risky"),
+      hasResilienceCdbgBoundary: text.includes("Approve one qualified grant-admin validation ask") &&
+        text.includes("No portal registration") &&
+        text.includes("No gated package download") &&
+        text.includes("No office-hour registration") &&
+        text.includes("No bid") &&
+        text.includes("No application") &&
+        text.includes("No invoice") &&
+        text.includes("No payment request"),
+      hasResilienceCdbgSources: sourceLinks.includes("DEP Resilient Florida Resources") &&
+        sourceLinks.includes("HUD CDBG-DR") &&
+        sourceLinks.includes("2 CFR 200.318"),
       scenarioCards: document.querySelectorAll("#scenarios .scenario").length,
       hasScenarioSpecifics: text.includes("Six no-charge scenario lanes") &&
         text.includes("Grant-admin support") &&
@@ -442,11 +484,11 @@ async function inspectViewport(name, viewport) {
   }));
   report.graderInteraction = graderInteraction;
 
-  if (report.feedbackLaneValues.includes("current_packet")) {
-    await page.selectOption("[data-feedback-lane]", "current_packet");
+  if (report.feedbackLaneValues.includes("resilience_cdbg")) {
+    await page.selectOption("[data-feedback-lane]", "resilience_cdbg");
   }
   await page.selectOption("[data-feedback-verdict]", "risky");
-  await page.fill("[data-feedback-blocker]", "Stale JAXPORT row unclear");
+  await page.fill("[data-feedback-blocker]", "BCA/EHP unclear");
   const feedbackInteraction = await page.evaluate(() => {
     const href = document.querySelector("[data-feedback-mailto]")?.getAttribute("href") ?? "";
     const decoded = decodeURIComponent(href);
@@ -464,6 +506,9 @@ async function inspectViewport(name, viewport) {
   await page.locator("#workbooks").screenshot({
     path: path.join(screenshotDir, `public-opportunity-desk-workbooks-${name}.png`),
   });
+  await page.locator("#resilience-cdbg").screenshot({
+    path: path.join(screenshotDir, `public-opportunity-desk-resilience-cdbg-${name}.png`),
+  });
   await page.close();
 
   if (report.title !== "North Florida Public Opportunity Desk | Andrew Barnes") failures.push(`${name}: unexpected title ${report.title}`);
@@ -478,6 +523,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasFdotReadiness) failures.push(`${name}: missing #fdot-readiness section`);
   if (!report.hasSourceGraph) failures.push(`${name}: missing #source-graph section`);
   if (!report.hasFreshQueue) failures.push(`${name}: missing #fresh-queue section`);
+  if (!report.hasResilienceCdbg) failures.push(`${name}: missing #resilience-cdbg section`);
   if (!report.hasScenarios) failures.push(`${name}: missing #scenarios section`);
   if (!report.hasFitGrader) failures.push(`${name}: missing #fit-grader section`);
   if (!report.hasFeedbackSignal) failures.push(`${name}: missing #feedback-signal section`);
@@ -536,13 +582,23 @@ async function inspectViewport(name, viewport) {
   if (!report.hasFreshQueueRejects) failures.push(`${name}: missing fresh queue stale-label rejects`);
   if (!report.hasFreshQueueLanes) failures.push(`${name}: missing fresh queue ranked lanes`);
   if (!report.hasFreshQueueProofBoundary) failures.push(`${name}: missing fresh queue proof/no-contact boundary`);
+  if (report.resilienceCdbgCards !== 4) failures.push(`${name}: expected 4 Resilience/CDBG cards, saw ${report.resilienceCdbgCards}`);
+  if (report.resilienceCdbgRows !== 4) failures.push(`${name}: expected 4 Resilience/CDBG scenario rows, saw ${report.resilienceCdbgRows}`);
+  if (report.resilienceCdbgModuleRows !== 10) failures.push(`${name}: expected 10 Resilience/CDBG module rows, saw ${report.resilienceCdbgModuleRows}`);
+  if (!report.hasResilienceCdbgSummary) failures.push(`${name}: missing Resilience/CDBG summary/proof copy`);
+  if (!report.hasResilienceCdbgScenarios) failures.push(`${name}: missing Resilience/CDBG scenario source copy`);
+  if (!report.hasResilienceCdbgModules) failures.push(`${name}: missing Resilience/CDBG readiness modules`);
+  if (!report.hasResilienceCdbgReviewerAsk) failures.push(`${name}: missing Resilience/CDBG reviewer ask`);
+  if (!report.hasResilienceCdbgBoundary) failures.push(`${name}: missing Resilience/CDBG no-contact boundary`);
+  if (!report.hasResilienceCdbgSources) failures.push(`${name}: missing Resilience/CDBG official source links`);
   if (report.scenarioCards !== 6) failures.push(`${name}: expected 6 scenario cards, saw ${report.scenarioCards}`);
   if (!report.hasScenarioSpecifics) failures.push(`${name}: missing scenario-specific copy`);
   if (report.fitGraderOptions !== 5) failures.push(`${name}: expected 5 fit-grader scenario options, saw ${report.fitGraderOptions}`);
   if (report.fitGraderChecks !== 8) failures.push(`${name}: expected 8 fit-grader checks, saw ${report.fitGraderChecks}`);
   if (report.fitGraderDefaultScore !== "2 / 8") failures.push(`${name}: expected default fit-grader score 2 / 8, saw ${report.fitGraderDefaultScore}`);
-  if (report.feedbackLaneOptions !== 6) failures.push(`${name}: expected 6 feedback lane options, saw ${report.feedbackLaneOptions}`);
+  if (report.feedbackLaneOptions !== 7) failures.push(`${name}: expected 7 feedback lane options, saw ${report.feedbackLaneOptions}`);
   if (!report.feedbackLaneValues.includes("current_packet")) failures.push(`${name}: feedback lane options missing current_packet`);
+  if (!report.feedbackLaneValues.includes("resilience_cdbg")) failures.push(`${name}: feedback lane options missing resilience_cdbg`);
   if (report.feedbackVerdictOptions !== 3) failures.push(`${name}: expected 3 feedback verdict options, saw ${report.feedbackVerdictOptions}`);
   if (!report.feedbackDefaultHref.includes("public%20opportunity%20usefulness%20signal")) failures.push(`${name}: feedback default mailto missing usefulness signal subject`);
   if (!report.hasFeedbackSignalCopy) failures.push(`${name}: missing feedback signal copy or proof boundary`);
@@ -550,9 +606,9 @@ async function inspectViewport(name, viewport) {
   if (report.graderInteraction.score !== "5 / 8") failures.push(`${name}: expected surplus grader cap score 5 / 8, saw ${report.graderInteraction.score}`);
   if (report.graderInteraction.call !== "Paper trade only.") failures.push(`${name}: expected surplus paper-trade-only call, saw ${report.graderInteraction.call}`);
   if (!report.graderInteraction.output.includes("no-cash paper-trade rejection sheet")) failures.push(`${name}: surplus grader output missing no-cash paper-trade language`);
-  if (!report.feedbackInteraction.decoded.includes("Scenario: current_packet")) failures.push(`${name}: feedback mailto missing selected current-packet lane`);
+  if (!report.feedbackInteraction.decoded.includes("Scenario: resilience_cdbg")) failures.push(`${name}: feedback mailto missing selected Resilience/CDBG lane`);
   if (!report.feedbackInteraction.decoded.includes("Verdict: risky")) failures.push(`${name}: feedback mailto missing selected risky verdict`);
-  if (!report.feedbackInteraction.decoded.includes("Main blocker: Stale JAXPORT row unclear")) failures.push(`${name}: feedback mailto missing typed current-packet blocker`);
+  if (!report.feedbackInteraction.decoded.includes("Main blocker: BCA/EHP unclear")) failures.push(`${name}: feedback mailto missing typed Resilience/CDBG blocker`);
   if (!report.feedbackInteraction.decoded.includes("Proof status: $0")) failures.push(`${name}: feedback mailto missing proof status`);
   if (!report.feedbackInteraction.decoded.includes("not a payment request, bid, portal action, or income proof")) failures.push(`${name}: feedback mailto missing proof boundary`);
   if (!report.hasNoChargeValidation) failures.push(`${name}: missing no-charge validation copy`);
