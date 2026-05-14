@@ -1089,6 +1089,7 @@
             <a href="#workbooks">Workbooks</a>
             <a href="#pipeline">Pipeline</a>
             <a href="#validation">Works?</a>
+            <a href="#current-packet">Current packet</a>
             <a href="#rhtp-readiness">RHTP</a>
             <a href="#monitor">Monitor</a>
             <a href="#fdot-readiness">FDOT lane</a>
@@ -1517,6 +1518,103 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <section class="pipeline-band" id="current-packet">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Current-source validation packet.</h2>
+          <p>
+            The late-day refresh removed stale live-target assumptions. This is the packet I would put in front of one
+            qualified reviewer only after approval: current rows, rejected traps, one question, proof status $0.
+            Proof status $0 means this is validation distribution, not income.
+          </p>
+        </div>
+        <div class="pipeline-grid" aria-label="Current validation packet summary">
+          <div class="pipeline-card">
+            <strong>4</strong>
+            <span>current rows</span>
+            <p>JAA, DEP, and AHCA rows that are still useful as validation inputs.</p>
+          </div>
+          <div class="pipeline-card">
+            <strong>5</strong>
+            <span>benchmarks / rejects</span>
+            <p>JAXPORT and portal-process rows are kept as blockers, not live targets.</p>
+          </div>
+          <div class="pipeline-card">
+            <strong>1</strong>
+            <span>reviewer question</span>
+            <p>Ask whether the packet is useful, too generic, credential-risky, or worth narrowing.</p>
+          </div>
+          <div class="pipeline-card">
+            <strong>$0</strong>
+            <span>proof status</span>
+            <p>This is not a send list, bid list, invoice, or income proof.</p>
+          </div>
+        </div>
+        <table class="opportunity-table" aria-label="Current-source validation rows">
+          <thead>
+            <tr>
+              <th>Current row</th>
+              <th>Validation use</th>
+              <th>Stop signal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>JAA 26-22-25001</td>
+              <td class="fit">State/local government-relations support demand and public-authority deadline tracking.</td>
+              <td>Stop if the work implies lobbying representation, agency contact, or DemandStar package access.</td>
+            </tr>
+            <tr>
+              <td>JAA 26-21-25001</td>
+              <td class="fit">Federal government-relations comparison row for separating support from representation.</td>
+              <td>Stop if the federal scope makes the packet credential-heavy or too close to lobbying.</td>
+            </tr>
+            <tr>
+              <td>DEP Resilient Florida 2026</td>
+              <td class="fit">Grant-readiness lane for eligibility, GIS/vulnerability evidence, scoring, and timeline checks.</td>
+              <td>Stop before office-hours registration, application portal work, or applicant authority.</td>
+            </tr>
+            <tr>
+              <td>AHCA RHTP 2026</td>
+              <td class="fit">Rural-health readiness lane with restricted-communication-safe evidence mapping.</td>
+              <td>Stop before AHCA contact, applicant contact, RFA questions, MFMP action, or healthcare claims.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pipeline-notes">
+          <div class="pipeline-note">
+            <h3>Rejected as live targets</h3>
+            <p>
+              JAXPORT 26-02 is benchmark-only after the same-day 2:00 PM deadline. JAXPORT C-1951 is stale/rejected
+              after its May 5 due date. JAXPORT 26-05 is CPA-prime benchmark only, not a route for Andy as prime.
+            </p>
+            <p>
+              The useful thing is the rejection logic: active labels are not enough without deadline math.
+            </p>
+          </div>
+          <div class="pipeline-note">
+            <h3>One question, no pitch</h3>
+            <p>
+              Would this current-source packet be useful for quickly spotting deadline, portal, credential, and
+              documentation blockers before deciding pursue, partner, watch, or skip, or is it too generic or risky
+              to use without a qualified grant or government-contracting owner?
+            </p>
+            <p>
+              Do not send the one-question validation ask without: Approve one qualified grant-admin validation ask.
+              No portal registration. No gated package download. No payment request.
+            </p>
+          </div>
+        </div>
+        <div class="source-links" aria-label="Current validation packet sources">
+          <a href="https://www.flyjacksonville.com/jaa/BidStatusReport.aspx">JAA current packet rows</a>
+          <a href="https://floridadep.gov/rcp/resilient-florida-program/content/resilient-florida-program-applicants">DEP Resilient Florida Applicants</a>
+          <a href="https://ahca.myflorida.com/site/rural-health-transformation-program">AHCA RHTP current packet</a>
+          <a href="https://www.jaxport.com/procurement/active-solicitations/entry/14046/?gvid=776">JAXPORT 26-02 benchmark</a>
+          <a href="https://www.jaxport.com/procurement/active-solicitations/entry/14025/?gvid=776">JAXPORT 26-05 benchmark</a>
+        </div>
       </div>
     </section>
 

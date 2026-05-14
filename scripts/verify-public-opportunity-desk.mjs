@@ -96,6 +96,7 @@ async function inspectViewport(name, viewport) {
       hasSample: Boolean(document.querySelector("#sample")),
       hasPipeline: Boolean(document.querySelector("#pipeline")),
       hasValidation: Boolean(document.querySelector("#validation")),
+      hasCurrentPacket: Boolean(document.querySelector("#current-packet")),
       hasRhtpReadiness: Boolean(document.querySelector("#rhtp-readiness")),
       hasMonitor: Boolean(document.querySelector("#monitor")),
       hasFdotReadiness: Boolean(document.querySelector("#fdot-readiness")),
@@ -180,6 +181,26 @@ async function inspectViewport(name, viewport) {
         text.includes("due May 30, 2026") &&
         text.includes("Macclenny CDBG-DR") &&
         text.includes("Find the official city packet first"),
+      currentPacketCards: document.querySelectorAll("#current-packet .pipeline-card").length,
+      currentPacketRows: document.querySelectorAll("#current-packet tbody tr").length,
+      hasCurrentPacketCopy: text.includes("Current-source validation packet") &&
+        text.includes("JAA 26-22-25001") &&
+        text.includes("JAA 26-21-25001") &&
+        text.includes("DEP Resilient Florida 2026") &&
+        text.includes("AHCA RHTP 2026") &&
+        text.includes("JAXPORT 26-02 is benchmark-only") &&
+        text.includes("JAXPORT C-1951 is stale/rejected") &&
+        text.includes("JAXPORT 26-05 is CPA-prime benchmark only") &&
+        text.includes("Proof status $0") &&
+        text.includes("not a send list"),
+      hasCurrentPacketOneQuestion: text.includes("Would this current-source packet be useful") &&
+        text.includes("too generic or risky") &&
+        text.includes("pursue, partner, watch, or skip"),
+      hasCurrentPacketGate: text.includes("Do not send the one-question validation ask") &&
+        text.includes("Approve one qualified grant-admin validation ask") &&
+        text.includes("No portal registration") &&
+        text.includes("No gated package download") &&
+        text.includes("No payment request"),
       rhtpCards: document.querySelectorAll("#rhtp-readiness .pipeline-card").length,
       rhtpRows: document.querySelectorAll("#rhtp-readiness tbody tr").length,
       hasRhtpReadinessSummary: text.includes("Fresh state-program test: AHCA RHTP readiness") &&
@@ -417,6 +438,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasSample) failures.push(`${name}: missing #sample section`);
   if (!report.hasPipeline) failures.push(`${name}: missing #pipeline section`);
   if (!report.hasValidation) failures.push(`${name}: missing #validation section`);
+  if (!report.hasCurrentPacket) failures.push(`${name}: missing #current-packet section`);
   if (!report.hasRhtpReadiness) failures.push(`${name}: missing #rhtp-readiness section`);
   if (!report.hasMonitor) failures.push(`${name}: missing #monitor section`);
   if (!report.hasFdotReadiness) failures.push(`${name}: missing #fdot-readiness section`);
@@ -443,6 +465,11 @@ async function inspectViewport(name, viewport) {
   if (report.validationRows !== 4) failures.push(`${name}: expected 4 validation scorecard rows, saw ${report.validationRows}`);
   if (!report.hasValidationDefinition) failures.push(`${name}: missing no-charge validation definition`);
   if (!report.hasCurrentPublicSourceScorecard) failures.push(`${name}: missing current public-source scorecard copy`);
+  if (report.currentPacketCards !== 4) failures.push(`${name}: expected 4 current-packet cards, saw ${report.currentPacketCards}`);
+  if (report.currentPacketRows !== 4) failures.push(`${name}: expected 4 current-packet rows, saw ${report.currentPacketRows}`);
+  if (!report.hasCurrentPacketCopy) failures.push(`${name}: missing current-packet source/rejection/proof copy`);
+  if (!report.hasCurrentPacketOneQuestion) failures.push(`${name}: missing current-packet one-question validation copy`);
+  if (!report.hasCurrentPacketGate) failures.push(`${name}: missing current-packet no-contact gate copy`);
   if (report.rhtpCards !== 4) failures.push(`${name}: expected 4 RHTP cards, saw ${report.rhtpCards}`);
   if (report.rhtpRows !== 4) failures.push(`${name}: expected 4 RHTP matrix rows, saw ${report.rhtpRows}`);
   if (!report.hasRhtpReadinessSummary) failures.push(`${name}: missing RHTP readiness summary`);
