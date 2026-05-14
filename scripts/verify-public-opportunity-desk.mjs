@@ -77,6 +77,8 @@ async function inspectViewport(name, viewport) {
     const sourceLinks = [...document.querySelectorAll(".source-links a")].map((link) => link.textContent.trim());
     const workbookLink = document.querySelector('a[href$="Grant-Admin-Support-Sample-Workbook-2026-05-14.xlsx"]');
     const workbookHref = workbookLink?.getAttribute("href") ?? "";
+    const rhtpWorkbookLink = document.querySelector('a[href$="AHCA-RHTP-Readiness-Matrix-2026-05-14.xlsx"]');
+    const rhtpWorkbookHref = rhtpWorkbookLink?.getAttribute("href") ?? "";
     const sampleRows = document.querySelectorAll("#sample tbody tr").length;
     const heroReport = document.querySelector(".hero-report")?.getBoundingClientRect();
 
@@ -87,6 +89,7 @@ async function inspectViewport(name, viewport) {
       hasSample: Boolean(document.querySelector("#sample")),
       hasPipeline: Boolean(document.querySelector("#pipeline")),
       hasValidation: Boolean(document.querySelector("#validation")),
+      hasRhtpReadiness: Boolean(document.querySelector("#rhtp-readiness")),
       hasMonitor: Boolean(document.querySelector("#monitor")),
       hasFdotReadiness: Boolean(document.querySelector("#fdot-readiness")),
       hasScenarios: Boolean(document.querySelector("#scenarios")),
@@ -127,6 +130,37 @@ async function inspectViewport(name, viewport) {
         text.includes("due May 30, 2026") &&
         text.includes("Macclenny CDBG-DR") &&
         text.includes("Find the official city packet first"),
+      rhtpCards: document.querySelectorAll("#rhtp-readiness .pipeline-card").length,
+      rhtpRows: document.querySelectorAll("#rhtp-readiness tbody tr").length,
+      hasRhtpReadinessSummary: text.includes("Fresh state-program test: AHCA RHTP readiness") &&
+        text.includes("4") &&
+        text.includes("official AHCA sources") &&
+        text.includes("10") &&
+        text.includes("readiness modules") &&
+        text.includes("8") &&
+        text.includes("matrix rows") &&
+        text.includes("$0") &&
+        text.includes("proof status"),
+      hasRhtpWorkbook: text.includes("Download RHTP workbook") &&
+        text.includes("Summary, Readiness Matrix, Module Checks, Sources, Proof Classifier, and Checks sheets") &&
+        text.includes("0 formula errors") &&
+        text.includes("6 rendered sheet previews") &&
+        rhtpWorkbookHref.includes("AHCA-RHTP-Readiness-Matrix-2026-05-14.xlsx"),
+      hasRhtpMatrixRows: text.includes("Eligibility and bundle fit") &&
+        text.includes("Financial solvency and controls") &&
+        text.includes("Data collection and reporting plan") &&
+        text.includes("Vendor procurement and contract management") &&
+        text.includes("official RFA documents") &&
+        text.includes("partner approval") &&
+        text.includes("contract ownership"),
+      hasRhtpBoundary: text.includes("restricted communication period") &&
+        text.includes("does not authorize AHCA") &&
+        text.includes("applicant contact") &&
+        text.includes("RFA questions") &&
+        text.includes("portal registration") &&
+        text.includes("payment requests") &&
+        text.includes("Approve one qualified grant-admin validation ask"),
+      rhtpWorkbookHref,
       monitorCards: document.querySelectorAll("#monitor .pipeline-card").length,
       monitorRows: document.querySelectorAll("#monitor tbody tr").length,
       hasGeneratedMonitor: text.includes("Generated monitor, not another hand-built list") &&
@@ -201,6 +235,10 @@ async function inspectViewport(name, viewport) {
         sourceLinks.includes("St. Johns County") &&
         sourceLinks.includes("FDOT D2 Lettings") &&
         sourceLinks.includes("FDOT D2 Contracts") &&
+        sourceLinks.includes("AHCA RHTP") &&
+        sourceLinks.includes("AHCA RHTP Funding") &&
+        sourceLinks.includes("AHCA RHTP Webinar") &&
+        sourceLinks.includes("AHCA RHTP Deck") &&
         sourceLinks.includes("Clay Utility Procurement") &&
         sourceLinks.includes("Clay County OpenGov") &&
         sourceLinks.includes("Nassau Procurement") &&
@@ -240,6 +278,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasSample) failures.push(`${name}: missing #sample section`);
   if (!report.hasPipeline) failures.push(`${name}: missing #pipeline section`);
   if (!report.hasValidation) failures.push(`${name}: missing #validation section`);
+  if (!report.hasRhtpReadiness) failures.push(`${name}: missing #rhtp-readiness section`);
   if (!report.hasMonitor) failures.push(`${name}: missing #monitor section`);
   if (!report.hasFdotReadiness) failures.push(`${name}: missing #fdot-readiness section`);
   if (!report.hasScenarios) failures.push(`${name}: missing #scenarios section`);
@@ -255,6 +294,12 @@ async function inspectViewport(name, viewport) {
   if (report.validationRows !== 4) failures.push(`${name}: expected 4 validation scorecard rows, saw ${report.validationRows}`);
   if (!report.hasValidationDefinition) failures.push(`${name}: missing no-charge validation definition`);
   if (!report.hasCurrentPublicSourceScorecard) failures.push(`${name}: missing current public-source scorecard copy`);
+  if (report.rhtpCards !== 4) failures.push(`${name}: expected 4 RHTP cards, saw ${report.rhtpCards}`);
+  if (report.rhtpRows !== 4) failures.push(`${name}: expected 4 RHTP matrix rows, saw ${report.rhtpRows}`);
+  if (!report.hasRhtpReadinessSummary) failures.push(`${name}: missing RHTP readiness summary`);
+  if (!report.hasRhtpWorkbook) failures.push(`${name}: missing RHTP workbook download and verification copy`);
+  if (!report.hasRhtpMatrixRows) failures.push(`${name}: missing RHTP matrix row copy`);
+  if (!report.hasRhtpBoundary) failures.push(`${name}: missing RHTP no-contact boundary`);
   if (report.monitorCards !== 4) failures.push(`${name}: expected 4 monitor cards, saw ${report.monitorCards}`);
   if (report.monitorRows !== 5) failures.push(`${name}: expected 5 generated monitor rows, saw ${report.monitorRows}`);
   if (!report.hasGeneratedMonitor) failures.push(`${name}: missing generated monitor summary`);
@@ -275,7 +320,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasNoAwardPromises) failures.push(`${name}: missing award-promise boundary`);
   if (!report.hasNoSubmission) failures.push(`${name}: missing bid-submission boundary`);
   if (!report.hasOfficialSources) failures.push(`${name}: missing expected official source links`);
-  if (report.sourceLinkCount < 35) failures.push(`${name}: expected at least 35 source links, saw ${report.sourceLinkCount}`);
+  if (report.sourceLinkCount < 39) failures.push(`${name}: expected at least 39 source links, saw ${report.sourceLinkCount}`);
   if (!report.requestLink.includes("Trade%20or%20service")) failures.push(`${name}: request link missing prefilled intake body`);
   if (report.horizontalOverflow > 1) failures.push(`${name}: horizontal overflow ${report.horizontalOverflow}px`);
   if (errors.length) failures.push(`${name}: console/page errors ${errors.join(" | ")}`);
@@ -297,6 +342,11 @@ if (!sitemap.includes("https://bortlesboat.github.io/public-opportunity-desk/"))
 const workbookPath = path.join(publicRoot, "public-opportunity-desk", "Grant-Admin-Support-Sample-Workbook-2026-05-14.xlsx");
 if (!fs.existsSync(workbookPath) || fs.statSync(workbookPath).size < 5000) {
   failures.push("workbook sample asset missing or unexpectedly small");
+}
+
+const rhtpWorkbookPath = path.join(publicRoot, "public-opportunity-desk", "AHCA-RHTP-Readiness-Matrix-2026-05-14.xlsx");
+if (!fs.existsSync(rhtpWorkbookPath) || fs.statSync(rhtpWorkbookPath).size < 10000) {
+  failures.push("RHTP workbook asset missing or unexpectedly small");
 }
 
 const output = { ok: failures.length === 0, failures, desktop, mobile };
