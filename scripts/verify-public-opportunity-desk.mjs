@@ -86,6 +86,7 @@ async function inspectViewport(name, viewport) {
       hasHeroVisual: Boolean(heroReport && heroReport.width > 250 && heroReport.height > 250),
       hasSample: Boolean(document.querySelector("#sample")),
       hasPipeline: Boolean(document.querySelector("#pipeline")),
+      hasValidation: Boolean(document.querySelector("#validation")),
       hasScenarios: Boolean(document.querySelector("#scenarios")),
       hasPricing: Boolean(document.querySelector("#pricing")),
       hasStart: Boolean(document.querySelector("#start")),
@@ -107,6 +108,20 @@ async function inspectViewport(name, viewport) {
         text.includes("2 CFR Part 200 evidence map") &&
         text.includes("No prime grant-administrator bid") &&
         text.includes("one qualified no-charge review"),
+      validationCards: document.querySelectorAll("#validation .pipeline-card").length,
+      validationRows: document.querySelectorAll("#validation tbody tr").length,
+      hasValidationDefinition: text.includes("What counts as working now") &&
+        text.includes("official public sources") &&
+        text.includes("qualified reviewer") &&
+        text.includes("revenue target") &&
+        text.includes("Income proof still requires a paid, funded, or settled event"),
+      hasCurrentPublicSourceScorecard: text.includes("Florida Small Cities CDBG cycle") &&
+        text.includes("May 20, 2026") &&
+        text.includes("May 5 vs May 20 source conflict") &&
+        text.includes("City of Temple, Georgia") &&
+        text.includes("due May 30, 2026") &&
+        text.includes("Macclenny CDBG-DR") &&
+        text.includes("Find the official city packet first"),
       scenarioCards: document.querySelectorAll("#scenarios .scenario").length,
       hasScenarioSpecifics: text.includes("JSEB-ready") &&
         text.includes("Subcontractor-first") &&
@@ -131,9 +146,14 @@ async function inspectViewport(name, viewport) {
         sourceLinks.includes("UNF APEX") &&
         sourceLinks.includes("Avon Park CDBG-DR") &&
         sourceLinks.includes("FloridaCommerce CDBG") &&
+        sourceLinks.includes("FloridaCommerce Small Cities Program") &&
         sourceLinks.includes("Rebuild Florida IRP") &&
+        sourceLinks.includes("Florida CDBG-DR/RIF Awards") &&
         sourceLinks.includes("Columbia County CDBG") &&
         sourceLinks.includes("Georgia DCA CDBG-DR") &&
+        sourceLinks.includes("Temple GA Grants") &&
+        sourceLinks.includes("Monroe GA Scope PDF") &&
+        sourceLinks.includes("Florida CPTA") &&
         sourceLinks.includes("DIA Facade") &&
         sourceLinks.includes("COJ Facade") &&
         sourceLinks.includes("Duval LBT"),
@@ -154,6 +174,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasHeroVisual) failures.push(`${name}: missing substantial hero report visual`);
   if (!report.hasSample) failures.push(`${name}: missing #sample section`);
   if (!report.hasPipeline) failures.push(`${name}: missing #pipeline section`);
+  if (!report.hasValidation) failures.push(`${name}: missing #validation section`);
   if (!report.hasScenarios) failures.push(`${name}: missing #scenarios section`);
   if (!report.hasPricing) failures.push(`${name}: missing #pricing section`);
   if (!report.hasStart) failures.push(`${name}: missing #start section`);
@@ -162,6 +183,10 @@ async function inspectViewport(name, viewport) {
   if (report.pipelineCards !== 4) failures.push(`${name}: expected 4 pipeline cards, saw ${report.pipelineCards}`);
   if (!report.hasPipelineSummary) failures.push(`${name}: missing grant-admin pipeline summary`);
   if (!report.hasPipelineSupportOnly) failures.push(`${name}: missing support-only grant-admin pipeline boundaries`);
+  if (report.validationCards !== 4) failures.push(`${name}: expected 4 validation cards, saw ${report.validationCards}`);
+  if (report.validationRows !== 4) failures.push(`${name}: expected 4 validation scorecard rows, saw ${report.validationRows}`);
+  if (!report.hasValidationDefinition) failures.push(`${name}: missing no-charge validation definition`);
+  if (!report.hasCurrentPublicSourceScorecard) failures.push(`${name}: missing current public-source scorecard copy`);
   if (report.scenarioCards !== 6) failures.push(`${name}: expected 6 scenario cards, saw ${report.scenarioCards}`);
   if (!report.hasScenarioSpecifics) failures.push(`${name}: missing scenario-specific copy`);
   if (!report.hasNoChargeValidation) failures.push(`${name}: missing no-charge validation copy`);
@@ -170,7 +195,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasNoAwardPromises) failures.push(`${name}: missing award-promise boundary`);
   if (!report.hasNoSubmission) failures.push(`${name}: missing bid-submission boundary`);
   if (!report.hasOfficialSources) failures.push(`${name}: missing expected official source links`);
-  if (report.sourceLinkCount < 16) failures.push(`${name}: expected at least 16 source links, saw ${report.sourceLinkCount}`);
+  if (report.sourceLinkCount < 21) failures.push(`${name}: expected at least 21 source links, saw ${report.sourceLinkCount}`);
   if (!report.requestLink.includes("Trade%20or%20service")) failures.push(`${name}: request link missing prefilled intake body`);
   if (report.horizontalOverflow > 1) failures.push(`${name}: horizontal overflow ${report.horizontalOverflow}px`);
   if (errors.length) failures.push(`${name}: console/page errors ${errors.join(" | ")}`);
