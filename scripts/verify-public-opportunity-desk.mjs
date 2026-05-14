@@ -70,6 +70,7 @@ async function inspectViewport(name, viewport) {
   await page.waitForLoadState("domcontentloaded");
   await page.waitForSelector("#sample .opportunity-table", { timeout: 5000 });
   await page.waitForSelector("#fit-grader [data-grader-score]", { timeout: 5000 });
+  await page.waitForSelector("#source-graph .source-ladder", { timeout: 5000 });
   await page.waitForSelector("#feedback-signal [data-feedback-mailto]", { timeout: 5000 });
   await page.waitForTimeout(250);
 
@@ -98,6 +99,7 @@ async function inspectViewport(name, viewport) {
       hasRhtpReadiness: Boolean(document.querySelector("#rhtp-readiness")),
       hasMonitor: Boolean(document.querySelector("#monitor")),
       hasFdotReadiness: Boolean(document.querySelector("#fdot-readiness")),
+      hasSourceGraph: Boolean(document.querySelector("#source-graph")),
       hasScenarios: Boolean(document.querySelector("#scenarios")),
       hasFitGrader: Boolean(document.querySelector("#fit-grader")),
       hasFeedbackSignal: Boolean(document.querySelector("#feedback-signal")),
@@ -250,6 +252,38 @@ async function inspectViewport(name, viewport) {
       hasFdotGate: text.includes("No FDOT-specific send gate exists yet") &&
         text.includes("does not authorize contractor contact") &&
         text.includes("Approve one qualified grant-admin validation ask"),
+      sourceGraphCards: document.querySelectorAll("#source-graph .pipeline-card").length,
+      sourceFamilyGroups: document.querySelectorAll("#source-graph .source-family").length,
+      sourceLadderRows: document.querySelectorAll("#source-graph .source-ladder li").length,
+      hasSourceGraphSummary: text.includes("Source graph: public rows are inputs, not targets") &&
+        text.includes("16") &&
+        text.includes("source families") &&
+        text.includes("8") &&
+        text.includes("scenario lanes") &&
+        text.includes("4") &&
+        text.includes("verification stages") &&
+        text.includes("Charge-now: false") &&
+        text.includes("Income proof still requires $100+ third-party paid, funded, settled, escrowed, or claimable value"),
+      hasSourceGraphFamilies: text.includes("SAM.gov Get Opportunities Public API") &&
+        text.includes("Grants.gov Applicant API") &&
+        text.includes("USAspending API") &&
+        text.includes("Florida VBS / MyFloridaMarketPlace") &&
+        text.includes("Florida FACTS contract and grant awards") &&
+        text.includes("AHCA Rural Health Transformation Program") &&
+        text.includes("DEP Resilient Florida applicants") &&
+        text.includes("COJ 1Cloud supplier portal") &&
+        text.includes("JAXPORT active solicitations") &&
+        text.includes("JAA bid status board") &&
+        text.includes("St. Johns, Clay, Nassau, and Putnam procurement surfaces") &&
+        text.includes("COJ surplus auction information") &&
+        text.includes("Duval tax certificates and tax deeds"),
+      hasSourceGraphLadder: text.includes("Source validity:") &&
+        text.includes("Model usefulness:") &&
+        text.includes("Repeatability:") &&
+        text.includes("Income proof:") &&
+        text.includes("useful, risky, or too generic feedback") &&
+        text.includes("the same lane works across three official sources") &&
+        text.includes("only $100+ third-party paid, funded, settled, escrowed, or claimable evidence"),
       scenarioCards: document.querySelectorAll("#scenarios .scenario").length,
       hasScenarioSpecifics: text.includes("Six no-charge scenario lanes") &&
         text.includes("Grant-admin support") &&
@@ -326,7 +360,16 @@ async function inspectViewport(name, viewport) {
         sourceLinks.includes("Florida CPTA") &&
         sourceLinks.includes("DIA Facade") &&
         sourceLinks.includes("COJ Facade") &&
-        sourceLinks.includes("Duval LBT"),
+        sourceLinks.includes("Duval LBT") &&
+        sourceLinks.includes("SAM.gov API") &&
+        sourceLinks.includes("Grants.gov API") &&
+        sourceLinks.includes("USAspending API") &&
+        sourceLinks.includes("Florida VBS Manual") &&
+        sourceLinks.includes("Florida FACTS") &&
+        sourceLinks.includes("COJ Surplus") &&
+        sourceLinks.includes("Duval Tax Certificates") &&
+        sourceLinks.includes("Duval Tax Deeds") &&
+        sourceLinks.includes("Putnam Procurement"),
       sourceLinkCount: sourceLinks.length,
       requestLink,
       horizontalOverflow: document.documentElement.scrollWidth - window.innerWidth,
@@ -377,6 +420,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasRhtpReadiness) failures.push(`${name}: missing #rhtp-readiness section`);
   if (!report.hasMonitor) failures.push(`${name}: missing #monitor section`);
   if (!report.hasFdotReadiness) failures.push(`${name}: missing #fdot-readiness section`);
+  if (!report.hasSourceGraph) failures.push(`${name}: missing #source-graph section`);
   if (!report.hasScenarios) failures.push(`${name}: missing #scenarios section`);
   if (!report.hasFitGrader) failures.push(`${name}: missing #fit-grader section`);
   if (!report.hasFeedbackSignal) failures.push(`${name}: missing #feedback-signal section`);
@@ -417,6 +461,12 @@ async function inspectViewport(name, viewport) {
   if (!report.hasFdotPacketRows) failures.push(`${name}: missing FDOT packet rows`);
   if (!report.hasFdotReadinessChecks) failures.push(`${name}: missing FDOT readiness checks`);
   if (!report.hasFdotGate) failures.push(`${name}: missing FDOT no-send gate copy`);
+  if (report.sourceGraphCards !== 4) failures.push(`${name}: expected 4 source-graph summary cards, saw ${report.sourceGraphCards}`);
+  if (report.sourceFamilyGroups !== 4) failures.push(`${name}: expected 4 source-family groups, saw ${report.sourceFamilyGroups}`);
+  if (report.sourceLadderRows !== 4) failures.push(`${name}: expected 4 source-ladder rows, saw ${report.sourceLadderRows}`);
+  if (!report.hasSourceGraphSummary) failures.push(`${name}: missing source-graph summary or proof-boundary copy`);
+  if (!report.hasSourceGraphFamilies) failures.push(`${name}: missing source-family group copy`);
+  if (!report.hasSourceGraphLadder) failures.push(`${name}: missing source verification ladder copy`);
   if (report.scenarioCards !== 6) failures.push(`${name}: expected 6 scenario cards, saw ${report.scenarioCards}`);
   if (!report.hasScenarioSpecifics) failures.push(`${name}: missing scenario-specific copy`);
   if (report.fitGraderOptions !== 5) failures.push(`${name}: expected 5 fit-grader scenario options, saw ${report.fitGraderOptions}`);
@@ -441,7 +491,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasNoAwardPromises) failures.push(`${name}: missing award-promise boundary`);
   if (!report.hasNoSubmission) failures.push(`${name}: missing bid-submission boundary`);
   if (!report.hasOfficialSources) failures.push(`${name}: missing expected official source links`);
-  if (report.sourceLinkCount < 39) failures.push(`${name}: expected at least 39 source links, saw ${report.sourceLinkCount}`);
+  if (report.sourceLinkCount < 48) failures.push(`${name}: expected at least 48 source links, saw ${report.sourceLinkCount}`);
   if (!report.requestLink.includes("Trade%20or%20service")) failures.push(`${name}: request link missing prefilled intake body`);
   if (report.horizontalOverflow > 1) failures.push(`${name}: horizontal overflow ${report.horizontalOverflow}px`);
   if (errors.length) failures.push(`${name}: console/page errors ${errors.join(" | ")}`);

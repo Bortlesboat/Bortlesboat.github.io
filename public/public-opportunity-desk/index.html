@@ -754,6 +754,66 @@
         margin-top: 14px;
       }
 
+      .source-graph-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 0.88fr) minmax(340px, 0.52fr);
+        gap: 22px;
+        align-items: start;
+      }
+
+      .source-family-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .source-family {
+        min-height: 100%;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--white);
+        padding: 18px;
+      }
+
+      .source-family h3 {
+        margin: 0 0 10px;
+      }
+
+      .source-family p,
+      .source-ladder p {
+        color: var(--muted);
+        margin: 0;
+      }
+
+      .source-family ul,
+      .source-ladder ol {
+        margin: 14px 0 0;
+        padding-left: 18px;
+        color: #2b342f;
+      }
+
+      .source-family li + li,
+      .source-ladder li + li {
+        margin-top: 7px;
+      }
+
+      .source-ladder {
+        position: sticky;
+        top: 18px;
+        border: 1px solid var(--green);
+        border-radius: 6px;
+        background: #f8faf4;
+        padding: 20px;
+      }
+
+      .source-ladder h3 {
+        margin: 0 0 10px;
+      }
+
+      .source-ladder strong {
+        color: var(--green-2);
+      }
+
       .workbook-meta {
         display: flex;
         flex-wrap: wrap;
@@ -897,6 +957,8 @@
         .pipeline-notes,
         .workbook-library,
         .grader-shell,
+        .source-graph-shell,
+        .source-family-grid,
         .check-grid,
         .feedback-signal,
         .feedback-grid,
@@ -1733,6 +1795,95 @@
       </div>
     </section>
 
+    <section class="pipeline-band" id="source-graph">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Source graph: public rows are inputs, not targets.</h2>
+          <p>
+            The model now starts with official source families, not a contact list. Each row needs a scenario lane,
+            blocker map, kill rule, and verification signal before it can become even a free review packet.
+          </p>
+        </div>
+        <div class="pipeline-grid" aria-label="Public-resource source graph summary">
+          <div class="pipeline-card">
+            <strong>16</strong>
+            <span>source families</span>
+            <p>Federal, Florida state, North Florida local, port/airport, surplus, and tax-deed/certificate sources.</p>
+          </div>
+          <div class="pipeline-card">
+            <strong>8</strong>
+            <span>scenario lanes</span>
+            <p>Grant-admin, rural health, resilience, contractor readiness, portal gaps, award watch, surplus, and tax deeds.</p>
+          </div>
+          <div class="pipeline-card">
+            <strong>4</strong>
+            <span>verification stages</span>
+            <p>Source validity, model usefulness, repeatability, and income proof stay separated.</p>
+          </div>
+          <div class="pipeline-card">
+            <strong>$0</strong>
+            <span>proof status</span>
+            <p>Charge-now: false. Income proof still requires $100+ third-party paid, funded, settled, escrowed, or claimable value.</p>
+          </div>
+        </div>
+        <div class="source-graph-shell">
+          <div class="source-family-grid" aria-label="Official public-resource source families">
+            <article class="source-family">
+              <h3>Federal feeds</h3>
+              <p>Use national surfaces as upstream discovery and award-to-downstream signals.</p>
+              <ul>
+                <li>SAM.gov Get Opportunities Public API</li>
+                <li>Grants.gov Applicant API</li>
+                <li>USAspending API</li>
+              </ul>
+            </article>
+            <article class="source-family">
+              <h3>Florida state stack</h3>
+              <p>Use state programs and procurement systems to catch eligibility, package, blackout, and reporting blockers.</p>
+              <ul>
+                <li>Florida VBS / MyFloridaMarketPlace</li>
+                <li>Florida FACTS contract and grant awards</li>
+                <li>AHCA Rural Health Transformation Program</li>
+                <li>DEP Resilient Florida applicants</li>
+              </ul>
+            </article>
+            <article class="source-family">
+              <h3>North Florida procurement</h3>
+              <p>Use city, county, school, port, airport, and utility rows for readiness, portal-gap, and partner/watch calls.</p>
+              <ul>
+                <li>COJ 1Cloud supplier portal</li>
+                <li>JAXPORT active solicitations</li>
+                <li>JAA bid status board</li>
+                <li>St. Johns, Clay, Nassau, and Putnam procurement surfaces</li>
+              </ul>
+            </article>
+            <article class="source-family">
+              <h3>Paper-trade only</h3>
+              <p>Use high-risk asset sources to reject bad deals before real money moves.</p>
+              <ul>
+                <li>COJ surplus auction information</li>
+                <li>Duval tax certificates and tax deeds</li>
+                <li>Deposit, owner-contact, title, access, utility, and quiet-title blockers</li>
+              </ul>
+            </article>
+          </div>
+          <aside class="source-ladder" aria-label="Public-resource verification ladder">
+            <h3>Verification ladder</h3>
+            <p>
+              Verification is useful only when it says what kind of proof it is. These stages prevent verifier green
+              lights from becoming fake income proof.
+            </p>
+            <ol>
+              <li><strong>Source validity:</strong> official URL, date/status, access limitation, and kill rule.</li>
+              <li><strong>Model usefulness:</strong> useful, risky, or too generic feedback with a stated blocker.</li>
+              <li><strong>Repeatability:</strong> the same lane works across three official sources and rejects stale rows.</li>
+              <li><strong>Income proof:</strong> only $100+ third-party paid, funded, settled, escrowed, or claimable evidence.</li>
+            </ol>
+          </aside>
+        </div>
+      </div>
+    </section>
+
     <section id="scenarios">
       <div class="wrap">
         <div class="section-head">
@@ -2049,6 +2200,15 @@
           <a href="https://dia.jacksonville.gov/doing-business-with-us/doing-business-with-dia/storefront-facade-grant-program" target="_blank" rel="noopener">DIA Facade</a>
           <a href="https://www.jacksonville.gov/departments/office-of-economic-development/facade-renovation-matching-grant-program" target="_blank" rel="noopener">COJ Facade</a>
           <a href="https://taxcollector.jacksonville.gov/Taxes/Local-Business-Tax" target="_blank" rel="noopener">Duval LBT</a>
+          <a href="https://open.gsa.gov/api/get-opportunities-public-api/" target="_blank" rel="noopener">SAM.gov API</a>
+          <a href="https://www.grants.gov/api/applicant" target="_blank" rel="noopener">Grants.gov API</a>
+          <a href="https://api.usaspending.gov/" target="_blank" rel="noopener">USAspending API</a>
+          <a href="https://www.dms.myflorida.com/content/download/152865/1016668/VBS_Manual.pdf" target="_blank" rel="noopener">Florida VBS Manual</a>
+          <a href="https://myfloridacfo.com/factshelp/facts-faq" target="_blank" rel="noopener">Florida FACTS</a>
+          <a href="https://www.jacksonville.gov/departments/office-of-administrative-services/procurement/surplus-auction-information" target="_blank" rel="noopener">COJ Surplus</a>
+          <a href="https://taxcollector.jacksonville.gov/taxes/property-taxes/tax-sale%2C-certificates%2C-and-tax-deeds" target="_blank" rel="noopener">Duval Tax Certificates</a>
+          <a href="https://www.duvalclerk.gov/departments/county-services/tax-deed-files" target="_blank" rel="noopener">Duval Tax Deeds</a>
+          <a href="https://www.putnam-fl.gov/departments/general-services/procurement/" target="_blank" rel="noopener">Putnam Procurement</a>
         </div>
       </div>
     </section>
