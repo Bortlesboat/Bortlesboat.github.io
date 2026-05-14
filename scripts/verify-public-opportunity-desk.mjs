@@ -96,6 +96,9 @@ async function inspectViewport(name, viewport) {
       hasWorkbookSample: text.includes("Grant-admin support workbook sample") &&
         text.includes("Download workbook") &&
         workbookHref.includes("Grant-Admin-Support-Sample-Workbook-2026-05-14.xlsx"),
+      hasWorkbookRepeatabilityCopy: text.includes("source-change tracker") &&
+        text.includes("approval-dependency tracker") &&
+        text.includes("closeout tracker"),
       workbookHref,
       pipelineCards: document.querySelectorAll("#pipeline .pipeline-card").length,
       hasPipelineSummary: text.includes("13") &&
@@ -237,6 +240,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasStart) failures.push(`${name}: missing #start section`);
   if (report.sampleRows !== 5) failures.push(`${name}: expected 5 sample opportunity rows, saw ${report.sampleRows}`);
   if (!report.hasWorkbookSample) failures.push(`${name}: missing workbook sample download`);
+  if (!report.hasWorkbookRepeatabilityCopy) failures.push(`${name}: missing workbook repeatability copy`);
   if (report.pipelineCards !== 4) failures.push(`${name}: expected 4 pipeline cards, saw ${report.pipelineCards}`);
   if (!report.hasPipelineSummary) failures.push(`${name}: missing grant-admin pipeline summary`);
   if (!report.hasPipelineSupportOnly) failures.push(`${name}: missing support-only grant-admin pipeline boundaries`);
