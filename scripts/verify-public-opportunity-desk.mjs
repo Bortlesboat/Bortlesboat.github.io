@@ -72,7 +72,7 @@ async function inspectViewport(name, viewport) {
 
   const report = await page.evaluate(() => {
     const text = document.body.textContent;
-    const requestLink = document.querySelector('a[href^="mailto:"][href*="public%20opportunity%20desk%20pilot"]')?.getAttribute("href") ?? "";
+    const requestLink = document.querySelector('a[href^="mailto:"][href*="public%20opportunity%20validation%20request"]')?.getAttribute("href") ?? "";
     const sourceLinks = [...document.querySelectorAll(".source-links a")].map((link) => link.textContent.trim());
     const sampleRows = document.querySelectorAll("#sample tbody tr").length;
     const heroReport = document.querySelector(".hero-report")?.getBoundingClientRect();
@@ -91,8 +91,13 @@ async function inspectViewport(name, viewport) {
         text.includes("Subcontractor-first") &&
         text.includes("Referrer packet") &&
         text.includes("Grant and capital screen"),
-      hasFirstFit: text.includes("$150") && text.includes("first-fit scan"),
-      hasFirstBid: text.includes("$300") && text.includes("first-bid packet"),
+      hasNoChargeValidation: text.includes("No-charge validation first") &&
+        text.includes("Live opportunity match") &&
+        text.includes("Eligibility friction screen") &&
+        text.includes("No invoice during validation"),
+      hasVerification: text.includes("Verified first") &&
+        text.includes("source links") &&
+        text.includes("verification timestamp"),
       hasNoPasswords: text.includes("No passwords") || text.includes("No portal passwords"),
       hasNoAwardPromises: text.includes("No award promises"),
       hasNoSubmission: text.includes("No bid submission"),
@@ -102,7 +107,10 @@ async function inspectViewport(name, viewport) {
         sourceLinks.includes("JEA Formal") &&
         sourceLinks.includes("St. Johns County") &&
         sourceLinks.includes("JSEB") &&
-        sourceLinks.includes("UNF APEX"),
+        sourceLinks.includes("UNF APEX") &&
+        sourceLinks.includes("DIA Facade") &&
+        sourceLinks.includes("COJ Facade") &&
+        sourceLinks.includes("Duval LBT"),
       sourceLinkCount: sourceLinks.length,
       requestLink,
       horizontalOverflow: document.documentElement.scrollWidth - window.innerWidth,
@@ -116,7 +124,7 @@ async function inspectViewport(name, viewport) {
   await page.close();
 
   if (report.title !== "North Florida Public Opportunity Desk | Andrew Barnes") failures.push(`${name}: unexpected title ${report.title}`);
-  if (!report.description.includes("public bid radar")) failures.push(`${name}: missing useful meta description`);
+  if (!report.description.includes("public opportunity validation")) failures.push(`${name}: missing useful meta description`);
   if (!report.hasHeroVisual) failures.push(`${name}: missing substantial hero report visual`);
   if (!report.hasSample) failures.push(`${name}: missing #sample section`);
   if (!report.hasScenarios) failures.push(`${name}: missing #scenarios section`);
@@ -125,13 +133,13 @@ async function inspectViewport(name, viewport) {
   if (report.sampleRows !== 5) failures.push(`${name}: expected 5 sample opportunity rows, saw ${report.sampleRows}`);
   if (report.scenarioCards !== 6) failures.push(`${name}: expected 6 scenario cards, saw ${report.scenarioCards}`);
   if (!report.hasScenarioSpecifics) failures.push(`${name}: missing scenario-specific copy`);
-  if (!report.hasFirstFit) failures.push(`${name}: missing $150 first-fit offer`);
-  if (!report.hasFirstBid) failures.push(`${name}: missing $300 first-bid offer`);
+  if (!report.hasNoChargeValidation) failures.push(`${name}: missing no-charge validation copy`);
+  if (!report.hasVerification) failures.push(`${name}: missing verification copy`);
   if (!report.hasNoPasswords) failures.push(`${name}: missing password boundary`);
   if (!report.hasNoAwardPromises) failures.push(`${name}: missing award-promise boundary`);
   if (!report.hasNoSubmission) failures.push(`${name}: missing bid-submission boundary`);
   if (!report.hasOfficialSources) failures.push(`${name}: missing expected official source links`);
-  if (report.sourceLinkCount < 8) failures.push(`${name}: expected at least 8 source links, saw ${report.sourceLinkCount}`);
+  if (report.sourceLinkCount < 11) failures.push(`${name}: expected at least 11 source links, saw ${report.sourceLinkCount}`);
   if (!report.requestLink.includes("Trade%20or%20service")) failures.push(`${name}: request link missing prefilled intake body`);
   if (report.horizontalOverflow > 1) failures.push(`${name}: horizontal overflow ${report.horizontalOverflow}px`);
   if (errors.length) failures.push(`${name}: console/page errors ${errors.join(" | ")}`);
