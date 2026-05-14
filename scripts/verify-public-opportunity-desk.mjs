@@ -321,6 +321,7 @@ async function inspectViewport(name, viewport) {
       fitGraderChecks: document.querySelectorAll("#fit-grader [data-grader-check]").length,
       fitGraderDefaultScore: document.querySelector("[data-grader-score]")?.textContent.trim() ?? "",
       feedbackLaneOptions: document.querySelectorAll("#feedback-signal [data-feedback-lane] option").length,
+      feedbackLaneValues: [...document.querySelectorAll("#feedback-signal [data-feedback-lane] option")].map((option) => option.value),
       feedbackVerdictOptions: document.querySelectorAll("#feedback-signal [data-feedback-verdict] option").length,
       feedbackDefaultHref: document.querySelector("#feedback-signal [data-feedback-mailto]")?.getAttribute("href") ?? "",
       hasFeedbackSignalCopy: text.includes("Send a structured usefulness signal") &&
@@ -410,9 +411,11 @@ async function inspectViewport(name, viewport) {
   }));
   report.graderInteraction = graderInteraction;
 
-  await page.selectOption("[data-feedback-lane]", "contractor_readiness");
+  if (report.feedbackLaneValues.includes("current_packet")) {
+    await page.selectOption("[data-feedback-lane]", "current_packet");
+  }
   await page.selectOption("[data-feedback-verdict]", "risky");
-  await page.fill("[data-feedback-blocker]", "Bonding unclear");
+  await page.fill("[data-feedback-blocker]", "Stale JAXPORT row unclear");
   const feedbackInteraction = await page.evaluate(() => {
     const href = document.querySelector("[data-feedback-mailto]")?.getAttribute("href") ?? "";
     const decoded = decodeURIComponent(href);
@@ -499,7 +502,8 @@ async function inspectViewport(name, viewport) {
   if (report.fitGraderOptions !== 5) failures.push(`${name}: expected 5 fit-grader scenario options, saw ${report.fitGraderOptions}`);
   if (report.fitGraderChecks !== 8) failures.push(`${name}: expected 8 fit-grader checks, saw ${report.fitGraderChecks}`);
   if (report.fitGraderDefaultScore !== "2 / 8") failures.push(`${name}: expected default fit-grader score 2 / 8, saw ${report.fitGraderDefaultScore}`);
-  if (report.feedbackLaneOptions !== 5) failures.push(`${name}: expected 5 feedback lane options, saw ${report.feedbackLaneOptions}`);
+  if (report.feedbackLaneOptions !== 6) failures.push(`${name}: expected 6 feedback lane options, saw ${report.feedbackLaneOptions}`);
+  if (!report.feedbackLaneValues.includes("current_packet")) failures.push(`${name}: feedback lane options missing current_packet`);
   if (report.feedbackVerdictOptions !== 3) failures.push(`${name}: expected 3 feedback verdict options, saw ${report.feedbackVerdictOptions}`);
   if (!report.feedbackDefaultHref.includes("public%20opportunity%20usefulness%20signal")) failures.push(`${name}: feedback default mailto missing usefulness signal subject`);
   if (!report.hasFeedbackSignalCopy) failures.push(`${name}: missing feedback signal copy or proof boundary`);
@@ -507,9 +511,9 @@ async function inspectViewport(name, viewport) {
   if (report.graderInteraction.score !== "5 / 8") failures.push(`${name}: expected surplus grader cap score 5 / 8, saw ${report.graderInteraction.score}`);
   if (report.graderInteraction.call !== "Paper trade only.") failures.push(`${name}: expected surplus paper-trade-only call, saw ${report.graderInteraction.call}`);
   if (!report.graderInteraction.output.includes("no-cash paper-trade rejection sheet")) failures.push(`${name}: surplus grader output missing no-cash paper-trade language`);
-  if (!report.feedbackInteraction.decoded.includes("Scenario: contractor_readiness")) failures.push(`${name}: feedback mailto missing selected contractor lane`);
+  if (!report.feedbackInteraction.decoded.includes("Scenario: current_packet")) failures.push(`${name}: feedback mailto missing selected current-packet lane`);
   if (!report.feedbackInteraction.decoded.includes("Verdict: risky")) failures.push(`${name}: feedback mailto missing selected risky verdict`);
-  if (!report.feedbackInteraction.decoded.includes("Main blocker: Bonding unclear")) failures.push(`${name}: feedback mailto missing typed blocker`);
+  if (!report.feedbackInteraction.decoded.includes("Main blocker: Stale JAXPORT row unclear")) failures.push(`${name}: feedback mailto missing typed current-packet blocker`);
   if (!report.feedbackInteraction.decoded.includes("Proof status: $0")) failures.push(`${name}: feedback mailto missing proof status`);
   if (!report.feedbackInteraction.decoded.includes("not a payment request, bid, portal action, or income proof")) failures.push(`${name}: feedback mailto missing proof boundary`);
   if (!report.hasNoChargeValidation) failures.push(`${name}: missing no-charge validation copy`);

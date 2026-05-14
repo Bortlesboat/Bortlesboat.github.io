@@ -2127,12 +2127,14 @@
             <h3>Send a structured usefulness signal.</h3>
             <p>
               If a sample looks useful, risky, or too generic, this creates an inbound validation note with the lane,
-              verdict, blocker, and proof-status boundary already filled in. It is feedback capture, not a sales form.
+              verdict, blocker, and proof-status boundary already filled in. It now covers the current-source packet too.
+              It is feedback capture, not a sales form.
             </p>
             <div class="feedback-grid" aria-label="Validation feedback signal fields">
               <div class="field-row">
                 <label for="feedback-lane">Scenario</label>
                 <select id="feedback-lane" data-feedback-lane>
+                  <option value="current_packet">Current-source packet</option>
                   <option value="grant_admin_support">Grant-admin support</option>
                   <option value="resilient_florida">DEP Resilient Florida</option>
                   <option value="contractor_readiness">Contractor readiness</option>
