@@ -87,6 +87,7 @@ async function inspectViewport(name, viewport) {
       hasSample: Boolean(document.querySelector("#sample")),
       hasPipeline: Boolean(document.querySelector("#pipeline")),
       hasValidation: Boolean(document.querySelector("#validation")),
+      hasMonitor: Boolean(document.querySelector("#monitor")),
       hasScenarios: Boolean(document.querySelector("#scenarios")),
       hasPricing: Boolean(document.querySelector("#pricing")),
       hasStart: Boolean(document.querySelector("#start")),
@@ -122,6 +123,27 @@ async function inspectViewport(name, viewport) {
         text.includes("due May 30, 2026") &&
         text.includes("Macclenny CDBG-DR") &&
         text.includes("Find the official city packet first"),
+      monitorCards: document.querySelectorAll("#monitor .pipeline-card").length,
+      monitorRows: document.querySelectorAll("#monitor tbody tr").length,
+      hasGeneratedMonitor: text.includes("Generated monitor, not another hand-built list") &&
+        text.includes("source entries") &&
+        text.includes("ranked rows") &&
+        text.includes("registry sources") &&
+        text.includes("direct-bid rows"),
+      hasMonitorOps: text.includes("source registry and scoring config") &&
+        text.includes("refresh runbook") &&
+        text.includes("5 source artifacts") &&
+        text.includes("9 registry rows") &&
+        text.includes("8 scoring weights") &&
+        text.includes("5 refresh steps"),
+      hasReviewerBrief: text.includes("JEA/JAA government-consulting and grant-support reviewer brief") &&
+        text.includes("saves time, catches a blocker") &&
+        text.includes("bid/partner/watch/skip") &&
+        text.includes("Approve one qualified grant-admin validation ask"),
+      hasMonitorTopRows: text.includes("JAA federal government relations") &&
+        text.includes("JAA state and local government consulting") &&
+        text.includes("JEA Grant Consulting Services RFQ 106132") &&
+        text.includes("FloridaCommerce CPTA 2026-2027"),
       scenarioCards: document.querySelectorAll("#scenarios .scenario").length,
       hasScenarioSpecifics: text.includes("JSEB-ready") &&
         text.includes("Subcontractor-first") &&
@@ -139,8 +161,12 @@ async function inspectViewport(name, viewport) {
       hasNoSubmission: text.includes("No bid submission"),
       hasOfficialSources: sourceLinks.includes("COJ 1Cloud") &&
         sourceLinks.includes("JAA Bid Board") &&
+        sourceLinks.includes("JAA State/Local Consulting") &&
+        sourceLinks.includes("JAA Federal Relations") &&
         sourceLinks.includes("JAXPORT") &&
         sourceLinks.includes("JEA Formal") &&
+        sourceLinks.includes("JEA Informal") &&
+        sourceLinks.includes("JEA Professional Forecast") &&
         sourceLinks.includes("St. Johns County") &&
         sourceLinks.includes("JSEB") &&
         sourceLinks.includes("UNF APEX") &&
@@ -175,6 +201,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasSample) failures.push(`${name}: missing #sample section`);
   if (!report.hasPipeline) failures.push(`${name}: missing #pipeline section`);
   if (!report.hasValidation) failures.push(`${name}: missing #validation section`);
+  if (!report.hasMonitor) failures.push(`${name}: missing #monitor section`);
   if (!report.hasScenarios) failures.push(`${name}: missing #scenarios section`);
   if (!report.hasPricing) failures.push(`${name}: missing #pricing section`);
   if (!report.hasStart) failures.push(`${name}: missing #start section`);
@@ -187,6 +214,12 @@ async function inspectViewport(name, viewport) {
   if (report.validationRows !== 4) failures.push(`${name}: expected 4 validation scorecard rows, saw ${report.validationRows}`);
   if (!report.hasValidationDefinition) failures.push(`${name}: missing no-charge validation definition`);
   if (!report.hasCurrentPublicSourceScorecard) failures.push(`${name}: missing current public-source scorecard copy`);
+  if (report.monitorCards !== 4) failures.push(`${name}: expected 4 monitor cards, saw ${report.monitorCards}`);
+  if (report.monitorRows !== 5) failures.push(`${name}: expected 5 generated monitor rows, saw ${report.monitorRows}`);
+  if (!report.hasGeneratedMonitor) failures.push(`${name}: missing generated monitor summary`);
+  if (!report.hasMonitorOps) failures.push(`${name}: missing monitor ops/config copy`);
+  if (!report.hasReviewerBrief) failures.push(`${name}: missing reviewer brief gate copy`);
+  if (!report.hasMonitorTopRows) failures.push(`${name}: missing generated monitor top rows`);
   if (report.scenarioCards !== 6) failures.push(`${name}: expected 6 scenario cards, saw ${report.scenarioCards}`);
   if (!report.hasScenarioSpecifics) failures.push(`${name}: missing scenario-specific copy`);
   if (!report.hasNoChargeValidation) failures.push(`${name}: missing no-charge validation copy`);
@@ -195,7 +228,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasNoAwardPromises) failures.push(`${name}: missing award-promise boundary`);
   if (!report.hasNoSubmission) failures.push(`${name}: missing bid-submission boundary`);
   if (!report.hasOfficialSources) failures.push(`${name}: missing expected official source links`);
-  if (report.sourceLinkCount < 21) failures.push(`${name}: expected at least 21 source links, saw ${report.sourceLinkCount}`);
+  if (report.sourceLinkCount < 27) failures.push(`${name}: expected at least 27 source links, saw ${report.sourceLinkCount}`);
   if (!report.requestLink.includes("Trade%20or%20service")) failures.push(`${name}: request link missing prefilled intake body`);
   if (report.horizontalOverflow > 1) failures.push(`${name}: horizontal overflow ${report.horizontalOverflow}px`);
   if (errors.length) failures.push(`${name}: console/page errors ${errors.join(" | ")}`);
