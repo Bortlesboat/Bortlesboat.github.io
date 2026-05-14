@@ -71,6 +71,7 @@ async function inspectViewport(name, viewport) {
   await page.waitForSelector("#sample .opportunity-table", { timeout: 5000 });
   await page.waitForSelector("#fit-grader [data-grader-score]", { timeout: 5000 });
   await page.waitForSelector("#source-graph .source-ladder", { timeout: 5000 });
+  await page.waitForSelector("#fresh-queue .opportunity-table", { timeout: 5000 });
   await page.waitForSelector("#feedback-signal [data-feedback-mailto]", { timeout: 5000 });
   await page.waitForTimeout(250);
 
@@ -101,6 +102,7 @@ async function inspectViewport(name, viewport) {
       hasMonitor: Boolean(document.querySelector("#monitor")),
       hasFdotReadiness: Boolean(document.querySelector("#fdot-readiness")),
       hasSourceGraph: Boolean(document.querySelector("#source-graph")),
+      hasFreshQueue: Boolean(document.querySelector("#fresh-queue")),
       hasScenarios: Boolean(document.querySelector("#scenarios")),
       hasFitGrader: Boolean(document.querySelector("#fit-grader")),
       hasFeedbackSignal: Boolean(document.querySelector("#feedback-signal")),
@@ -305,6 +307,35 @@ async function inspectViewport(name, viewport) {
         text.includes("useful, risky, or too generic feedback") &&
         text.includes("the same lane works across three official sources") &&
         text.includes("only $100+ third-party paid, funded, settled, escrowed, or claimable evidence"),
+      freshQueueCards: document.querySelectorAll("#fresh-queue .pipeline-card").length,
+      freshQueueRows: document.querySelectorAll("#fresh-queue tbody tr").length,
+      freshQueueLaneRows: document.querySelectorAll("#fresh-queue .source-ladder li").length,
+      hasFreshQueueSummary: text.includes("Fresh source queue: current rows, repeatable lanes, rejects") &&
+        text.includes("14") &&
+        text.includes("source rows") &&
+        text.includes("8") &&
+        text.includes("source families") &&
+        text.includes("5") &&
+        text.includes("ranked lanes") &&
+        text.includes("$0") &&
+        text.includes("proof status"),
+      hasFreshQueueRejects: text.includes("JAXPORT 26-02") &&
+        text.includes("deadline-missed active label") &&
+        text.includes("JAXPORT C-1951") &&
+        text.includes("reject as live target") &&
+        text.includes("JAXPORT 26-05") &&
+        text.includes("CPA-prime benchmark only"),
+      hasFreshQueueLanes: text.includes("Grant/government-relations validation") &&
+        text.includes("Resilience/CDBG grant readiness") &&
+        text.includes("Contractor readiness rejection engine") &&
+        text.includes("Portal monitor subscription") &&
+        text.includes("same-day and near-deadline traps"),
+      hasFreshQueueProofBoundary: text.includes("No outreach, follow-up, agency contact, reviewer contact") &&
+        text.includes("No portal registration") &&
+        text.includes("No gated package download") &&
+        text.includes("No invoice or payment request") &&
+        text.includes("No spend or paid smoke") &&
+        text.includes("not income proof"),
       scenarioCards: document.querySelectorAll("#scenarios .scenario").length,
       hasScenarioSpecifics: text.includes("Six no-charge scenario lanes") &&
         text.includes("Grant-admin support") &&
@@ -446,6 +477,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasMonitor) failures.push(`${name}: missing #monitor section`);
   if (!report.hasFdotReadiness) failures.push(`${name}: missing #fdot-readiness section`);
   if (!report.hasSourceGraph) failures.push(`${name}: missing #source-graph section`);
+  if (!report.hasFreshQueue) failures.push(`${name}: missing #fresh-queue section`);
   if (!report.hasScenarios) failures.push(`${name}: missing #scenarios section`);
   if (!report.hasFitGrader) failures.push(`${name}: missing #fit-grader section`);
   if (!report.hasFeedbackSignal) failures.push(`${name}: missing #feedback-signal section`);
@@ -497,6 +529,13 @@ async function inspectViewport(name, viewport) {
   if (!report.hasSourceGraphSummary) failures.push(`${name}: missing source-graph summary or proof-boundary copy`);
   if (!report.hasSourceGraphFamilies) failures.push(`${name}: missing source-family group copy`);
   if (!report.hasSourceGraphLadder) failures.push(`${name}: missing source verification ladder copy`);
+  if (report.freshQueueCards !== 4) failures.push(`${name}: expected 4 fresh-queue cards, saw ${report.freshQueueCards}`);
+  if (report.freshQueueRows !== 6) failures.push(`${name}: expected 6 fresh-queue source rows, saw ${report.freshQueueRows}`);
+  if (report.freshQueueLaneRows !== 5) failures.push(`${name}: expected 5 fresh-queue lane rows, saw ${report.freshQueueLaneRows}`);
+  if (!report.hasFreshQueueSummary) failures.push(`${name}: missing fresh queue summary copy`);
+  if (!report.hasFreshQueueRejects) failures.push(`${name}: missing fresh queue stale-label rejects`);
+  if (!report.hasFreshQueueLanes) failures.push(`${name}: missing fresh queue ranked lanes`);
+  if (!report.hasFreshQueueProofBoundary) failures.push(`${name}: missing fresh queue proof/no-contact boundary`);
   if (report.scenarioCards !== 6) failures.push(`${name}: expected 6 scenario cards, saw ${report.scenarioCards}`);
   if (!report.hasScenarioSpecifics) failures.push(`${name}: missing scenario-specific copy`);
   if (report.fitGraderOptions !== 5) failures.push(`${name}: expected 5 fit-grader scenario options, saw ${report.fitGraderOptions}`);

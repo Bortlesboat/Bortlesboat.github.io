@@ -1093,6 +1093,7 @@
             <a href="#rhtp-readiness">RHTP</a>
             <a href="#monitor">Monitor</a>
             <a href="#fdot-readiness">FDOT lane</a>
+            <a href="#fresh-queue">Fresh queue</a>
             <a href="#scenarios">Scenarios</a>
             <a href="#pricing">Validation</a>
             <a href="#start">Start</a>
@@ -1982,6 +1983,122 @@
       </div>
     </section>
 
+    <section class="pipeline-band" id="fresh-queue">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Fresh source queue: current rows, repeatable lanes, rejects.</h2>
+          <p>
+            The newest no-contact sweep checks official rows against deadline math before anything becomes a packet.
+            It keeps live validation, repeatability evidence, and stale-label rejects in separate buckets.
+          </p>
+        </div>
+        <div class="pipeline-grid" aria-label="Fresh source queue summary">
+          <div class="pipeline-card">
+            <strong>14</strong>
+            <span>source rows</span>
+            <p>JAA, JAXPORT, DEP, FDEM, Avon Park, JTA, St. Johns Schools, Clay County, and Nassau County.</p>
+          </div>
+          <div class="pipeline-card">
+            <strong>8</strong>
+            <span>source families</span>
+            <p>Airport, port, state grant, mitigation, municipal CDBG, transit, school, and county portal sources.</p>
+          </div>
+          <div class="pipeline-card">
+            <strong>5</strong>
+            <span>ranked lanes</span>
+            <p>Grant/government relations leads; resilience/CDBG is the strongest repeatability lane.</p>
+          </div>
+          <div class="pipeline-card">
+            <strong>$0</strong>
+            <span>proof status</span>
+            <p>This queue is not income proof. It is validation evidence until $100+ third-party proof exists.</p>
+          </div>
+        </div>
+        <div class="source-graph-shell">
+          <div>
+            <div class="table-wrap">
+              <table class="opportunity-table" aria-label="Fresh official source queue">
+                <thead>
+                  <tr>
+                    <th>Source</th>
+                    <th>Queue call</th>
+                    <th>Why it matters</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>JAA 26-22-25001</td>
+                    <td>Validate only</td>
+                    <td>Current state/local government-relations row with a June 16 deadline and credential risk.</td>
+                  </tr>
+                  <tr>
+                    <td>JAA 26-21-25001</td>
+                    <td>Validate only</td>
+                    <td>Federal-relations comparison row for separating source tracking from representation or lobbying.</td>
+                  </tr>
+                  <tr>
+                    <td>JAA C-898</td>
+                    <td>Validate only</td>
+                    <td>Contractor readiness and bid/no-bid friction input with a May 28 deadline.</td>
+                  </tr>
+                  <tr>
+                    <td>JAXPORT 26-02</td>
+                    <td>Reject as live target</td>
+                    <td>deadline-missed active label: useful benchmark, not a current action surface; reject as live target.</td>
+                  </tr>
+                  <tr>
+                    <td>JAXPORT C-1951</td>
+                    <td>Reject as live target</td>
+                    <td>Active label remained after a May 5 due date; deadline math beats status text; reject as live target.</td>
+                  </tr>
+                  <tr>
+                    <td>JAXPORT 26-05</td>
+                    <td>CPA-prime benchmark only</td>
+                    <td>Audit/compliance signal is real, but near-deadline and credential-heavy for direct work.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="source-family-grid" aria-label="Fresh queue proof boundaries">
+              <article class="source-family">
+                <h3>Best route</h3>
+                <p>Grant/government-relations validation stays first because it has current JAA rows and recent JAXPORT scope evidence.</p>
+              </article>
+              <article class="source-family">
+                <h3>Repeatable lane</h3>
+                <p>Resilience/CDBG grant readiness scores second because DEP, FDEM BRIC, and Avon Park repeat the same evidence and timing blockers.</p>
+              </article>
+              <article class="source-family">
+                <h3>Rejected traps</h3>
+                <p>same-day and near-deadline traps are treated as benchmark rows unless a qualified owner can act without new capacity.</p>
+              </article>
+              <article class="source-family">
+                <h3>No-contact boundary</h3>
+                <p>No outreach, follow-up, agency contact, reviewer contact. No portal registration. No gated package download. No invoice or payment request. No spend or paid smoke.</p>
+              </article>
+            </div>
+          </div>
+          <aside class="source-ladder" aria-label="Fresh source queue ranked lanes">
+            <h3>Ranked lanes from the sweep</h3>
+            <p>
+              These are product lanes to validate, not targets to contact. A lane moves forward only when a qualified
+              reviewer names what is useful, risky, or too generic.
+            </p>
+            <ol>
+              <li><strong>Grant/government-relations validation:</strong> top lane, but keep it out of lobbying or representation.</li>
+              <li><strong>Resilience/CDBG grant readiness:</strong> strongest repeatability lane across DEP, FDEM, and Avon Park.</li>
+              <li><strong>Contractor readiness rejection engine:</strong> useful for portal, bonding, deadline, and fit blockers.</li>
+              <li><strong>Audit/compliance benchmark:</strong> hold until a CPA reviewer validates a support-only surface.</li>
+              <li><strong>Portal monitor subscription:</strong> possible dashboard lane, but no charge until demand is proven.</li>
+            </ol>
+            <p>
+              Current gate: Approve one qualified grant-admin validation ask.
+            </p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
     <section id="scenarios">
       <div class="wrap">
         <div class="section-head">
@@ -2297,6 +2414,8 @@
           <a href="https://www.monroega.com/sites/default/files/fileattachments/purchasing/page/40244/01_gw_rfq-p_-_monroe_fy27_innovative_cdbg.pdf" target="_blank" rel="noopener">Monroe GA Scope PDF</a>
           <a href="https://www.floridajobs.org/community-planning-and-development/programs/community-planning-table-of-contents/technical-assistance/community-planning-technical-assistance-grant" target="_blank" rel="noopener">Florida CPTA</a>
           <a href="https://www.unf.edu/sbdc/apex-accelerator.html" target="_blank" rel="noopener">UNF APEX</a>
+          <a href="https://floridadep.gov/rcp/resilient-florida-program/content/resilient-florida-program-applicants" target="_blank" rel="noopener">DEP Resilient Florida</a>
+          <a href="https://www.floridadisaster.org/dem/mitigation/builing-resilient-infrastructure-and-communities-bric-grant-program/" target="_blank" rel="noopener">FDEM BRIC</a>
           <a href="https://dia.jacksonville.gov/doing-business-with-us/doing-business-with-dia/storefront-facade-grant-program" target="_blank" rel="noopener">DIA Facade</a>
           <a href="https://www.jacksonville.gov/departments/office-of-economic-development/facade-renovation-matching-grant-program" target="_blank" rel="noopener">COJ Facade</a>
           <a href="https://taxcollector.jacksonville.gov/Taxes/Local-Business-Tax" target="_blank" rel="noopener">Duval LBT</a>
