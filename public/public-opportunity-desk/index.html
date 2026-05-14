@@ -487,6 +487,23 @@
         font-size: 0.92rem;
       }
 
+      .sample-download {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 18px;
+        align-items: center;
+        margin-top: 22px;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--white);
+      }
+
+      .sample-download p {
+        margin: 0;
+        color: var(--muted);
+      }
+
       footer {
         padding: 34px 0;
         color: var(--muted);
@@ -541,6 +558,7 @@
         .grid-3,
         .scenario-grid,
         .price-grid,
+        .sample-download,
         .report-grid {
           grid-template-columns: 1fr;
         }
@@ -764,6 +782,20 @@
             </tr>
           </tbody>
         </table>
+        <div class="sample-download">
+          <div>
+            <h3>Grant-admin support workbook sample</h3>
+            <p>
+              Download the no-charge validation workbook used for the grant-admin support lane: reimbursement tracker,
+              source-document checklist, deadline/risk log, CFR evidence map, and reviewer questions.
+            </p>
+          </div>
+          <a
+            class="btn"
+            href="/public-opportunity-desk/Grant-Admin-Support-Sample-Workbook-2026-05-14.xlsx"
+            download
+          >Download workbook</a>
+        </div>
       </div>
     </section>
 

@@ -17,6 +17,7 @@ const types = new Map([
   [".css", "text/css; charset=utf-8"],
   [".svg", "image/svg+xml"],
   [".png", "image/png"],
+  [".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"],
   [".json", "application/json; charset=utf-8"],
   [".xml", "application/xml; charset=utf-8"],
 ]);
@@ -74,6 +75,8 @@ async function inspectViewport(name, viewport) {
     const text = document.body.textContent;
     const requestLink = document.querySelector('a[href^="mailto:"][href*="public%20opportunity%20validation%20request"]')?.getAttribute("href") ?? "";
     const sourceLinks = [...document.querySelectorAll(".source-links a")].map((link) => link.textContent.trim());
+    const workbookLink = document.querySelector('a[href$="Grant-Admin-Support-Sample-Workbook-2026-05-14.xlsx"]');
+    const workbookHref = workbookLink?.getAttribute("href") ?? "";
     const sampleRows = document.querySelectorAll("#sample tbody tr").length;
     const heroReport = document.querySelector(".hero-report")?.getBoundingClientRect();
 
@@ -86,6 +89,10 @@ async function inspectViewport(name, viewport) {
       hasPricing: Boolean(document.querySelector("#pricing")),
       hasStart: Boolean(document.querySelector("#start")),
       sampleRows,
+      hasWorkbookSample: text.includes("Grant-admin support workbook sample") &&
+        text.includes("Download workbook") &&
+        workbookHref.includes("Grant-Admin-Support-Sample-Workbook-2026-05-14.xlsx"),
+      workbookHref,
       scenarioCards: document.querySelectorAll("#scenarios .scenario").length,
       hasScenarioSpecifics: text.includes("JSEB-ready") &&
         text.includes("Subcontractor-first") &&
@@ -131,6 +138,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasPricing) failures.push(`${name}: missing #pricing section`);
   if (!report.hasStart) failures.push(`${name}: missing #start section`);
   if (report.sampleRows !== 5) failures.push(`${name}: expected 5 sample opportunity rows, saw ${report.sampleRows}`);
+  if (!report.hasWorkbookSample) failures.push(`${name}: missing workbook sample download`);
   if (report.scenarioCards !== 6) failures.push(`${name}: expected 6 scenario cards, saw ${report.scenarioCards}`);
   if (!report.hasScenarioSpecifics) failures.push(`${name}: missing scenario-specific copy`);
   if (!report.hasNoChargeValidation) failures.push(`${name}: missing no-charge validation copy`);
@@ -156,6 +164,11 @@ server.close();
 const sitemap = fs.readFileSync(path.join(publicRoot, "sitemap.xml"), "utf8");
 if (!sitemap.includes("https://bortlesboat.github.io/public-opportunity-desk/")) {
   failures.push("sitemap missing public-opportunity-desk route");
+}
+
+const workbookPath = path.join(publicRoot, "public-opportunity-desk", "Grant-Admin-Support-Sample-Workbook-2026-05-14.xlsx");
+if (!fs.existsSync(workbookPath) || fs.statSync(workbookPath).size < 5000) {
+  failures.push("workbook sample asset missing or unexpectedly small");
 }
 
 const output = { ok: failures.length === 0, failures, desktop, mobile };
