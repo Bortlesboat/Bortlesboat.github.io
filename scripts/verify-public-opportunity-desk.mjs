@@ -169,10 +169,17 @@ async function inspectViewport(name, viewport) {
         text.includes("does not authorize contractor contact") &&
         text.includes("Approve one qualified grant-admin validation ask"),
       scenarioCards: document.querySelectorAll("#scenarios .scenario").length,
-      hasScenarioSpecifics: text.includes("JSEB-ready") &&
-        text.includes("Subcontractor-first") &&
+      hasScenarioSpecifics: text.includes("Six no-charge scenario lanes") &&
+        text.includes("Grant-admin support") &&
+        text.includes("Contractor readiness") &&
+        text.includes("JSEB partner map") &&
+        text.includes("Vendor portal gap") &&
+        text.includes("Upstream award watch") &&
         text.includes("Referrer packet") &&
-        text.includes("Grant and capital screen"),
+        text.includes("Source proof:") &&
+        text.includes("Free output:") &&
+        text.includes("Kill rule:") &&
+        text.includes("proof-status separation"),
       hasNoChargeValidation: text.includes("No-charge validation first") &&
         text.includes("Live opportunity match") &&
         text.includes("Eligibility friction screen") &&
