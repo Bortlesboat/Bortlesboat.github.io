@@ -504,6 +504,51 @@
         color: var(--muted);
       }
 
+      .workbook-library {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 18px;
+      }
+
+      .workbook-card {
+        display: flex;
+        min-height: 100%;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--white);
+      }
+
+      .workbook-card h3 {
+        margin: 0 0 8px;
+      }
+
+      .workbook-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.94rem;
+      }
+
+      .workbook-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .workbook-meta span {
+        border: 1px solid rgba(36, 92, 72, 0.22);
+        border-radius: 999px;
+        padding: 4px 8px;
+        color: var(--green);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
       .pipeline-band {
         background: #e7ece4;
         border-top: 1px solid var(--line);
@@ -628,6 +673,7 @@
         .price-grid,
         .pipeline-grid,
         .pipeline-notes,
+        .workbook-library,
         .sample-download,
         .report-grid {
           grid-template-columns: 1fr;
@@ -743,6 +789,7 @@
           <a class="brand" href="/">Andrew Barnes</a>
           <div class="nav-links" aria-label="Page navigation">
             <a href="#sample">Sample radar</a>
+            <a href="#workbooks">Workbooks</a>
             <a href="#pipeline">Pipeline</a>
             <a href="#validation">Works?</a>
             <a href="#rhtp-readiness">RHTP</a>
@@ -871,6 +918,94 @@
             href="/public-opportunity-desk/Grant-Admin-Support-Sample-Workbook-2026-05-14.xlsx"
             download
           >Download workbook</a>
+        </div>
+        <div class="sample-download">
+          <div>
+            <h3>Scenario workbook library</h3>
+            <p>
+              Four no-charge samples show different public-resource decisions: grant-admin support, RHTP health readiness,
+              affordable-housing finance, and surplus/tax-deed rejection. Each remains validation evidence only, with proof status $0.
+            </p>
+          </div>
+          <a class="btn" href="#scenarios">Compare lanes</a>
+        </div>
+        <div class="workbook-library" id="workbooks" aria-label="Scenario workbook library">
+          <article class="workbook-card">
+            <div>
+              <div class="workbook-meta">
+                <span>grant-admin</span>
+                <span>support-only</span>
+                <span>proof $0</span>
+              </div>
+              <h3>Grant-admin support sample</h3>
+              <p>
+                Reimbursement tracker, source-document checklist, CFR evidence outline, approval-dependency tracker,
+                closeout tracker, and reviewer questions for a qualified grant-admin validation review.
+              </p>
+            </div>
+            <a
+              class="btn"
+              href="/public-opportunity-desk/Grant-Admin-Support-Sample-Workbook-2026-05-14.xlsx"
+              download
+            >Download grant workbook</a>
+          </article>
+          <article class="workbook-card">
+            <div>
+              <div class="workbook-meta">
+                <span>RHTP</span>
+                <span>restricted comms</span>
+                <span>proof $0</span>
+              </div>
+              <h3>RHTP health-readiness matrix</h3>
+              <p>
+                Eligibility, bundle fit, solvency, reporting, procurement, partner approval, contract ownership,
+                sustainability, proof classifier, and no-contact checks from public AHCA materials.
+              </p>
+            </div>
+            <a
+              class="btn"
+              href="/public-opportunity-desk/AHCA-RHTP-Readiness-Matrix-2026-05-14.xlsx"
+              download
+            >Download RHTP workbook</a>
+          </article>
+          <article class="workbook-card">
+            <div>
+              <div class="workbook-meta">
+                <span>JHFA/DIA</span>
+                <span>FP&amp;A fit</span>
+                <span>proof $0</span>
+              </div>
+              <h3>Affordable-housing finance readiness</h3>
+              <p>
+                Sources-and-uses, pro forma, site-control, local-contribution, FHFC/JHFA/DIA dependency,
+                blocker, and proof-classifier checks for a developer or advisor review.
+              </p>
+            </div>
+            <a
+              class="btn"
+              href="/public-opportunity-desk/JHFA-DIA-Affordable-Housing-Finance-Readiness-2026-05-14.xlsx"
+              download
+            >Download housing workbook</a>
+          </article>
+          <article class="workbook-card">
+            <div>
+              <div class="workbook-meta">
+                <span>paper trade</span>
+                <span>reject bad deals</span>
+                <span>proof $0</span>
+              </div>
+              <h3>Surplus/tax-deed rejection workbook</h3>
+              <p>
+                No-cash paper-trade screen for surplus, certificate, and tax-deed ideas. Every sample row was rejected
+                or blocked, which is the point: public data should stop bad deals before money moves.
+              </p>
+            </div>
+            <a
+              class="btn"
+              href="/public-opportunity-desk/Surplus-Tax-Deed-Paper-Trade-Rejection-Workbook-2026-05-14.xlsx"
+              download
+            >Download rejection workbook</a>
+          </article>
         </div>
       </div>
     </section>

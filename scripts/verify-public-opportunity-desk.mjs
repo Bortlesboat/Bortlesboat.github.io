@@ -79,6 +79,10 @@ async function inspectViewport(name, viewport) {
     const workbookHref = workbookLink?.getAttribute("href") ?? "";
     const rhtpWorkbookLink = document.querySelector('a[href$="AHCA-RHTP-Readiness-Matrix-2026-05-14.xlsx"]');
     const rhtpWorkbookHref = rhtpWorkbookLink?.getAttribute("href") ?? "";
+    const jhfaWorkbookLink = document.querySelector('a[href$="JHFA-DIA-Affordable-Housing-Finance-Readiness-2026-05-14.xlsx"]');
+    const jhfaWorkbookHref = jhfaWorkbookLink?.getAttribute("href") ?? "";
+    const surplusWorkbookLink = document.querySelector('a[href$="Surplus-Tax-Deed-Paper-Trade-Rejection-Workbook-2026-05-14.xlsx"]');
+    const surplusWorkbookHref = surplusWorkbookLink?.getAttribute("href") ?? "";
     const sampleRows = document.querySelectorAll("#sample tbody tr").length;
     const heroReport = document.querySelector(".hero-report")?.getBoundingClientRect();
 
@@ -96,13 +100,28 @@ async function inspectViewport(name, viewport) {
       hasPricing: Boolean(document.querySelector("#pricing")),
       hasStart: Boolean(document.querySelector("#start")),
       sampleRows,
+      workbookCards: document.querySelectorAll("#workbooks .workbook-card").length,
       hasWorkbookSample: text.includes("Grant-admin support workbook sample") &&
         text.includes("Download workbook") &&
         workbookHref.includes("Grant-Admin-Support-Sample-Workbook-2026-05-14.xlsx"),
       hasWorkbookRepeatabilityCopy: text.includes("source-change tracker") &&
         text.includes("approval-dependency tracker") &&
         text.includes("closeout tracker"),
+      hasScenarioWorkbookLibrary: text.includes("Scenario workbook library") &&
+        text.includes("Grant-admin support sample") &&
+        text.includes("RHTP health-readiness matrix") &&
+        text.includes("Affordable-housing finance readiness") &&
+        text.includes("Surplus/tax-deed rejection workbook") &&
+        text.includes("proof $0") &&
+        text.includes("Download grant workbook") &&
+        text.includes("Download RHTP workbook") &&
+        text.includes("Download housing workbook") &&
+        text.includes("Download rejection workbook") &&
+        jhfaWorkbookHref.includes("JHFA-DIA-Affordable-Housing-Finance-Readiness-2026-05-14.xlsx") &&
+        surplusWorkbookHref.includes("Surplus-Tax-Deed-Paper-Trade-Rejection-Workbook-2026-05-14.xlsx"),
       workbookHref,
+      jhfaWorkbookHref,
+      surplusWorkbookHref,
       pipelineCards: document.querySelectorAll("#pipeline .pipeline-card").length,
       hasPipelineSummary: text.includes("13") &&
         text.includes("tracked rows") &&
@@ -268,7 +287,10 @@ async function inspectViewport(name, viewport) {
 
   await page.screenshot({
     path: path.join(screenshotDir, `public-opportunity-desk-${name}.png`),
-    fullPage: true,
+    fullPage: false,
+  });
+  await page.locator("#workbooks").screenshot({
+    path: path.join(screenshotDir, `public-opportunity-desk-workbooks-${name}.png`),
   });
   await page.close();
 
@@ -287,6 +309,8 @@ async function inspectViewport(name, viewport) {
   if (report.sampleRows !== 5) failures.push(`${name}: expected 5 sample opportunity rows, saw ${report.sampleRows}`);
   if (!report.hasWorkbookSample) failures.push(`${name}: missing workbook sample download`);
   if (!report.hasWorkbookRepeatabilityCopy) failures.push(`${name}: missing workbook repeatability copy`);
+  if (report.workbookCards !== 4) failures.push(`${name}: expected 4 scenario workbook cards, saw ${report.workbookCards}`);
+  if (!report.hasScenarioWorkbookLibrary) failures.push(`${name}: missing scenario workbook library copy or links`);
   if (report.pipelineCards !== 4) failures.push(`${name}: expected 4 pipeline cards, saw ${report.pipelineCards}`);
   if (!report.hasPipelineSummary) failures.push(`${name}: missing grant-admin pipeline summary`);
   if (!report.hasPipelineSupportOnly) failures.push(`${name}: missing support-only grant-admin pipeline boundaries`);
@@ -347,6 +371,16 @@ if (!fs.existsSync(workbookPath) || fs.statSync(workbookPath).size < 5000) {
 const rhtpWorkbookPath = path.join(publicRoot, "public-opportunity-desk", "AHCA-RHTP-Readiness-Matrix-2026-05-14.xlsx");
 if (!fs.existsSync(rhtpWorkbookPath) || fs.statSync(rhtpWorkbookPath).size < 10000) {
   failures.push("RHTP workbook asset missing or unexpectedly small");
+}
+
+const jhfaWorkbookPath = path.join(publicRoot, "public-opportunity-desk", "JHFA-DIA-Affordable-Housing-Finance-Readiness-2026-05-14.xlsx");
+if (!fs.existsSync(jhfaWorkbookPath) || fs.statSync(jhfaWorkbookPath).size < 10000) {
+  failures.push("JHFA/DIA workbook asset missing or unexpectedly small");
+}
+
+const surplusWorkbookPath = path.join(publicRoot, "public-opportunity-desk", "Surplus-Tax-Deed-Paper-Trade-Rejection-Workbook-2026-05-14.xlsx");
+if (!fs.existsSync(surplusWorkbookPath) || fs.statSync(surplusWorkbookPath).size < 10000) {
+  failures.push("surplus/tax-deed workbook asset missing or unexpectedly small");
 }
 
 const output = { ok: failures.length === 0, failures, desktop, mobile };
