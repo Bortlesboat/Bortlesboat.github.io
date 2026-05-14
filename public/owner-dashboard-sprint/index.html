@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Owner Dashboard Sprint | Andrew Barnes</title>
+    <meta
+      name="description"
+      content="A fixed 48-hour owner dashboard and 13-week cash forecast sprint for local service businesses."
+    />
+    <meta name="theme-color" content="#101118" />
+    <meta property="og:title" content="Owner Dashboard Sprint" />
+    <meta
+      property="og:description"
+      content="Turn exports from QuickBooks, Stripe, bank CSVs, or spreadsheets into a simple weekly cash view."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bortlesboat.github.io/owner-dashboard-sprint/" />
+    <meta property="og:image" content="https://bortlesboat.github.io/owner-dashboard-sprint/sample.png" />
+    <link rel="canonical" href="https://bortlesboat.github.io/owner-dashboard-sprint/" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #101118;
+        --surface: #181a23;
+        --surface-2: #20232c;
+        --border: #303441;
+        --text: #f2f2f4;
+        --muted: #a5a8b6;
+        --subtle: #727687;
+        --accent: #f7931a;
+        --accent-2: #5bbf9f;
+        --danger: #ef767a;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(247, 147, 26, 0.11), transparent 32rem),
+          linear-gradient(180deg, #101118 0%, #13141c 52%, #101118 100%);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .wrap {
+        width: min(1120px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      header {
+        min-height: 92vh;
+        display: grid;
+        align-items: center;
+        padding: 48px 0 32px;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 56px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .brand {
+        color: var(--text);
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr);
+        gap: 44px;
+        align-items: center;
+      }
+
+      .eyebrow {
+        color: var(--accent);
+        font-weight: 700;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin: 0 0 16px;
+      }
+
+      h1 {
+        font-size: clamp(42px, 7vw, 78px);
+        line-height: 0.98;
+        letter-spacing: 0;
+        margin: 0 0 24px;
+      }
+
+      .lede {
+        color: var(--muted);
+        font-size: 19px;
+        max-width: 620px;
+        margin: 0 0 28px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin: 34px 0 28px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 20px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 15px;
+      }
+
+      .btn.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #111118;
+      }
+
+      .proof-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        max-width: 650px;
+      }
+
+      .proof-item {
+        border: 1px solid var(--border);
+        background: rgba(24, 26, 35, 0.72);
+        border-radius: 8px;
+        padding: 14px;
+      }
+
+      .proof-item strong {
+        display: block;
+        color: var(--text);
+        font-size: 18px;
+        line-height: 1.2;
+      }
+
+      .proof-item span {
+        display: block;
+        color: var(--subtle);
+        font-size: 13px;
+        margin-top: 4px;
+      }
+
+      .preview {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+      }
+
+      .preview img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 6px;
+        background: #fff;
+      }
+
+      section {
+        padding: 74px 0;
+        border-top: 1px solid rgba(48, 52, 65, 0.7);
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+        gap: 40px;
+        align-items: start;
+        margin-bottom: 32px;
+      }
+
+      h2 {
+        font-size: clamp(28px, 4vw, 44px);
+        line-height: 1.08;
+        margin: 0;
+      }
+
+      .section-head p,
+      .muted {
+        color: var(--muted);
+        margin: 0;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .panel {
+        border: 1px solid var(--border);
+        background: rgba(24, 26, 35, 0.74);
+        border-radius: 8px;
+        padding: 22px;
+      }
+
+      .panel h3 {
+        margin: 0 0 10px;
+        font-size: 18px;
+      }
+
+      .panel p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 15px;
+      }
+
+      .deliverables {
+        display: grid;
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .deliverables li {
+        display: grid;
+        grid-template-columns: 18px 1fr;
+        gap: 12px;
+        color: var(--muted);
+        align-items: start;
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        margin-top: 8px;
+        border-radius: 50%;
+        background: var(--accent-2);
+      }
+
+      .price-box {
+        display: grid;
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+        gap: 24px;
+        align-items: center;
+        border: 1px solid rgba(247, 147, 26, 0.5);
+        background: rgba(247, 147, 26, 0.08);
+        border-radius: 8px;
+        padding: 28px;
+      }
+
+      .price {
+        font-size: clamp(44px, 6vw, 64px);
+        line-height: 1;
+        color: var(--accent);
+        font-weight: 800;
+      }
+
+      .fine {
+        color: var(--subtle);
+        font-size: 13px;
+        margin-top: 12px;
+      }
+
+      footer {
+        padding: 44px 0;
+        color: var(--subtle);
+        font-size: 14px;
+      }
+
+      @media (max-width: 850px) {
+        .hero,
+        .section-head,
+        .price-box {
+          grid-template-columns: 1fr;
+        }
+
+        header {
+          min-height: auto;
+        }
+
+        .preview {
+          order: -1;
+        }
+
+        .grid,
+        .proof-strip {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <nav>
+          <a class="brand" href="/">Andrew Barnes</a>
+          <a href="mailto:bortlesboat@gmail.com?subject=owner%20dashboard%20sprint">bortlesboat@gmail.com</a>
+        </nav>
+        <div class="hero">
+          <div>
+            <p class="eyebrow">Fixed 48-hour diagnostic</p>
+            <h1>Owner Dashboard Sprint</h1>
+            <p class="lede">
+              Turn exports from QuickBooks, Stripe, bank CSVs, or spreadsheets into a weekly owner view:
+              cash forecast, KPI snapshot, and the handful of questions worth answering before the next payroll run.
+            </p>
+            <div class="actions">
+              <a class="btn primary" href="mailto:bortlesboat@gmail.com?subject=owner%20dashboard%20sprint">Ask for the diagnostic</a>
+              <a class="btn" href="#sample">View sample</a>
+            </div>
+            <div class="proof-strip" aria-label="Sprint summary">
+              <div class="proof-item">
+                <strong>48 hours</strong>
+                <span>first diagnostic turnaround</span>
+              </div>
+              <div class="proof-item">
+                <strong>$300</strong>
+                <span>first diagnostic price</span>
+              </div>
+              <div class="proof-item">
+                <strong>No credentials</strong>
+                <span>exports only for first pass</span>
+              </div>
+            </div>
+          </div>
+          <div class="preview" id="sample">
+            <img src="/owner-dashboard-sprint/sample.png" alt="Sample owner dashboard sprint one-page report preview" />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section>
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Built for service businesses with messy weekly cash.</h2>
+          <p>
+            HVAC, moving, landscaping, contractors, and local operators often have the data already.
+            The hard part is getting it out of scattered exports and into one view an owner can act on.
+          </p>
+        </div>
+        <div class="grid">
+          <div class="panel">
+            <h3>Cash timing</h3>
+            <p>Deposits, payroll, parts, receivables, and debt service put on a 13-week view.</p>
+          </div>
+          <div class="panel">
+            <h3>Job mix</h3>
+            <p>Service, install, commercial, and maintenance work separated so margin noise is easier to see.</p>
+          </div>
+          <div class="panel">
+            <h3>Owner questions</h3>
+            <p>A short memo on what changed, what looks off, and what needs better source data.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="price-box">
+          <div>
+            <div class="price">$300</div>
+            <div class="fine">First three diagnostics. Fixed scope. Exports only.</div>
+          </div>
+          <div>
+            <ul class="deliverables">
+              <li><span class="dot"></span><span>13-week cash forecast with assumptions separated from source data.</span></li>
+              <li><span class="dot"></span><span>Owner dashboard covering cash, revenue, margin, receivables, and payroll timing.</span></li>
+              <li><span class="dot"></span><span>Short red-flag memo with what to fix, ignore, or inspect next.</span></li>
+              <li><span class="dot"></span><span>If there is no obvious ROI, we stop at the diagnostic.</span></li>
+            </ul>
+            <div class="actions">
+              <a class="btn primary" href="mailto:bortlesboat@gmail.com?subject=owner%20dashboard%20sprint">Start by email</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Simple boundaries.</h2>
+          <p>
+            The first pass uses exports only. No bank logins, no live credentials, no vague savings promise.
+            The goal is a useful decision view and an honest next step.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        Andrew Barnes · FP&amp;A automation · <a href="/">Portfolio</a>
+      </div>
+    </footer>
+  </body>
+</html>
