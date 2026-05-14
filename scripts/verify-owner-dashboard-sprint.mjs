@@ -75,10 +75,12 @@ async function inspectViewport(name, viewport) {
       .filter((img) => !img.complete || img.naturalWidth < 100 || img.naturalHeight < 100)
       .map((img) => img.alt || img.src);
     const sampleRect = document.querySelector("#sample")?.getBoundingClientRect();
+    const startLink = document.querySelector('#start a[href^="mailto:"]')?.getAttribute("href") ?? "";
 
     return {
       title: document.title,
       sampleExists: Boolean(document.querySelector("#sample")),
+      startExists: Boolean(document.querySelector("#start")),
       scenarioCount: document.querySelectorAll("#sample .scenario-card").length,
       headings,
       hasSyntheticNote: document.body.textContent.includes("Figures above are synthetic examples"),
@@ -86,6 +88,10 @@ async function inspectViewport(name, viewport) {
       hasBuyerScenario: document.body.textContent.includes("SBA buyer model"),
       hasCpaScenario: document.body.textContent.includes("CPA referral packet"),
       hasLenderScenario: document.body.textContent.includes("Lender-ready view"),
+      hasStartSteps: document.body.textContent.includes("Pick the scenario") &&
+        document.body.textContent.includes("Send exports") &&
+        document.body.textContent.includes("Fund first"),
+      startLink,
       badImages,
       horizontalOverflow: document.documentElement.scrollWidth - window.innerWidth,
       sampleTop: sampleRect?.top ?? null,
@@ -100,12 +106,15 @@ async function inspectViewport(name, viewport) {
 
   if (report.title !== "Owner Dashboard Sprint | Andrew Barnes") failures.push(`${name}: unexpected title ${report.title}`);
   if (!report.sampleExists) failures.push(`${name}: missing #sample section`);
+  if (!report.startExists) failures.push(`${name}: missing #start section`);
   if (report.scenarioCount !== 4) failures.push(`${name}: expected 4 scenario cards, saw ${report.scenarioCount}`);
   if (!report.hasSyntheticNote) failures.push(`${name}: missing synthetic-data note`);
   if (!report.hasOwnerScenario) failures.push(`${name}: missing owner cash scenario`);
   if (!report.hasBuyerScenario) failures.push(`${name}: missing SBA buyer scenario`);
   if (!report.hasCpaScenario) failures.push(`${name}: missing CPA referral scenario`);
   if (!report.hasLenderScenario) failures.push(`${name}: missing lender-ready scenario`);
+  if (!report.hasStartSteps) failures.push(`${name}: missing conversion start steps`);
+  if (!report.startLink.includes("Scenario%3A")) failures.push(`${name}: start mailto missing prefilled scenario body`);
   if (report.badImages.length) failures.push(`${name}: bad images ${report.badImages.join(", ")}`);
   if (report.horizontalOverflow > 1) failures.push(`${name}: horizontal overflow ${report.horizontalOverflow}px`);
   if (Math.abs(report.sampleTop) > viewport.height) failures.push(`${name}: #sample anchor did not land near the scenario section`);
