@@ -70,6 +70,7 @@ async function inspectViewport(name, viewport) {
   await page.waitForLoadState("domcontentloaded");
   await page.waitForSelector("#sample .opportunity-table", { timeout: 5000 });
   await page.waitForSelector("#fit-grader [data-grader-score]", { timeout: 5000 });
+  await page.waitForSelector("#feedback-signal [data-feedback-mailto]", { timeout: 5000 });
   await page.waitForTimeout(250);
 
   const report = await page.evaluate(() => {
@@ -99,6 +100,7 @@ async function inspectViewport(name, viewport) {
       hasFdotReadiness: Boolean(document.querySelector("#fdot-readiness")),
       hasScenarios: Boolean(document.querySelector("#scenarios")),
       hasFitGrader: Boolean(document.querySelector("#fit-grader")),
+      hasFeedbackSignal: Boolean(document.querySelector("#feedback-signal")),
       hasPricing: Boolean(document.querySelector("#pricing")),
       hasStart: Boolean(document.querySelector("#start")),
       sampleRows,
@@ -260,9 +262,18 @@ async function inspectViewport(name, viewport) {
         text.includes("Free output:") &&
         text.includes("Kill rule:") &&
         text.includes("proof-status separation"),
-      fitGraderOptions: document.querySelectorAll("#fit-grader option").length,
+      fitGraderOptions: document.querySelectorAll("#fit-grader [data-grader-lane] option").length,
       fitGraderChecks: document.querySelectorAll("#fit-grader [data-grader-check]").length,
       fitGraderDefaultScore: document.querySelector("[data-grader-score]")?.textContent.trim() ?? "",
+      feedbackLaneOptions: document.querySelectorAll("#feedback-signal [data-feedback-lane] option").length,
+      feedbackVerdictOptions: document.querySelectorAll("#feedback-signal [data-feedback-verdict] option").length,
+      feedbackDefaultHref: document.querySelector("#feedback-signal [data-feedback-mailto]")?.getAttribute("href") ?? "",
+      hasFeedbackSignalCopy: text.includes("Send a structured usefulness signal") &&
+        text.includes("Captured fields:") &&
+        text.includes("scenario, verdict, blocker, source timestamp, proof status $0") &&
+        text.includes("feedback capture, not a sales form") &&
+        text.includes("A feedback note, page visit, workbook download, or meeting is validation evidence only") &&
+        text.includes("Income proof still requires a paid, funded, settled, or claimable third-party event"),
       hasFitGraderCopy: text.includes("Self-serve fit grader") &&
         text.includes("pursue, partner, watch, or skip") &&
         text.includes("Current official source is named") &&
@@ -335,6 +346,19 @@ async function inspectViewport(name, viewport) {
   }));
   report.graderInteraction = graderInteraction;
 
+  await page.selectOption("[data-feedback-lane]", "contractor_readiness");
+  await page.selectOption("[data-feedback-verdict]", "risky");
+  await page.fill("[data-feedback-blocker]", "Bonding unclear");
+  const feedbackInteraction = await page.evaluate(() => {
+    const href = document.querySelector("[data-feedback-mailto]")?.getAttribute("href") ?? "";
+    const decoded = decodeURIComponent(href);
+    return {
+      href,
+      decoded
+    };
+  });
+  report.feedbackInteraction = feedbackInteraction;
+
   await page.screenshot({
     path: path.join(screenshotDir, `public-opportunity-desk-${name}.png`),
     fullPage: false,
@@ -355,6 +379,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasFdotReadiness) failures.push(`${name}: missing #fdot-readiness section`);
   if (!report.hasScenarios) failures.push(`${name}: missing #scenarios section`);
   if (!report.hasFitGrader) failures.push(`${name}: missing #fit-grader section`);
+  if (!report.hasFeedbackSignal) failures.push(`${name}: missing #feedback-signal section`);
   if (!report.hasPricing) failures.push(`${name}: missing #pricing section`);
   if (!report.hasStart) failures.push(`${name}: missing #start section`);
   if (report.sampleRows !== 5) failures.push(`${name}: expected 5 sample opportunity rows, saw ${report.sampleRows}`);
@@ -397,10 +422,19 @@ async function inspectViewport(name, viewport) {
   if (report.fitGraderOptions !== 5) failures.push(`${name}: expected 5 fit-grader scenario options, saw ${report.fitGraderOptions}`);
   if (report.fitGraderChecks !== 8) failures.push(`${name}: expected 8 fit-grader checks, saw ${report.fitGraderChecks}`);
   if (report.fitGraderDefaultScore !== "2 / 8") failures.push(`${name}: expected default fit-grader score 2 / 8, saw ${report.fitGraderDefaultScore}`);
+  if (report.feedbackLaneOptions !== 5) failures.push(`${name}: expected 5 feedback lane options, saw ${report.feedbackLaneOptions}`);
+  if (report.feedbackVerdictOptions !== 3) failures.push(`${name}: expected 3 feedback verdict options, saw ${report.feedbackVerdictOptions}`);
+  if (!report.feedbackDefaultHref.includes("public%20opportunity%20usefulness%20signal")) failures.push(`${name}: feedback default mailto missing usefulness signal subject`);
+  if (!report.hasFeedbackSignalCopy) failures.push(`${name}: missing feedback signal copy or proof boundary`);
   if (!report.hasFitGraderCopy) failures.push(`${name}: missing fit-grader copy or proof boundary`);
   if (report.graderInteraction.score !== "5 / 8") failures.push(`${name}: expected surplus grader cap score 5 / 8, saw ${report.graderInteraction.score}`);
   if (report.graderInteraction.call !== "Paper trade only.") failures.push(`${name}: expected surplus paper-trade-only call, saw ${report.graderInteraction.call}`);
   if (!report.graderInteraction.output.includes("no-cash paper-trade rejection sheet")) failures.push(`${name}: surplus grader output missing no-cash paper-trade language`);
+  if (!report.feedbackInteraction.decoded.includes("Scenario: contractor_readiness")) failures.push(`${name}: feedback mailto missing selected contractor lane`);
+  if (!report.feedbackInteraction.decoded.includes("Verdict: risky")) failures.push(`${name}: feedback mailto missing selected risky verdict`);
+  if (!report.feedbackInteraction.decoded.includes("Main blocker: Bonding unclear")) failures.push(`${name}: feedback mailto missing typed blocker`);
+  if (!report.feedbackInteraction.decoded.includes("Proof status: $0")) failures.push(`${name}: feedback mailto missing proof status`);
+  if (!report.feedbackInteraction.decoded.includes("not a payment request, bid, portal action, or income proof")) failures.push(`${name}: feedback mailto missing proof boundary`);
   if (!report.hasNoChargeValidation) failures.push(`${name}: missing no-charge validation copy`);
   if (!report.hasVerification) failures.push(`${name}: missing verification copy`);
   if (!report.hasNoPasswords) failures.push(`${name}: missing password boundary`);

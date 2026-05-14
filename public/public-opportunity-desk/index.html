@@ -626,7 +626,9 @@
         font-weight: 800;
       }
 
-      .field-row select {
+      .field-row select,
+      .field-row input,
+      .field-row textarea {
         min-height: 48px;
         border: 1px solid var(--line);
         border-radius: 6px;
@@ -710,6 +712,46 @@
 
       .grader-output b {
         color: var(--ink);
+      }
+
+      .feedback-signal {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.45fr);
+        gap: 18px;
+        align-items: start;
+        margin-top: 22px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--white);
+        padding: 22px;
+      }
+
+      .feedback-signal h3 {
+        margin-top: 0;
+      }
+
+      .feedback-signal p {
+        color: var(--muted);
+        margin: 0 0 16px;
+      }
+
+      .feedback-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .feedback-card {
+        border: 1px solid rgba(36, 92, 72, 0.28);
+        border-radius: 6px;
+        background: #f8faf4;
+        padding: 18px;
+      }
+
+      .feedback-card .btn {
+        width: 100%;
+        justify-content: center;
+        margin-top: 14px;
       }
 
       .workbook-meta {
@@ -856,6 +898,8 @@
         .workbook-library,
         .grader-shell,
         .check-grid,
+        .feedback-signal,
+        .feedback-grid,
         .sample-download,
         .report-grid {
           grid-template-columns: 1fr;
@@ -1829,6 +1873,52 @@
             </div>
           </aside>
         </div>
+        <div class="feedback-signal" id="feedback-signal" data-feedback-signal>
+          <div>
+            <h3>Send a structured usefulness signal.</h3>
+            <p>
+              If a sample looks useful, risky, or too generic, this creates an inbound validation note with the lane,
+              verdict, blocker, and proof-status boundary already filled in. It is feedback capture, not a sales form.
+            </p>
+            <div class="feedback-grid" aria-label="Validation feedback signal fields">
+              <div class="field-row">
+                <label for="feedback-lane">Scenario</label>
+                <select id="feedback-lane" data-feedback-lane>
+                  <option value="grant_admin_support">Grant-admin support</option>
+                  <option value="resilient_florida">DEP Resilient Florida</option>
+                  <option value="contractor_readiness">Contractor readiness</option>
+                  <option value="rhtp_health_readiness">AHCA RHTP</option>
+                  <option value="surplus_tax_deed">Surplus or tax deed</option>
+                </select>
+              </div>
+              <div class="field-row">
+                <label for="feedback-verdict">Verdict</label>
+                <select id="feedback-verdict" data-feedback-verdict>
+                  <option value="useful">Useful</option>
+                  <option value="risky">Risky</option>
+                  <option value="too_generic">Too generic</option>
+                </select>
+              </div>
+              <div class="field-row">
+                <label for="feedback-blocker">Main blocker</label>
+                <input id="feedback-blocker" data-feedback-blocker value="One blocker this packet should catch" />
+              </div>
+            </div>
+          </div>
+          <aside class="feedback-card">
+            <p>
+              <b>Captured fields:</b> scenario, verdict, blocker, source timestamp, proof status $0, and no-charge validation mode.
+            </p>
+            <p>
+              A feedback note, page visit, workbook download, or meeting is validation evidence only. Income proof still requires a paid, funded, settled, or claimable third-party event.
+            </p>
+            <a
+              class="btn"
+              data-feedback-mailto
+              href="mailto:bortlesboat@gmail.com?subject=public%20opportunity%20usefulness%20signal"
+            >Send usefulness signal</a>
+          </aside>
+        </div>
       </div>
     </section>
 
@@ -2019,6 +2109,35 @@
         lane.addEventListener("change", render);
         checks.forEach((check) => check.addEventListener("change", render));
         render();
+      }
+
+      const feedback = document.querySelector("[data-feedback-signal]");
+      if (feedback) {
+        const lane = feedback.querySelector("[data-feedback-lane]");
+        const verdict = feedback.querySelector("[data-feedback-verdict]");
+        const blocker = feedback.querySelector("[data-feedback-blocker]");
+        const mailto = feedback.querySelector("[data-feedback-mailto]");
+
+        const updateFeedbackLink = () => {
+          const body = [
+            "Public opportunity usefulness signal",
+            "",
+            `Scenario: ${lane.value}`,
+            `Verdict: ${verdict.value}`,
+            `Main blocker: ${blocker.value}`,
+            "Source timestamp: visitor-submitted",
+            "Mode: no-charge validation first",
+            "Proof status: $0",
+            "",
+            "This is validation evidence only. It is not a payment request, bid, portal action, or income proof."
+          ].join("\n");
+
+          mailto.href = `mailto:bortlesboat@gmail.com?subject=public%20opportunity%20usefulness%20signal&body=${encodeURIComponent(body)}`;
+        };
+
+        [lane, verdict].forEach((field) => field.addEventListener("change", updateFeedbackLink));
+        blocker.addEventListener("input", updateFeedbackLink);
+        updateFeedbackLink();
       }
     </script>
   </body>
