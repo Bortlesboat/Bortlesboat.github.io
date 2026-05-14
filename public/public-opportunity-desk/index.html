@@ -504,6 +504,74 @@
         color: var(--muted);
       }
 
+      .pipeline-band {
+        background: #e7ece4;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .pipeline-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 22px;
+      }
+
+      .pipeline-card {
+        min-height: 168px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--white);
+        padding: 18px;
+      }
+
+      .pipeline-card strong {
+        display: block;
+        color: var(--green-2);
+        font-size: 2.05rem;
+        line-height: 1;
+        margin-bottom: 10px;
+      }
+
+      .pipeline-card span {
+        display: block;
+        color: var(--ink);
+        font-weight: 800;
+      }
+
+      .pipeline-card p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .pipeline-notes {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .pipeline-note {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(255, 253, 248, 0.72);
+        padding: 22px;
+      }
+
+      .pipeline-note h3 {
+        margin-top: 0;
+      }
+
+      .pipeline-note p {
+        color: var(--muted);
+        margin: 0 0 12px;
+      }
+
+      .pipeline-note p:last-child {
+        margin-bottom: 0;
+      }
+
       footer {
         padding: 34px 0;
         color: var(--muted);
@@ -558,6 +626,8 @@
         .grid-3,
         .scenario-grid,
         .price-grid,
+        .pipeline-grid,
+        .pipeline-notes,
         .sample-download,
         .report-grid {
           grid-template-columns: 1fr;
@@ -673,6 +743,7 @@
           <a class="brand" href="/">Andrew Barnes</a>
           <div class="nav-links" aria-label="Page navigation">
             <a href="#sample">Sample radar</a>
+            <a href="#pipeline">Pipeline</a>
             <a href="#scenarios">Scenarios</a>
             <a href="#pricing">Validation</a>
             <a href="#start">Start</a>
@@ -795,6 +866,62 @@
             href="/public-opportunity-desk/Grant-Admin-Support-Sample-Workbook-2026-05-14.xlsx"
             download
           >Download workbook</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="pipeline-band" id="pipeline">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>The grant-admin lane is repeatable, but still support-only.</h2>
+          <p>
+            The latest scan separates live RFPs, current state programs, award-downstream watch rows, and closed scope benchmarks.
+            That prevents stale bid lists from masquerading as traction while keeping the useful public-source pattern visible.
+          </p>
+        </div>
+        <div class="pipeline-grid" aria-label="Grant-admin repeatability scan summary">
+          <div class="pipeline-card">
+            <strong>13</strong>
+            <span>tracked rows</span>
+            <p>Official pages, PDFs, program notices, and one legal-notice-only watch row.</p>
+          </div>
+          <div class="pipeline-card">
+            <strong>5</strong>
+            <span>live or near-live</span>
+            <p>JEA, Avon Park, Suwannee, and Macclenny signals that still require qualification.</p>
+          </div>
+          <div class="pipeline-card">
+            <strong>4</strong>
+            <span>scope benchmarks</span>
+            <p>Closed Columbia County, Perry, Port St. Joe, and Pensacola packets used only to learn requirements.</p>
+          </div>
+          <div class="pipeline-card">
+            <strong>$0</strong>
+            <span>proof status</span>
+            <p>Useful workflow evidence, not buyer demand or income proof.</p>
+          </div>
+        </div>
+        <div class="pipeline-notes">
+          <div class="pipeline-note">
+            <h3>What the support packet actually does</h3>
+            <p>
+              It organizes reimbursement trackers, source-document checklists, procurement evidence indexes, draw request packet
+              checklists, deadline logs, and a 2 CFR Part 200 evidence map for a qualified reviewer to judge.
+            </p>
+            <p>
+              The pattern came from JEA CDBG-DR work, FloridaCommerce CDBG/CDBG-DR program surfaces, and official county/city RFPs.
+            </p>
+          </div>
+          <div class="pipeline-note">
+            <h3>What stays out of bounds</h3>
+            <p>
+              No prime grant-administrator bid, no compliance certification, no portal submission, no copied contact list,
+              and no payment request during validation.
+            </p>
+            <p>
+              The next human test is one qualified no-charge review: does this save time, expose a missing blocker, or fail clearly?
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -985,6 +1112,11 @@
           <a href="https://www.stjohns.k12.fl.us/purchasing/active/" target="_blank" rel="noopener">St. Johns Schools</a>
           <a href="https://jseb.jacksonville.gov/" target="_blank" rel="noopener">JSEB</a>
           <a href="https://vendor.myfloridamarketplace.com/" target="_blank" rel="noopener">MFMP/VBS</a>
+          <a href="https://www.avonpark.city/community/bids-rfp/rfp-26-05-community-development-block-grant-disaster-recovery-cdbg-dr-program" target="_blank" rel="noopener">Avon Park CDBG-DR</a>
+          <a href="https://floridajobs.org/news-center/DEO-Press/2026/04/06/floridacommerce-announces-funding-available-through-the-small-cities-community-development-block-grant-program" target="_blank" rel="noopener">FloridaCommerce CDBG</a>
+          <a href="https://www.floridajobs.org/community-planning-and-development/assistance-for-governments-and-organizations/disaster-recovery-initiative/2023-and-2024-storms/rebuild-florida-2023-and-2024-storms-infrastructure-repair-program" target="_blank" rel="noopener">Rebuild Florida IRP</a>
+          <a href="https://bcc.columbiacountyfla.com/PurchasingBid.aspx?Id=1747" target="_blank" rel="noopener">Columbia County CDBG</a>
+          <a href="https://dca.georgia.gov/financing-tools/disaster-relief/community-development-block-grant-disaster-recovery-program-cdbg-dr" target="_blank" rel="noopener">Georgia DCA CDBG-DR</a>
           <a href="https://www.unf.edu/sbdc/apex-accelerator.html" target="_blank" rel="noopener">UNF APEX</a>
           <a href="https://dia.jacksonville.gov/doing-business-with-us/doing-business-with-dia/storefront-facade-grant-program" target="_blank" rel="noopener">DIA Facade</a>
           <a href="https://www.jacksonville.gov/departments/office-of-economic-development/facade-renovation-matching-grant-program" target="_blank" rel="noopener">COJ Facade</a>

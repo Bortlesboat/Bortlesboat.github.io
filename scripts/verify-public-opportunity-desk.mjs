@@ -85,6 +85,7 @@ async function inspectViewport(name, viewport) {
       description: document.querySelector('meta[name="description"]')?.getAttribute("content") ?? "",
       hasHeroVisual: Boolean(heroReport && heroReport.width > 250 && heroReport.height > 250),
       hasSample: Boolean(document.querySelector("#sample")),
+      hasPipeline: Boolean(document.querySelector("#pipeline")),
       hasScenarios: Boolean(document.querySelector("#scenarios")),
       hasPricing: Boolean(document.querySelector("#pricing")),
       hasStart: Boolean(document.querySelector("#start")),
@@ -93,6 +94,19 @@ async function inspectViewport(name, viewport) {
         text.includes("Download workbook") &&
         workbookHref.includes("Grant-Admin-Support-Sample-Workbook-2026-05-14.xlsx"),
       workbookHref,
+      pipelineCards: document.querySelectorAll("#pipeline .pipeline-card").length,
+      hasPipelineSummary: text.includes("13") &&
+        text.includes("tracked rows") &&
+        text.includes("live or near-live") &&
+        text.includes("scope benchmarks") &&
+        text.includes("$0") &&
+        text.includes("proof status"),
+      hasPipelineSupportOnly: text.includes("The grant-admin lane is repeatable, but still support-only.") &&
+        text.includes("reimbursement trackers") &&
+        text.includes("source-document checklists") &&
+        text.includes("2 CFR Part 200 evidence map") &&
+        text.includes("No prime grant-administrator bid") &&
+        text.includes("one qualified no-charge review"),
       scenarioCards: document.querySelectorAll("#scenarios .scenario").length,
       hasScenarioSpecifics: text.includes("JSEB-ready") &&
         text.includes("Subcontractor-first") &&
@@ -115,6 +129,11 @@ async function inspectViewport(name, viewport) {
         sourceLinks.includes("St. Johns County") &&
         sourceLinks.includes("JSEB") &&
         sourceLinks.includes("UNF APEX") &&
+        sourceLinks.includes("Avon Park CDBG-DR") &&
+        sourceLinks.includes("FloridaCommerce CDBG") &&
+        sourceLinks.includes("Rebuild Florida IRP") &&
+        sourceLinks.includes("Columbia County CDBG") &&
+        sourceLinks.includes("Georgia DCA CDBG-DR") &&
         sourceLinks.includes("DIA Facade") &&
         sourceLinks.includes("COJ Facade") &&
         sourceLinks.includes("Duval LBT"),
@@ -134,11 +153,15 @@ async function inspectViewport(name, viewport) {
   if (!report.description.includes("public opportunity validation")) failures.push(`${name}: missing useful meta description`);
   if (!report.hasHeroVisual) failures.push(`${name}: missing substantial hero report visual`);
   if (!report.hasSample) failures.push(`${name}: missing #sample section`);
+  if (!report.hasPipeline) failures.push(`${name}: missing #pipeline section`);
   if (!report.hasScenarios) failures.push(`${name}: missing #scenarios section`);
   if (!report.hasPricing) failures.push(`${name}: missing #pricing section`);
   if (!report.hasStart) failures.push(`${name}: missing #start section`);
   if (report.sampleRows !== 5) failures.push(`${name}: expected 5 sample opportunity rows, saw ${report.sampleRows}`);
   if (!report.hasWorkbookSample) failures.push(`${name}: missing workbook sample download`);
+  if (report.pipelineCards !== 4) failures.push(`${name}: expected 4 pipeline cards, saw ${report.pipelineCards}`);
+  if (!report.hasPipelineSummary) failures.push(`${name}: missing grant-admin pipeline summary`);
+  if (!report.hasPipelineSupportOnly) failures.push(`${name}: missing support-only grant-admin pipeline boundaries`);
   if (report.scenarioCards !== 6) failures.push(`${name}: expected 6 scenario cards, saw ${report.scenarioCards}`);
   if (!report.hasScenarioSpecifics) failures.push(`${name}: missing scenario-specific copy`);
   if (!report.hasNoChargeValidation) failures.push(`${name}: missing no-charge validation copy`);
@@ -147,7 +170,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasNoAwardPromises) failures.push(`${name}: missing award-promise boundary`);
   if (!report.hasNoSubmission) failures.push(`${name}: missing bid-submission boundary`);
   if (!report.hasOfficialSources) failures.push(`${name}: missing expected official source links`);
-  if (report.sourceLinkCount < 11) failures.push(`${name}: expected at least 11 source links, saw ${report.sourceLinkCount}`);
+  if (report.sourceLinkCount < 16) failures.push(`${name}: expected at least 16 source links, saw ${report.sourceLinkCount}`);
   if (!report.requestLink.includes("Trade%20or%20service")) failures.push(`${name}: request link missing prefilled intake body`);
   if (report.horizontalOverflow > 1) failures.push(`${name}: horizontal overflow ${report.horizontalOverflow}px`);
   if (errors.length) failures.push(`${name}: console/page errors ${errors.join(" | ")}`);
