@@ -73,6 +73,7 @@ async function inspectViewport(name, viewport) {
   await page.waitForSelector("#source-graph .source-ladder", { timeout: 5000 });
   await page.waitForSelector("#fresh-queue .opportunity-table", { timeout: 5000 });
   await page.waitForSelector("#resilience-cdbg .opportunity-table", { timeout: 5000 });
+  await page.waitForSelector("#rejection-engine [data-rejection-engine]", { timeout: 5000 });
   await page.waitForSelector("#feedback-signal [data-feedback-mailto]", { timeout: 5000 });
   await page.waitForTimeout(250);
 
@@ -105,6 +106,7 @@ async function inspectViewport(name, viewport) {
       hasSourceGraph: Boolean(document.querySelector("#source-graph")),
       hasFreshQueue: Boolean(document.querySelector("#fresh-queue")),
       hasResilienceCdbg: Boolean(document.querySelector("#resilience-cdbg")),
+      hasRejectionEngine: Boolean(document.querySelector("#rejection-engine")),
       hasScenarios: Boolean(document.querySelector("#scenarios")),
       hasFitGrader: Boolean(document.querySelector("#fit-grader")),
       hasFeedbackSignal: Boolean(document.querySelector("#feedback-signal")),
@@ -378,6 +380,40 @@ async function inspectViewport(name, viewport) {
       hasResilienceCdbgSources: sourceLinks.includes("DEP Resilient Florida Resources") &&
         sourceLinks.includes("HUD CDBG-DR") &&
         sourceLinks.includes("2 CFR 200.318"),
+      rejectionEngineCards: document.querySelectorAll("#rejection-engine .pipeline-card").length,
+      rejectionEngineRows: document.querySelectorAll("#rejection-engine tbody tr").length,
+      rejectionEngineOptions: document.querySelectorAll("#rejection-engine [data-engine-row] option").length,
+      rejectionEngineChecks: document.querySelectorAll("#rejection-engine [data-engine-check]").length,
+      rejectionEngineDefaultCall: document.querySelector("[data-engine-call]")?.textContent.trim() ?? "",
+      rejectionEngineDefaultBlockers: document.querySelector("[data-engine-blockers]")?.textContent.trim() ?? "",
+      hasRejectionEngineSummary: text.includes("Live contractor rejection engine") &&
+        text.includes("16 official-source facts") &&
+        text.includes("6 agency families") &&
+        text.includes("11 rejection-grid rows") &&
+        text.includes("Proof status $0") &&
+        text.includes("not income proof"),
+      hasRejectionEngineRows: text.includes("JAA-C-898") &&
+        text.includes("JAA-26-16-26201") &&
+        text.includes("FDOT-E21R4-R0") &&
+        text.includes("FDOT-E22A4-R0") &&
+        text.includes("FDOT-E21R6-R0") &&
+        text.includes("JTA-PROCUREMENT-PORTAL") &&
+        text.includes("CLAY-OPENGOV") &&
+        text.includes("NASSAU-PLANETBIDS") &&
+        text.includes("SJC-SCHOOLS-VENDORLINK"),
+      hasRejectionEngineLogic: text.includes("prime, partner, watch, or skip") &&
+        text.includes("DemandStar") &&
+        text.includes("OpenGov") &&
+        text.includes("PlanetBids") &&
+        text.includes("VendorLink") &&
+        text.includes("CPP Online Ordering") &&
+        text.includes("Work Class Breakouts") &&
+        text.includes("purchase-order and clearance") &&
+        text.includes("No supplier registration") &&
+        text.includes("No gated package download"),
+      hasRejectionEngineQuestion: text.includes("Would this interactive rejection engine prevent") &&
+        text.includes("wasting time on a public row") &&
+        text.includes("too generic or risky"),
       scenarioCards: document.querySelectorAll("#scenarios .scenario").length,
       hasScenarioSpecifics: text.includes("Six no-charge scenario lanes") &&
         text.includes("Grant-admin support") &&
@@ -499,6 +535,25 @@ async function inspectViewport(name, viewport) {
   });
   report.feedbackInteraction = feedbackInteraction;
 
+  await page.selectOption("[data-engine-row]", "FDOT-E21R4-R0");
+  const engineBoxes = await page.$$("[data-engine-check]");
+  for (let index = 0; index < engineBoxes.length; index += 1) {
+    if (index < 6) {
+      await engineBoxes[index].check();
+    } else {
+      await engineBoxes[index].uncheck();
+    }
+  }
+  const engineInteraction = await page.evaluate(() => ({
+    call: document.querySelector("[data-engine-call]")?.textContent.trim() ?? "",
+    action: document.querySelector("[data-engine-action]")?.textContent.trim() ?? "",
+    score: document.querySelector("[data-engine-score]")?.textContent.trim() ?? "",
+    blockers: document.querySelector("[data-engine-blockers]")?.textContent.trim() ?? "",
+    evidence: document.querySelector("[data-engine-evidence]")?.textContent.trim() ?? "",
+    killRule: document.querySelector("[data-engine-kill-rule]")?.textContent.trim() ?? "",
+  }));
+  report.engineInteraction = engineInteraction;
+
   await page.screenshot({
     path: path.join(screenshotDir, `public-opportunity-desk-${name}.png`),
     fullPage: false,
@@ -508,6 +563,9 @@ async function inspectViewport(name, viewport) {
   });
   await page.locator("#resilience-cdbg").screenshot({
     path: path.join(screenshotDir, `public-opportunity-desk-resilience-cdbg-${name}.png`),
+  });
+  await page.locator("#rejection-engine").screenshot({
+    path: path.join(screenshotDir, `public-opportunity-desk-rejection-engine-${name}.png`),
   });
   await page.close();
 
@@ -524,6 +582,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasSourceGraph) failures.push(`${name}: missing #source-graph section`);
   if (!report.hasFreshQueue) failures.push(`${name}: missing #fresh-queue section`);
   if (!report.hasResilienceCdbg) failures.push(`${name}: missing #resilience-cdbg section`);
+  if (!report.hasRejectionEngine) failures.push(`${name}: missing #rejection-engine section`);
   if (!report.hasScenarios) failures.push(`${name}: missing #scenarios section`);
   if (!report.hasFitGrader) failures.push(`${name}: missing #fit-grader section`);
   if (!report.hasFeedbackSignal) failures.push(`${name}: missing #feedback-signal section`);
@@ -591,14 +650,25 @@ async function inspectViewport(name, viewport) {
   if (!report.hasResilienceCdbgReviewerAsk) failures.push(`${name}: missing Resilience/CDBG reviewer ask`);
   if (!report.hasResilienceCdbgBoundary) failures.push(`${name}: missing Resilience/CDBG no-contact boundary`);
   if (!report.hasResilienceCdbgSources) failures.push(`${name}: missing Resilience/CDBG official source links`);
+  if (report.rejectionEngineCards !== 4) failures.push(`${name}: expected 4 rejection-engine cards, saw ${report.rejectionEngineCards}`);
+  if (report.rejectionEngineRows !== 6) failures.push(`${name}: expected 6 rejection-engine table rows, saw ${report.rejectionEngineRows}`);
+  if (report.rejectionEngineOptions !== 9) failures.push(`${name}: expected 9 rejection-engine options, saw ${report.rejectionEngineOptions}`);
+  if (report.rejectionEngineChecks !== 8) failures.push(`${name}: expected 8 rejection-engine readiness checks, saw ${report.rejectionEngineChecks}`);
+  if (!report.rejectionEngineDefaultCall.includes("Watch")) failures.push(`${name}: expected default rejection-engine call to include Watch, saw ${report.rejectionEngineDefaultCall}`);
+  if (!report.rejectionEngineDefaultBlockers.includes("DemandStar")) failures.push(`${name}: default rejection-engine blockers missing DemandStar`);
+  if (!report.hasRejectionEngineSummary) failures.push(`${name}: missing rejection-engine summary/proof copy`);
+  if (!report.hasRejectionEngineRows) failures.push(`${name}: missing rejection-engine row IDs`);
+  if (!report.hasRejectionEngineLogic) failures.push(`${name}: missing rejection-engine logic/platform/no-contact copy`);
+  if (!report.hasRejectionEngineQuestion) failures.push(`${name}: missing rejection-engine validation question`);
   if (report.scenarioCards !== 6) failures.push(`${name}: expected 6 scenario cards, saw ${report.scenarioCards}`);
   if (!report.hasScenarioSpecifics) failures.push(`${name}: missing scenario-specific copy`);
   if (report.fitGraderOptions !== 5) failures.push(`${name}: expected 5 fit-grader scenario options, saw ${report.fitGraderOptions}`);
   if (report.fitGraderChecks !== 8) failures.push(`${name}: expected 8 fit-grader checks, saw ${report.fitGraderChecks}`);
   if (report.fitGraderDefaultScore !== "2 / 8") failures.push(`${name}: expected default fit-grader score 2 / 8, saw ${report.fitGraderDefaultScore}`);
-  if (report.feedbackLaneOptions !== 7) failures.push(`${name}: expected 7 feedback lane options, saw ${report.feedbackLaneOptions}`);
+  if (report.feedbackLaneOptions !== 8) failures.push(`${name}: expected 8 feedback lane options, saw ${report.feedbackLaneOptions}`);
   if (!report.feedbackLaneValues.includes("current_packet")) failures.push(`${name}: feedback lane options missing current_packet`);
   if (!report.feedbackLaneValues.includes("resilience_cdbg")) failures.push(`${name}: feedback lane options missing resilience_cdbg`);
+  if (!report.feedbackLaneValues.includes("contractor_rejection_engine")) failures.push(`${name}: feedback lane options missing contractor_rejection_engine`);
   if (report.feedbackVerdictOptions !== 3) failures.push(`${name}: expected 3 feedback verdict options, saw ${report.feedbackVerdictOptions}`);
   if (!report.feedbackDefaultHref.includes("public%20opportunity%20usefulness%20signal")) failures.push(`${name}: feedback default mailto missing usefulness signal subject`);
   if (!report.hasFeedbackSignalCopy) failures.push(`${name}: missing feedback signal copy or proof boundary`);
@@ -611,6 +681,12 @@ async function inspectViewport(name, viewport) {
   if (!report.feedbackInteraction.decoded.includes("Main blocker: BCA/EHP unclear")) failures.push(`${name}: feedback mailto missing typed Resilience/CDBG blocker`);
   if (!report.feedbackInteraction.decoded.includes("Proof status: $0")) failures.push(`${name}: feedback mailto missing proof status`);
   if (!report.feedbackInteraction.decoded.includes("not a payment request, bid, portal action, or income proof")) failures.push(`${name}: feedback mailto missing proof boundary`);
+  if (!report.engineInteraction.call.includes("Partner-ready validation")) failures.push(`${name}: engine interaction expected Partner-ready validation, saw ${report.engineInteraction.call}`);
+  if (!report.engineInteraction.action.includes("validate only")) failures.push(`${name}: engine interaction missing validate-only action`);
+  if (report.engineInteraction.score !== "6 / 8") failures.push(`${name}: engine interaction expected score 6 / 8, saw ${report.engineInteraction.score}`);
+  if (!report.engineInteraction.blockers.includes("GPS/video mapping capability")) failures.push(`${name}: engine interaction missing FDOT blocker`);
+  if (!report.engineInteraction.evidence.includes("equipment proof")) failures.push(`${name}: engine interaction missing FDOT evidence`);
+  if (!report.engineInteraction.killRule.includes("video/GPS inspection")) failures.push(`${name}: engine interaction missing FDOT kill rule`);
   if (!report.hasNoChargeValidation) failures.push(`${name}: missing no-charge validation copy`);
   if (!report.hasVerification) failures.push(`${name}: missing verification copy`);
   if (!report.hasNoPasswords) failures.push(`${name}: missing password boundary`);
