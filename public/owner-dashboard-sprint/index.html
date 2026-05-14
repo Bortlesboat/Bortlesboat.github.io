@@ -6,7 +6,7 @@
     <title>Owner Dashboard Sprint | Andrew Barnes</title>
     <meta
       name="description"
-      content="A fixed 48-hour owner dashboard and 13-week cash forecast sprint for local service businesses."
+      content="Scenario-specific 48-hour owner dashboard, buyer model, and 13-week cash forecast samples for local operators, brokers, CPAs, and lenders."
     />
     <meta name="theme-color" content="#101118" />
     <meta property="og:title" content="Owner Dashboard Sprint" />
@@ -264,6 +264,143 @@
         padding: 28px;
       }
 
+      .sample-library {
+        background: linear-gradient(180deg, rgba(24, 26, 35, 0.22), rgba(16, 17, 24, 0));
+      }
+
+      .scenario-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .scenario-card {
+        border: 1px solid var(--border);
+        background: rgba(24, 26, 35, 0.72);
+        border-radius: 8px;
+        padding: 24px;
+        min-height: 100%;
+      }
+
+      .scenario-card.featured {
+        border-color: rgba(247, 147, 26, 0.46);
+        background:
+          linear-gradient(135deg, rgba(247, 147, 26, 0.12), transparent 44%),
+          rgba(24, 26, 35, 0.78);
+      }
+
+      .scenario-kicker {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .scenario-kicker span {
+        border: 1px solid rgba(165, 168, 182, 0.24);
+        border-radius: 999px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 5px 10px;
+      }
+
+      .scenario-card h3 {
+        margin: 0 0 10px;
+        font-size: 22px;
+        line-height: 1.22;
+      }
+
+      .scenario-card p {
+        color: var(--muted);
+        margin: 0;
+      }
+
+      .metric-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      .metric-row div {
+        border-top: 1px solid rgba(165, 168, 182, 0.22);
+        padding-top: 10px;
+      }
+
+      .metric-row strong {
+        display: block;
+        color: var(--text);
+        font-size: 20px;
+        line-height: 1.1;
+      }
+
+      .metric-row span {
+        display: block;
+        color: var(--subtle);
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      .scenario-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .scenario-table th,
+      .scenario-table td {
+        border-top: 1px solid rgba(165, 168, 182, 0.16);
+        padding: 9px 0;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .scenario-table th {
+        color: var(--subtle);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .scenario-table td:last-child,
+      .scenario-table th:last-child {
+        text-align: right;
+      }
+
+      .scenario-list {
+        display: grid;
+        gap: 9px;
+        margin: 18px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .scenario-list li {
+        display: grid;
+        grid-template-columns: 10px 1fr;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .scenario-list li::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        margin-top: 8px;
+        border-radius: 999px;
+        background: var(--accent-2);
+      }
+
+      .sample-note {
+        color: var(--subtle);
+        font-size: 13px;
+        margin-top: 18px;
+      }
+
       .price {
         font-size: clamp(44px, 6vw, 64px);
         line-height: 1;
@@ -299,8 +436,58 @@
         }
 
         .grid,
-        .proof-strip {
+        .proof-strip,
+        .scenario-grid {
           grid-template-columns: 1fr;
+        }
+
+        .metric-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .scenario-table,
+        .scenario-table thead,
+        .scenario-table tbody,
+        .scenario-table tr,
+        .scenario-table th,
+        .scenario-table td {
+          display: block;
+        }
+
+        .scenario-table thead {
+          display: none;
+        }
+
+        .scenario-table tr {
+          border-top: 1px solid rgba(165, 168, 182, 0.16);
+          padding: 10px 0;
+        }
+
+        .scenario-table td {
+          border: 0;
+          padding: 3px 0;
+          text-align: left !important;
+        }
+
+        .scenario-table td::before {
+          color: var(--subtle);
+          display: inline-block;
+          font-weight: 700;
+          margin-right: 6px;
+        }
+
+        .scenario-table td:first-child::before {
+          content: "Week";
+        }
+
+        .scenario-table td:nth-child(2)::before {
+          content: "Pressure";
+        }
+
+        .scenario-table td:last-child::before {
+          content: "Action";
         }
       }
     </style>
@@ -322,7 +509,7 @@
             </p>
             <div class="actions">
               <a class="btn primary" href="mailto:bortlesboat@gmail.com?subject=owner%20dashboard%20sprint">Ask for the diagnostic</a>
-              <a class="btn" href="#sample">View sample</a>
+              <a class="btn" href="#sample">View scenarios</a>
             </div>
             <div class="proof-strip" aria-label="Sprint summary">
               <div class="proof-item">
@@ -339,7 +526,7 @@
               </div>
             </div>
           </div>
-          <div class="preview" id="sample">
+          <div class="preview">
             <img src="/owner-dashboard-sprint/sample.png" alt="Sample owner dashboard sprint one-page report preview" />
           </div>
         </div>
@@ -369,6 +556,115 @@
             <p>A short memo on what changed, what looks off, and what needs better source data.</p>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="sample-library" id="sample">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Scenario samples for the different rooms this gets used in.</h2>
+          <p>
+            Same core sprint, different decision. A service owner needs cash timing. A buyer needs debt-service
+            sensitivity. A CPA needs a clean handoff. A lender wants the borrower ready before underwriting.
+          </p>
+        </div>
+        <div class="scenario-grid">
+          <article class="scenario-card featured">
+            <div class="scenario-kicker">
+              <span>Owner cash sprint</span>
+              <span>HVAC / contractor / local service</span>
+            </div>
+            <h3>Can we make payroll, buy parts, and still keep enough cash cushion?</h3>
+            <p>
+              Built from QuickBooks exports, bank CSV, open invoices, recurring bills, and payroll timing.
+              The output is a 13-week cash floor and the few calls the owner should make first.
+            </p>
+            <div class="metric-row">
+              <div><strong>$22K</strong><span>projected low cash week</span></div>
+              <div><strong>1.8x</strong><span>payroll coverage at low point</span></div>
+              <div><strong>$41K</strong><span>AR over 30 days</span></div>
+            </div>
+            <table class="scenario-table" aria-label="Owner cash sprint sample table">
+              <thead>
+                <tr><th>Week</th><th>Pressure point</th><th>Owner action</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>3</td><td>parts orders hit before deposits</td><td>delay noncritical truck stock</td></tr>
+                <tr><td>7</td><td>cash floor after payroll</td><td>collect two overdue commercial invoices</td></tr>
+                <tr><td>11</td><td>install margin dip</td><td>review labor hours by job type</td></tr>
+              </tbody>
+            </table>
+          </article>
+
+          <article class="scenario-card">
+            <div class="scenario-kicker">
+              <span>SBA buyer model</span>
+              <span>broker / acquisition buyer</span>
+            </div>
+            <h3>Does the deal still work after debt service, rent, and a realistic stress case?</h3>
+            <p>
+              Built from listing financials, seller-disclosed SDE, rent, lease terms, down payment, and loan
+              assumptions. It gives the buyer a clean first-pass view before asking for deeper diligence.
+            </p>
+            <div class="metric-row">
+              <div><strong>20%</strong><span>down payment case</span></div>
+              <div><strong>1.31x</strong><span>base DSCR estimate</span></div>
+              <div><strong>0.96x</strong><span>stress case DSCR</span></div>
+            </div>
+            <ul class="scenario-list">
+              <li>Normalize owner benefit against payroll, rent, add-backs, and working capital.</li>
+              <li>Separate seller-financing, SBA, and cash-buyer assumptions.</li>
+              <li>List the diligence questions that decide whether an LOI is worth writing.</li>
+            </ul>
+          </article>
+
+          <article class="scenario-card">
+            <div class="scenario-kicker">
+              <span>CPA referral packet</span>
+              <span>bookkeeper / advisor overflow</span>
+            </div>
+            <h3>Can the client see cash, AR, AP, and margin without turning the CPA into a dashboard shop?</h3>
+            <p>
+              Built as an export-only support layer for clients who already have bookkeeping help but need a
+              decision packet. It keeps tax, cleanup, and advisory boundaries clear.
+            </p>
+            <div class="metric-row">
+              <div><strong>6</strong><span>exports mapped</span></div>
+              <div><strong>4</strong><span>source-data gaps flagged</span></div>
+              <div><strong>2 pages</strong><span>handoff summary</span></div>
+            </div>
+            <ul class="scenario-list">
+              <li>Map source exports to the owner-facing dashboard fields.</li>
+              <li>Flag missing customer, job, or class coding before deeper reporting work.</li>
+              <li>Give the CPA/bookkeeper a clean "what changed and why" client summary.</li>
+            </ul>
+          </article>
+
+          <article class="scenario-card">
+            <div class="scenario-kicker">
+              <span>Lender-ready view</span>
+              <span>borrower / referral partner</span>
+            </div>
+            <h3>Is the borrower prepared enough to talk about cash flow without hand-waving?</h3>
+            <p>
+              Built for an owner heading into an SBA, equipment, or working-capital conversation. It packages
+              cash timing, debt load, and documentation gaps before a lender has to chase them.
+            </p>
+            <div class="metric-row">
+              <div><strong>$18K</strong><span>monthly debt service tested</span></div>
+              <div><strong>9</strong><span>documents requested</span></div>
+              <div><strong>3</strong><span>underwriting gaps</span></div>
+            </div>
+            <ul class="scenario-list">
+              <li>Convert exports into a borrower cash-flow story with assumptions visible.</li>
+              <li>Show base, tight, and downside cash cases without promising approval.</li>
+              <li>Give the owner a document checklist before the lender conversation.</li>
+            </ul>
+          </article>
+        </div>
+        <p class="sample-note">
+          Figures above are synthetic examples. Real diagnostics use client-provided exports only and do not require live bank credentials.
+        </p>
       </div>
     </section>
 
