@@ -102,6 +102,31 @@ async function inspectViewport(name, viewport) {
       hasPricing: Boolean(document.querySelector("#pricing")),
       hasStart: Boolean(document.querySelector("#start")),
       sampleRows,
+      scenarioSampleCards: document.querySelectorAll("#sample [data-scenario-sample]").length,
+      hasScenarioSampleCards: text.includes("Grant-admin support packet") &&
+        text.includes("DEP Resilient Florida evidence checklist") &&
+        text.includes("Contractor readiness screen") &&
+        text.includes("AHCA RHTP health-readiness matrix") &&
+        text.includes("Surplus and tax-deed paper trade") &&
+        text.includes("support-only") &&
+        text.includes("restricted comms") &&
+        text.includes("no cash") &&
+        text.includes("proof $0"),
+      hasScenarioSampleDecisionModel: text.includes("Support or subcontract lane, not Andy as prime grant administrator") &&
+        text.includes("Support/watch until an eligible applicant or advisor can judge the evidence gap") &&
+        text.includes("Bid, partner, watch, or skip based on existing capability") &&
+        text.includes("No-contact readiness matrix only while the restricted communication period applies") &&
+        text.includes("Paper trade only until official sources produce repeatable, source-complete passes"),
+      hasScenarioSampleVerification: text.includes("Qualified reviewer must say it saves time, catches a blocker") &&
+        text.includes("Every row needs a source, eligible-applicant check, evidence module, blocker") &&
+        text.includes("name at least one concrete blocker a contractor can confirm without sharing credentials") &&
+        text.includes("qualified health/grants reviewer can judge the public-source matrix") &&
+        text.includes("title, lien, access, zoning, utility, deposit, payment-deadline, and resale-cost screens"),
+      hasScenarioSampleKillRules: text.includes("Stop if it requires compliance certification, portal submission, official reporting, or payment during validation") &&
+        text.includes("No office-hours registration, DEP contact, application drafting, portal action, invoice, or payment request") &&
+        text.includes("Stop if fleet, license, bonding, crew, package access, or site access would need to be created from scratch") &&
+        text.includes("No AHCA contact, applicant contact, RFA questions, portal registration, bid, invoice, or payment request") &&
+        text.includes("No auction registration, deposit, bid, purchase, owner contact, agency contact, or cash movement"),
       workbookCards: document.querySelectorAll("#workbooks .workbook-card").length,
       hasWorkbookSample: text.includes("Grant-admin support workbook sample") &&
         text.includes("Download workbook") &&
@@ -333,6 +358,11 @@ async function inspectViewport(name, viewport) {
   if (!report.hasPricing) failures.push(`${name}: missing #pricing section`);
   if (!report.hasStart) failures.push(`${name}: missing #start section`);
   if (report.sampleRows !== 5) failures.push(`${name}: expected 5 sample opportunity rows, saw ${report.sampleRows}`);
+  if (report.scenarioSampleCards !== 5) failures.push(`${name}: expected 5 scenario sample cards, saw ${report.scenarioSampleCards}`);
+  if (!report.hasScenarioSampleCards) failures.push(`${name}: missing scenario sample card labels or proof copy`);
+  if (!report.hasScenarioSampleDecisionModel) failures.push(`${name}: missing scenario sample decision model copy`);
+  if (!report.hasScenarioSampleVerification) failures.push(`${name}: missing scenario sample verification copy`);
+  if (!report.hasScenarioSampleKillRules) failures.push(`${name}: missing scenario sample kill-rule boundaries`);
   if (!report.hasWorkbookSample) failures.push(`${name}: missing workbook sample download`);
   if (!report.hasWorkbookRepeatabilityCopy) failures.push(`${name}: missing workbook repeatability copy`);
   if (report.workbookCards !== 4) failures.push(`${name}: expected 4 scenario workbook cards, saw ${report.workbookCards}`);

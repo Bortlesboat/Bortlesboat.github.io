@@ -504,6 +504,77 @@
         color: var(--muted);
       }
 
+      .scenario-samples {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 22px;
+      }
+
+      .scenario-sample {
+        display: grid;
+        gap: 16px;
+        align-content: start;
+        min-height: 100%;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--white);
+      }
+
+      .scenario-sample h3 {
+        margin: 0;
+      }
+
+      .scenario-sample p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .scenario-sample__top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .scenario-sample__meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+
+      .scenario-sample__meta span {
+        padding: 4px 7px;
+        border: 1px solid rgba(36, 92, 72, 0.22);
+        border-radius: 999px;
+        color: var(--green);
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .sample-facts {
+        display: grid;
+        gap: 8px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      .sample-facts li {
+        display: grid;
+        grid-template-columns: 96px 1fr;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .sample-facts strong {
+        color: var(--ink);
+      }
+
       .workbook-library {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -778,6 +849,7 @@
         .proof-strip,
         .grid-3,
         .scenario-grid,
+        .scenario-samples,
         .price-grid,
         .pipeline-grid,
         .pipeline-notes,
@@ -834,6 +906,15 @@
 
         .opportunity-table td:nth-child(3)::before {
           content: "First read";
+        }
+
+        .scenario-sample__top {
+          flex-direction: column;
+        }
+
+        .sample-facts li {
+          grid-template-columns: 1fr;
+          gap: 2px;
         }
       }
     </style>
@@ -1014,6 +1095,98 @@
             </tr>
           </tbody>
         </table>
+        <div class="scenario-samples" aria-label="Scenario-specific public-resource samples">
+          <article class="scenario-sample" data-scenario-sample="grant-admin">
+            <div class="scenario-sample__top">
+              <h3>Grant-admin support packet</h3>
+              <div class="scenario-sample__meta">
+                <span>support-only</span>
+                <span>proof $0</span>
+              </div>
+            </div>
+            <p>
+              Built from JEA Normandy, FloridaCommerce, HUD, DEP, and 2 CFR Part 200 signals. The useful output is a
+              reimbursement tracker, source-document checklist, deadline-risk log, approval-dependency tracker, and closeout tracker.
+            </p>
+            <ul class="sample-facts">
+              <li><strong>Decision</strong><span>Support or subcontract lane, not Andy as prime grant administrator.</span></li>
+              <li><strong>Verification</strong><span>Qualified reviewer must say it saves time, catches a blocker, or clarifies bid/partner/watch/skip.</span></li>
+              <li><strong>Kill rule</strong><span>Stop if it requires compliance certification, portal submission, official reporting, or payment during validation.</span></li>
+            </ul>
+          </article>
+          <article class="scenario-sample" data-scenario-sample="resilient-florida">
+            <div class="scenario-sample__top">
+              <h3>DEP Resilient Florida evidence checklist</h3>
+              <div class="scenario-sample__meta">
+                <span>applicant evidence</span>
+                <span>proof $0</span>
+              </div>
+            </div>
+            <p>
+              Built from official DEP applicant, resources, grants dashboard, GIS, and vulnerability-assessment guidance.
+              The sample separates planning, implementation, regional entity, and current-grantee support tracks.
+            </p>
+            <ul class="sample-facts">
+              <li><strong>Decision</strong><span>Support/watch until an eligible applicant or advisor can judge the evidence gap.</span></li>
+              <li><strong>Verification</strong><span>Every row needs a source, eligible-applicant check, evidence module, blocker, and not-income-proof classifier.</span></li>
+              <li><strong>Kill rule</strong><span>No office-hours registration, DEP contact, application drafting, portal action, invoice, or payment request.</span></li>
+            </ul>
+          </article>
+          <article class="scenario-sample" data-scenario-sample="contractor">
+            <div class="scenario-sample__top">
+              <h3>Contractor readiness screen</h3>
+              <div class="scenario-sample__meta">
+                <span>bid/no-bid</span>
+                <span>proof $0</span>
+              </div>
+            </div>
+            <p>
+              Built from JAXPORT, FDOT District Two, St. Johns County, JAA, JTA, and local portal rules. It turns public rows
+              into license, insurance, bond, MOT, package, addenda, and deadline checks before anyone estimates work.
+            </p>
+            <ul class="sample-facts">
+              <li><strong>Decision</strong><span>Bid, partner, watch, or skip based on existing capability, not wishful capacity.</span></li>
+              <li><strong>Verification</strong><span>The packet must name at least one concrete blocker a contractor can confirm without sharing credentials.</span></li>
+              <li><strong>Kill rule</strong><span>Stop if fleet, license, bonding, crew, package access, or site access would need to be created from scratch.</span></li>
+            </ul>
+          </article>
+          <article class="scenario-sample" data-scenario-sample="health">
+            <div class="scenario-sample__top">
+              <h3>AHCA RHTP health-readiness matrix</h3>
+              <div class="scenario-sample__meta">
+                <span>restricted comms</span>
+                <span>proof $0</span>
+              </div>
+            </div>
+            <p>
+              Built from AHCA public RHTP materials only. The sample checks eligibility, bundle fit, financial solvency,
+              data reporting, procurement, partner approval, contract ownership, and sustainability.
+            </p>
+            <ul class="sample-facts">
+              <li><strong>Decision</strong><span>No-contact readiness matrix only while the restricted communication period applies.</span></li>
+              <li><strong>Verification</strong><span>Useful only if a qualified health/grants reviewer can judge the public-source matrix without private RFA discussion.</span></li>
+              <li><strong>Kill rule</strong><span>No AHCA contact, applicant contact, RFA questions, portal registration, bid, invoice, or payment request.</span></li>
+            </ul>
+          </article>
+          <article class="scenario-sample" data-scenario-sample="paper-trade">
+            <div class="scenario-sample__top">
+              <h3>Surplus and tax-deed paper trade</h3>
+              <div class="scenario-sample__meta">
+                <span>no cash</span>
+                <span>proof $0</span>
+              </div>
+            </div>
+            <p>
+              Built from COJ/GovDeals, tax-certificate, tax-deed, clerk, appraiser, zoning, and court-record sources.
+              The first 15-row run produced zero paper passes, which is a useful rejection-engine signal.
+            </p>
+            <ul class="sample-facts">
+              <li><strong>Decision</strong><span>Paper trade only until official sources produce repeatable, source-complete passes.</span></li>
+              <li><strong>Verification</strong><span>Each row must survive title, lien, access, zoning, utility, deposit, payment-deadline, and resale-cost screens.</span></li>
+              <li><strong>Kill rule</strong><span>No auction registration, deposit, bid, purchase, owner contact, agency contact, or cash movement.</span></li>
+            </ul>
+          </article>
+        </div>
         <div class="sample-download">
           <div>
             <h3>Grant-admin support workbook sample</h3>
