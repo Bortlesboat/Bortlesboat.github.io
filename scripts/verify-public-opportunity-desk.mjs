@@ -82,9 +82,15 @@ async function inspectViewport(name, viewport) {
       description: document.querySelector('meta[name="description"]')?.getAttribute("content") ?? "",
       hasHeroVisual: Boolean(heroReport && heroReport.width > 250 && heroReport.height > 250),
       hasSample: Boolean(document.querySelector("#sample")),
+      hasScenarios: Boolean(document.querySelector("#scenarios")),
       hasPricing: Boolean(document.querySelector("#pricing")),
       hasStart: Boolean(document.querySelector("#start")),
       sampleRows,
+      scenarioCards: document.querySelectorAll("#scenarios .scenario").length,
+      hasScenarioSpecifics: text.includes("JSEB-ready") &&
+        text.includes("Subcontractor-first") &&
+        text.includes("Referrer packet") &&
+        text.includes("Grant and capital screen"),
       hasFirstFit: text.includes("$150") && text.includes("first-fit scan"),
       hasFirstBid: text.includes("$300") && text.includes("first-bid packet"),
       hasNoPasswords: text.includes("No passwords") || text.includes("No portal passwords"),
@@ -94,7 +100,9 @@ async function inspectViewport(name, viewport) {
         sourceLinks.includes("JAA Bid Board") &&
         sourceLinks.includes("JAXPORT") &&
         sourceLinks.includes("JEA Formal") &&
-        sourceLinks.includes("St. Johns County"),
+        sourceLinks.includes("St. Johns County") &&
+        sourceLinks.includes("JSEB") &&
+        sourceLinks.includes("UNF APEX"),
       sourceLinkCount: sourceLinks.length,
       requestLink,
       horizontalOverflow: document.documentElement.scrollWidth - window.innerWidth,
@@ -111,9 +119,12 @@ async function inspectViewport(name, viewport) {
   if (!report.description.includes("public bid radar")) failures.push(`${name}: missing useful meta description`);
   if (!report.hasHeroVisual) failures.push(`${name}: missing substantial hero report visual`);
   if (!report.hasSample) failures.push(`${name}: missing #sample section`);
+  if (!report.hasScenarios) failures.push(`${name}: missing #scenarios section`);
   if (!report.hasPricing) failures.push(`${name}: missing #pricing section`);
   if (!report.hasStart) failures.push(`${name}: missing #start section`);
   if (report.sampleRows !== 5) failures.push(`${name}: expected 5 sample opportunity rows, saw ${report.sampleRows}`);
+  if (report.scenarioCards !== 6) failures.push(`${name}: expected 6 scenario cards, saw ${report.scenarioCards}`);
+  if (!report.hasScenarioSpecifics) failures.push(`${name}: missing scenario-specific copy`);
   if (!report.hasFirstFit) failures.push(`${name}: missing $150 first-fit offer`);
   if (!report.hasFirstBid) failures.push(`${name}: missing $300 first-bid offer`);
   if (!report.hasNoPasswords) failures.push(`${name}: missing password boundary`);

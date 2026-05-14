@@ -312,6 +312,46 @@
         font-size: 0.95rem;
       }
 
+      .scenario-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .scenario {
+        border: 1px solid var(--line);
+        background: var(--white);
+        border-radius: 6px;
+        padding: 22px;
+        min-height: 245px;
+      }
+
+      .scenario h3 {
+        margin-top: 0;
+      }
+
+      .scenario-tag {
+        display: inline-flex;
+        margin-bottom: 14px;
+        padding: 5px 8px;
+        border: 1px solid rgba(36, 92, 72, 0.22);
+        border-radius: 999px;
+        color: var(--green);
+        font-size: 0.76rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .scenario p {
+        color: var(--muted);
+        margin: 0 0 14px;
+        font-size: 0.95rem;
+      }
+
+      .scenario strong {
+        color: var(--ink);
+      }
+
       .opportunity-table {
         width: 100%;
         border-collapse: collapse;
@@ -499,6 +539,7 @@
 
         .proof-strip,
         .grid-3,
+        .scenario-grid,
         .price-grid,
         .report-grid {
           grid-template-columns: 1fr;
@@ -614,6 +655,7 @@
           <a class="brand" href="/">Andrew Barnes</a>
           <div class="nav-links" aria-label="Page navigation">
             <a href="#sample">Sample radar</a>
+            <a href="#scenarios">Scenarios</a>
             <a href="#pricing">Pilot options</a>
             <a href="#start">Start</a>
           </div>
@@ -722,6 +764,68 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <section id="scenarios">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Different entry points for different businesses.</h2>
+          <p>
+            The same public data can become a few distinct paid pilots. The scan only moves forward when the firm already has
+            the capacity to perform, a source-backed reason to look, and a bounded next decision.
+          </p>
+        </div>
+        <div class="scenario-grid">
+          <article class="scenario">
+            <span class="scenario-tag">Contractor scan</span>
+            <h3>Licensed trade or facilities firm</h3>
+            <p>
+              Best for civil, asphalt, fencing, demolition, HVAC, plumbing, electrical, janitorial, waste, or utility-support firms.
+            </p>
+            <p><strong>Paid output:</strong> five matched opportunities, deadline calendar, portal gaps, and a first target or no-bid call.</p>
+          </article>
+          <article class="scenario">
+            <span class="scenario-tag">JSEB-ready</span>
+            <h3>Small business with local certification upside</h3>
+            <p>
+              JSEB categories and set-aside patterns can matter, but certification questions should stay with the official program.
+            </p>
+            <p><strong>Paid output:</strong> readiness checklist, commodity-code map, watchlist categories, and questions to take to JSEB/APEX.</p>
+          </article>
+          <article class="scenario">
+            <span class="scenario-tag">Subcontractor-first</span>
+            <h3>Specialty firm below prime size</h3>
+            <p>
+              Large JEA, JAXPORT, and airport work may be too big as prime but useful for identifying likely partner lanes.
+            </p>
+            <p><strong>Paid output:</strong> prime/sub angle, no-bid blockers, source links, and a practical partner-positioning note.</p>
+          </article>
+          <article class="scenario">
+            <span class="scenario-tag">Referrer packet</span>
+            <h3>CPA, bookkeeper, lender, broker, or chamber contact</h3>
+            <p>
+              Referrers do not need to become bid analysts. They need to know which clients are real fits and which should not spend money yet.
+            </p>
+            <p><strong>Paid output:</strong> contractor-funded scan after one relevant intro; no broad list-building or generic blasts.</p>
+          </article>
+          <article class="scenario">
+            <span class="scenario-tag">Portal setup</span>
+            <h3>Vendor missing the right public-system footprint</h3>
+            <p>
+              1Cloud, DemandStar, JAXPORT, Zycus, OpenGov, VendorLink, MFMP/VBS, and SAM.gov all create small failure points.
+            </p>
+            <p><strong>Paid output:</strong> account-readiness map, notification categories, commodity-code shortlist, and no-password workflow.</p>
+          </article>
+          <article class="scenario">
+            <span class="scenario-tag">Grant and capital screen</span>
+            <h3>Veteran-owned or JSEB business checking support options</h3>
+            <p>
+              Local grants and working-capital programs can help, but eligibility, reimbursement rules, and official guidance control the answer.
+            </p>
+            <p><strong>Paid output:</strong> eligibility screen and document checklist only; no grant guarantee and no legal or tax advice.</p>
+          </article>
+        </div>
       </div>
     </section>
 
@@ -847,6 +951,9 @@
           <a href="https://jtafla.com/contact-us/business-opportunities/procurement/" target="_blank" rel="noopener">JTA</a>
           <a href="https://www.sjcfl.us/active-solicitations/" target="_blank" rel="noopener">St. Johns County</a>
           <a href="https://www.stjohns.k12.fl.us/purchasing/active/" target="_blank" rel="noopener">St. Johns Schools</a>
+          <a href="https://jseb.jacksonville.gov/" target="_blank" rel="noopener">JSEB</a>
+          <a href="https://vendor.myfloridamarketplace.com/" target="_blank" rel="noopener">MFMP/VBS</a>
+          <a href="https://www.unf.edu/sbdc/apex-accelerator.html" target="_blank" rel="noopener">UNF APEX</a>
         </div>
       </div>
     </section>
