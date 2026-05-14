@@ -533,6 +533,114 @@
         font-size: 0.94rem;
       }
 
+      .grader-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.82fr);
+        gap: 22px;
+        align-items: start;
+      }
+
+      .grader-controls {
+        display: grid;
+        gap: 16px;
+      }
+
+      .field-row {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field-row label,
+      .check-grid label {
+        font-weight: 800;
+      }
+
+      .field-row select {
+        min-height: 48px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--white);
+        color: var(--ink);
+        padding: 0 12px;
+        font: inherit;
+      }
+
+      .check-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .check-grid label {
+        display: grid;
+        grid-template-columns: 20px 1fr;
+        gap: 10px;
+        align-items: start;
+        min-height: 64px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--white);
+        padding: 12px;
+        color: #28322e;
+      }
+
+      .check-grid input {
+        margin-top: 3px;
+        accent-color: var(--green);
+      }
+
+      .grader-result {
+        position: sticky;
+        top: 18px;
+        border: 1px solid var(--green);
+        border-radius: 6px;
+        background: #f8faf4;
+        padding: 22px;
+      }
+
+      .grader-result strong {
+        display: block;
+        color: var(--green-2);
+        font-size: 2.15rem;
+        line-height: 1.05;
+      }
+
+      .grader-result span {
+        display: block;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+
+      .grader-meter {
+        height: 10px;
+        margin: 18px 0;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #dde6dc;
+        overflow: hidden;
+      }
+
+      .grader-meter div {
+        width: var(--score-width, 0%);
+        height: 100%;
+        background: var(--green);
+      }
+
+      .grader-output {
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .grader-output p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .grader-output b {
+        color: var(--ink);
+      }
+
       .workbook-meta {
         display: flex;
         flex-wrap: wrap;
@@ -674,6 +782,8 @@
         .pipeline-grid,
         .pipeline-notes,
         .workbook-library,
+        .grader-shell,
+        .check-grid,
         .sample-download,
         .report-grid {
           grid-template-columns: 1fr;
@@ -1500,6 +1610,55 @@
       </div>
     </section>
 
+    <section id="fit-grader">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Self-serve fit grader.</h2>
+          <p>
+            A quick, no-charge screen for public-resource opportunities. It turns the same source discipline into a
+            visible pursue, partner, watch, or skip call before any email, portal action, bid, or invoice.
+          </p>
+        </div>
+        <div class="grader-shell" data-fit-grader>
+          <form class="grader-controls" aria-label="Public opportunity fit grader">
+            <div class="field-row">
+              <label for="grader-lane">Scenario lane</label>
+              <select id="grader-lane" data-grader-lane>
+                <option value="grant">Grant-admin support</option>
+                <option value="contractor">Contractor readiness</option>
+                <option value="portal">Vendor portal gap</option>
+                <option value="award">Upstream award watch</option>
+                <option value="surplus">Surplus or tax-deed paper trade</option>
+              </select>
+            </div>
+            <div class="check-grid">
+              <label><input type="checkbox" data-grader-check value="source" checked /> Current official source is named</label>
+              <label><input type="checkbox" data-grader-check value="capability" /> Existing capability matches the work</label>
+              <label><input type="checkbox" data-grader-check value="geo" checked /> County or authority geography fits</label>
+              <label><input type="checkbox" data-grader-check value="deadline" /> More than 10 days remain</label>
+              <label><input type="checkbox" data-grader-check value="portal" /> Portal or package access is already clear</label>
+              <label><input type="checkbox" data-grader-check value="license" /> License, insurance, bonding, or grant role is clear</label>
+              <label><input type="checkbox" data-grader-check value="documents" /> Source documents or addenda are available</label>
+              <label><input type="checkbox" data-grader-check value="reviewer" /> Qualified reviewer or operator can judge usefulness</label>
+            </div>
+          </form>
+          <aside class="grader-result" aria-live="polite">
+            <span>Validation score</span>
+            <strong data-grader-score>2 / 8</strong>
+            <div class="grader-meter" aria-hidden="true">
+              <div data-grader-meter style="--score-width: 25%"></div>
+            </div>
+            <div class="grader-output">
+              <p><b data-grader-call>Watch.</b> <span data-grader-summary>Keep the source row, but do not contact anyone until blockers are clearer.</span></p>
+              <p><b>Free output:</b> <span data-grader-output>source timeline, blocker map, and one qualified reviewer question.</span></p>
+              <p><b>Proof status:</b> $0. A grader result, page visit, workbook download, reply, or meeting is not income proof.</p>
+              <p><b>External gate:</b> Approve one qualified grant-admin validation ask.</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
     <section id="pricing">
       <div class="wrap">
         <div class="section-head">
@@ -1636,5 +1795,58 @@
         Andrew Barnes | FP&amp;A automation | <a href="/">Portfolio</a> | <a href="/owner-dashboard-sprint/">Owner Dashboard Sprint</a>
       </div>
     </footer>
+    <script>
+      const grader = document.querySelector("[data-fit-grader]");
+      if (grader) {
+        const lane = grader.querySelector("[data-grader-lane]");
+        const checks = [...grader.querySelectorAll("[data-grader-check]")];
+        const scoreEl = grader.querySelector("[data-grader-score]");
+        const meterEl = grader.querySelector("[data-grader-meter]");
+        const callEl = grader.querySelector("[data-grader-call]");
+        const summaryEl = grader.querySelector("[data-grader-summary]");
+        const outputEl = grader.querySelector("[data-grader-output]");
+
+        const outputs = {
+          grant: "source timeline, reimbursement/document checklist, closeout risk map, and one qualified reviewer question.",
+          contractor: "portal readiness, license/work-class/insurance blockers, deadline risk, and bid/partner/watch/skip call.",
+          portal: "no-password portal map, notification categories, commodity-code shortlist, and submission-method red flags.",
+          award: "award-to-downstream watch map, eligible-applicant distinction, next-document watch, and source-conflict warning.",
+          surplus: "no-cash paper-trade rejection sheet with title, lien, zoning, access, fee, and worst-case loss checks."
+        };
+
+        const render = () => {
+          const checked = checks.filter((check) => check.checked).length;
+          const laneValue = lane.value;
+          const score = laneValue === "surplus" ? Math.min(checked, 5) : checked;
+          const width = Math.round((score / 8) * 100);
+          let call = "Skip.";
+          let summary = "Reject or park this until official-source blockers are resolved.";
+
+          if (laneValue === "surplus") {
+            call = "Paper trade only.";
+            summary = "Keep it no-cash until title, legal, logistics, and downside loss checks are source-complete.";
+          } else if (score >= 7) {
+            call = "Pursue validation.";
+            summary = "This is strong enough for a no-charge usefulness review after the explicit approval gate.";
+          } else if (score >= 5) {
+            call = "Partner or watch.";
+            summary = "Useful signal exists, but at least one capability, portal, deadline, or reviewer blocker remains.";
+          } else if (score >= 3) {
+            call = "Watch.";
+            summary = "Keep the source row, but do not contact anyone until blockers are clearer.";
+          }
+
+          scoreEl.textContent = `${score} / 8`;
+          meterEl.style.setProperty("--score-width", `${width}%`);
+          callEl.textContent = call;
+          summaryEl.textContent = summary;
+          outputEl.textContent = outputs[laneValue];
+        };
+
+        lane.addEventListener("change", render);
+        checks.forEach((check) => check.addEventListener("change", render));
+        render();
+      }
+    </script>
   </body>
 </html>

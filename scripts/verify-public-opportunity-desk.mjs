@@ -69,6 +69,7 @@ async function inspectViewport(name, viewport) {
   await page.goto(`http://127.0.0.1:${port}/public-opportunity-desk/`);
   await page.waitForLoadState("domcontentloaded");
   await page.waitForSelector("#sample .opportunity-table", { timeout: 5000 });
+  await page.waitForSelector("#fit-grader [data-grader-score]", { timeout: 5000 });
   await page.waitForTimeout(250);
 
   const report = await page.evaluate(() => {
@@ -97,6 +98,7 @@ async function inspectViewport(name, viewport) {
       hasMonitor: Boolean(document.querySelector("#monitor")),
       hasFdotReadiness: Boolean(document.querySelector("#fdot-readiness")),
       hasScenarios: Boolean(document.querySelector("#scenarios")),
+      hasFitGrader: Boolean(document.querySelector("#fit-grader")),
       hasPricing: Boolean(document.querySelector("#pricing")),
       hasStart: Boolean(document.querySelector("#start")),
       sampleRows,
@@ -233,6 +235,16 @@ async function inspectViewport(name, viewport) {
         text.includes("Free output:") &&
         text.includes("Kill rule:") &&
         text.includes("proof-status separation"),
+      fitGraderOptions: document.querySelectorAll("#fit-grader option").length,
+      fitGraderChecks: document.querySelectorAll("#fit-grader [data-grader-check]").length,
+      fitGraderDefaultScore: document.querySelector("[data-grader-score]")?.textContent.trim() ?? "",
+      hasFitGraderCopy: text.includes("Self-serve fit grader") &&
+        text.includes("pursue, partner, watch, or skip") &&
+        text.includes("Current official source is named") &&
+        text.includes("Existing capability matches the work") &&
+        text.includes("Proof status: $0") &&
+        text.includes("A grader result, page visit, workbook download, reply, or meeting is not income proof") &&
+        text.includes("Approve one qualified grant-admin validation ask"),
       hasNoChargeValidation: text.includes("No-charge validation first") &&
         text.includes("Live opportunity match") &&
         text.includes("Eligibility friction screen") &&
@@ -285,6 +297,19 @@ async function inspectViewport(name, viewport) {
     };
   });
 
+  await page.selectOption("[data-grader-lane]", "surplus");
+  const checkCount = await page.locator("[data-grader-check]").count();
+  for (let index = 0; index < checkCount; index += 1) {
+    await page.locator("[data-grader-check]").nth(index).check();
+  }
+  const graderInteraction = await page.evaluate(() => ({
+    score: document.querySelector("[data-grader-score]")?.textContent.trim() ?? "",
+    call: document.querySelector("[data-grader-call]")?.textContent.trim() ?? "",
+    summary: document.querySelector("[data-grader-summary]")?.textContent.trim() ?? "",
+    output: document.querySelector("[data-grader-output]")?.textContent.trim() ?? ""
+  }));
+  report.graderInteraction = graderInteraction;
+
   await page.screenshot({
     path: path.join(screenshotDir, `public-opportunity-desk-${name}.png`),
     fullPage: false,
@@ -304,6 +329,7 @@ async function inspectViewport(name, viewport) {
   if (!report.hasMonitor) failures.push(`${name}: missing #monitor section`);
   if (!report.hasFdotReadiness) failures.push(`${name}: missing #fdot-readiness section`);
   if (!report.hasScenarios) failures.push(`${name}: missing #scenarios section`);
+  if (!report.hasFitGrader) failures.push(`${name}: missing #fit-grader section`);
   if (!report.hasPricing) failures.push(`${name}: missing #pricing section`);
   if (!report.hasStart) failures.push(`${name}: missing #start section`);
   if (report.sampleRows !== 5) failures.push(`${name}: expected 5 sample opportunity rows, saw ${report.sampleRows}`);
@@ -338,6 +364,13 @@ async function inspectViewport(name, viewport) {
   if (!report.hasFdotGate) failures.push(`${name}: missing FDOT no-send gate copy`);
   if (report.scenarioCards !== 6) failures.push(`${name}: expected 6 scenario cards, saw ${report.scenarioCards}`);
   if (!report.hasScenarioSpecifics) failures.push(`${name}: missing scenario-specific copy`);
+  if (report.fitGraderOptions !== 5) failures.push(`${name}: expected 5 fit-grader scenario options, saw ${report.fitGraderOptions}`);
+  if (report.fitGraderChecks !== 8) failures.push(`${name}: expected 8 fit-grader checks, saw ${report.fitGraderChecks}`);
+  if (report.fitGraderDefaultScore !== "2 / 8") failures.push(`${name}: expected default fit-grader score 2 / 8, saw ${report.fitGraderDefaultScore}`);
+  if (!report.hasFitGraderCopy) failures.push(`${name}: missing fit-grader copy or proof boundary`);
+  if (report.graderInteraction.score !== "5 / 8") failures.push(`${name}: expected surplus grader cap score 5 / 8, saw ${report.graderInteraction.score}`);
+  if (report.graderInteraction.call !== "Paper trade only.") failures.push(`${name}: expected surplus paper-trade-only call, saw ${report.graderInteraction.call}`);
+  if (!report.graderInteraction.output.includes("no-cash paper-trade rejection sheet")) failures.push(`${name}: surplus grader output missing no-cash paper-trade language`);
   if (!report.hasNoChargeValidation) failures.push(`${name}: missing no-charge validation copy`);
   if (!report.hasVerification) failures.push(`${name}: missing verification copy`);
   if (!report.hasNoPasswords) failures.push(`${name}: missing password boundary`);
