@@ -73,7 +73,7 @@ async function inspectViewport(name, viewport) {
   await page.waitForSelector("#source-graph .source-ladder", { timeout: 5000 });
   await page.waitForSelector("#fresh-queue .opportunity-table", { timeout: 5000 });
   await page.waitForSelector("#resilience-cdbg .opportunity-table", { timeout: 5000 });
-  await page.waitForSelector("#rejection-engine [data-rejection-engine]", { timeout: 5000 });
+  await page.waitForSelector("#rejection-engine [data-simple-engine]", { timeout: 5000 });
   await page.waitForSelector("#feedback-signal [data-feedback-mailto]", { timeout: 5000 });
   await page.waitForTimeout(250);
 
@@ -382,37 +382,35 @@ async function inspectViewport(name, viewport) {
         sourceLinks.includes("2 CFR 200.318"),
       rejectionEngineCards: document.querySelectorAll("#rejection-engine .pipeline-card").length,
       rejectionEngineRows: document.querySelectorAll("#rejection-engine tbody tr").length,
-      rejectionEngineOptions: document.querySelectorAll("#rejection-engine [data-engine-row] option").length,
+      rejectionEnginePicks: document.querySelectorAll("#rejection-engine [data-engine-pick]").length,
       rejectionEngineChecks: document.querySelectorAll("#rejection-engine [data-engine-check]").length,
       rejectionEngineDefaultCall: document.querySelector("[data-engine-call]")?.textContent.trim() ?? "",
-      rejectionEngineDefaultBlockers: document.querySelector("[data-engine-blockers]")?.textContent.trim() ?? "",
-      hasRejectionEngineSummary: text.includes("Live contractor rejection engine") &&
-        text.includes("16 official-source facts") &&
-        text.includes("6 agency families") &&
-        text.includes("11 rejection-grid rows") &&
+      rejectionEngineDefaultReason: document.querySelector("[data-engine-reason]")?.textContent.trim() ?? "",
+      hasRejectionEngineSummary: text.includes("Should we spend time on this public row?") &&
+        text.includes("Pick a row") &&
+        text.includes("Answer four yes/no checks") &&
+        text.includes("Get one call") &&
         text.includes("Proof status $0") &&
         text.includes("not income proof"),
-      hasRejectionEngineRows: text.includes("JAA-C-898") &&
-        text.includes("JAA-26-16-26201") &&
+      hasRejectionEngineRows: text.includes("Airport curb lane work") &&
+        text.includes("School vendor work") &&
         text.includes("FDOT-E21R4-R0") &&
-        text.includes("FDOT-E22A4-R0") &&
-        text.includes("FDOT-E21R6-R0") &&
-        text.includes("JTA-PROCUREMENT-PORTAL") &&
-        text.includes("CLAY-OPENGOV") &&
-        text.includes("NASSAU-PLANETBIDS") &&
         text.includes("SJC-SCHOOLS-VENDORLINK"),
-      hasRejectionEngineLogic: text.includes("prime, partner, watch, or skip") &&
+      hasRejectionEngineLogic: text.includes("Skip") &&
+        text.includes("Watch") &&
+        text.includes("Partner check") &&
+        text.includes("Make packet") &&
         text.includes("DemandStar") &&
-        text.includes("OpenGov") &&
-        text.includes("PlanetBids") &&
         text.includes("VendorLink") &&
         text.includes("CPP Online Ordering") &&
-        text.includes("Work Class Breakouts") &&
-        text.includes("purchase-order and clearance") &&
+        text.includes("We already do this work") &&
+        text.includes("Portal/package is accessible") &&
+        text.includes("Enough time remains") &&
+        text.includes("Risk is understood") &&
         text.includes("No supplier registration") &&
         text.includes("No gated package download"),
-      hasRejectionEngineQuestion: text.includes("Would this interactive rejection engine prevent") &&
-        text.includes("wasting time on a public row") &&
+      hasRejectionEngineQuestion: text.includes("Useful signal") &&
+        text.includes("Did this make the next step obvious?") &&
         text.includes("too generic or risky"),
       scenarioCards: document.querySelectorAll("#scenarios .scenario").length,
       hasScenarioSpecifics: text.includes("Six no-charge scenario lanes") &&
@@ -535,22 +533,18 @@ async function inspectViewport(name, viewport) {
   });
   report.feedbackInteraction = feedbackInteraction;
 
-  await page.selectOption("[data-engine-row]", "FDOT-E21R4-R0");
+  await page.click('[data-engine-pick="FDOT-E21R4-R0"]');
   const engineBoxes = await page.$$("[data-engine-check]");
   for (let index = 0; index < engineBoxes.length; index += 1) {
-    if (index < 6) {
-      await engineBoxes[index].check();
-    } else {
-      await engineBoxes[index].uncheck();
-    }
+    await engineBoxes[index].check();
   }
   const engineInteraction = await page.evaluate(() => ({
     call: document.querySelector("[data-engine-call]")?.textContent.trim() ?? "",
-    action: document.querySelector("[data-engine-action]")?.textContent.trim() ?? "",
     score: document.querySelector("[data-engine-score]")?.textContent.trim() ?? "",
-    blockers: document.querySelector("[data-engine-blockers]")?.textContent.trim() ?? "",
-    evidence: document.querySelector("[data-engine-evidence]")?.textContent.trim() ?? "",
-    killRule: document.querySelector("[data-engine-kill-rule]")?.textContent.trim() ?? "",
+    row: document.querySelector("[data-engine-row-label]")?.textContent.trim() ?? "",
+    reason: document.querySelector("[data-engine-reason]")?.textContent.trim() ?? "",
+    next: document.querySelector("[data-engine-next]")?.textContent.trim() ?? "",
+    stop: document.querySelector("[data-engine-stop]")?.textContent.trim() ?? "",
   }));
   report.engineInteraction = engineInteraction;
 
@@ -650,12 +644,12 @@ async function inspectViewport(name, viewport) {
   if (!report.hasResilienceCdbgReviewerAsk) failures.push(`${name}: missing Resilience/CDBG reviewer ask`);
   if (!report.hasResilienceCdbgBoundary) failures.push(`${name}: missing Resilience/CDBG no-contact boundary`);
   if (!report.hasResilienceCdbgSources) failures.push(`${name}: missing Resilience/CDBG official source links`);
-  if (report.rejectionEngineCards !== 4) failures.push(`${name}: expected 4 rejection-engine cards, saw ${report.rejectionEngineCards}`);
-  if (report.rejectionEngineRows !== 6) failures.push(`${name}: expected 6 rejection-engine table rows, saw ${report.rejectionEngineRows}`);
-  if (report.rejectionEngineOptions !== 9) failures.push(`${name}: expected 9 rejection-engine options, saw ${report.rejectionEngineOptions}`);
-  if (report.rejectionEngineChecks !== 8) failures.push(`${name}: expected 8 rejection-engine readiness checks, saw ${report.rejectionEngineChecks}`);
-  if (!report.rejectionEngineDefaultCall.includes("Watch")) failures.push(`${name}: expected default rejection-engine call to include Watch, saw ${report.rejectionEngineDefaultCall}`);
-  if (!report.rejectionEngineDefaultBlockers.includes("DemandStar")) failures.push(`${name}: default rejection-engine blockers missing DemandStar`);
+  if (report.rejectionEngineCards !== 3) failures.push(`${name}: expected 3 simplified rejection-engine cards, saw ${report.rejectionEngineCards}`);
+  if (report.rejectionEngineRows !== 0) failures.push(`${name}: expected no rejection-engine table rows after simplification, saw ${report.rejectionEngineRows}`);
+  if (report.rejectionEnginePicks !== 3) failures.push(`${name}: expected 3 plain rejection-engine picks, saw ${report.rejectionEnginePicks}`);
+  if (report.rejectionEngineChecks !== 4) failures.push(`${name}: expected 4 simplified rejection-engine checks, saw ${report.rejectionEngineChecks}`);
+  if (!report.rejectionEngineDefaultCall.includes("SKIP")) failures.push(`${name}: expected default rejection-engine call to include SKIP, saw ${report.rejectionEngineDefaultCall}`);
+  if (!report.rejectionEngineDefaultReason.includes("missing")) failures.push(`${name}: default rejection-engine reason should explain missing checks`);
   if (!report.hasRejectionEngineSummary) failures.push(`${name}: missing rejection-engine summary/proof copy`);
   if (!report.hasRejectionEngineRows) failures.push(`${name}: missing rejection-engine row IDs`);
   if (!report.hasRejectionEngineLogic) failures.push(`${name}: missing rejection-engine logic/platform/no-contact copy`);
@@ -681,12 +675,12 @@ async function inspectViewport(name, viewport) {
   if (!report.feedbackInteraction.decoded.includes("Main blocker: BCA/EHP unclear")) failures.push(`${name}: feedback mailto missing typed Resilience/CDBG blocker`);
   if (!report.feedbackInteraction.decoded.includes("Proof status: $0")) failures.push(`${name}: feedback mailto missing proof status`);
   if (!report.feedbackInteraction.decoded.includes("not a payment request, bid, portal action, or income proof")) failures.push(`${name}: feedback mailto missing proof boundary`);
-  if (!report.engineInteraction.call.includes("Partner-ready validation")) failures.push(`${name}: engine interaction expected Partner-ready validation, saw ${report.engineInteraction.call}`);
-  if (!report.engineInteraction.action.includes("validate only")) failures.push(`${name}: engine interaction missing validate-only action`);
-  if (report.engineInteraction.score !== "6 / 8") failures.push(`${name}: engine interaction expected score 6 / 8, saw ${report.engineInteraction.score}`);
-  if (!report.engineInteraction.blockers.includes("GPS/video mapping capability")) failures.push(`${name}: engine interaction missing FDOT blocker`);
-  if (!report.engineInteraction.evidence.includes("equipment proof")) failures.push(`${name}: engine interaction missing FDOT evidence`);
-  if (!report.engineInteraction.killRule.includes("video/GPS inspection")) failures.push(`${name}: engine interaction missing FDOT kill rule`);
+  if (!report.engineInteraction.call.includes("MAKE PACKET")) failures.push(`${name}: engine interaction expected MAKE PACKET, saw ${report.engineInteraction.call}`);
+  if (report.engineInteraction.score !== "4 / 4") failures.push(`${name}: engine interaction expected score 4 / 4, saw ${report.engineInteraction.score}`);
+  if (!report.engineInteraction.row.includes("FDOT stormwater inspection")) failures.push(`${name}: engine interaction missing plain FDOT row label`);
+  if (!report.engineInteraction.reason.includes("source-backed one-page packet")) failures.push(`${name}: engine interaction reason should name one-page packet`);
+  if (!report.engineInteraction.next.includes("Make a no-charge validation packet")) failures.push(`${name}: engine interaction next step should be a no-charge packet`);
+  if (!report.engineInteraction.stop.includes("No bid")) failures.push(`${name}: engine interaction stop boundary missing No bid`);
   if (!report.hasNoChargeValidation) failures.push(`${name}: missing no-charge validation copy`);
   if (!report.hasVerification) failures.push(`${name}: missing verification copy`);
   if (!report.hasNoPasswords) failures.push(`${name}: missing password boundary`);

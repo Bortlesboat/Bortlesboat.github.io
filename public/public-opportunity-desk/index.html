@@ -718,7 +718,7 @@
 
       .engine-shell {
         display: grid;
-        grid-template-columns: minmax(0, 0.95fr) minmax(340px, 0.62fr);
+        grid-template-columns: minmax(0, 0.8fr) minmax(320px, 0.54fr);
         gap: 22px;
         align-items: start;
         min-width: 0;
@@ -727,8 +727,83 @@
 
       .engine-controls {
         display: grid;
-        gap: 16px;
+        gap: 18px;
         min-width: 0;
+      }
+
+      .engine-pick-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .engine-pick {
+        appearance: none;
+        min-height: 150px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--white);
+        color: var(--ink);
+        padding: 16px;
+        text-align: left;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .engine-pick[aria-pressed="true"] {
+        border-color: var(--green);
+        background: #f8faf4;
+        box-shadow: inset 0 0 0 2px rgba(36, 92, 72, 0.12);
+      }
+
+      .engine-pick strong,
+      .engine-pick span,
+      .engine-pick small {
+        display: block;
+      }
+
+      .engine-pick strong {
+        font-size: 1rem;
+        line-height: 1.2;
+      }
+
+      .engine-pick span {
+        margin-top: 8px;
+        color: var(--green);
+        font-size: 0.8rem;
+        font-weight: 800;
+      }
+
+      .engine-pick small {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.35;
+      }
+
+      .engine-check-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .engine-check-grid label {
+        display: grid;
+        grid-template-columns: 20px 1fr;
+        gap: 10px;
+        align-items: start;
+        min-height: 62px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--white);
+        padding: 12px;
+        color: #28322e;
+        font-weight: 800;
+      }
+
+      .engine-check-grid input {
+        margin-top: 3px;
+        accent-color: var(--green);
       }
 
       .engine-result {
@@ -744,7 +819,8 @@
       .engine-result h3 {
         margin: 0 0 12px;
         color: var(--green-2);
-        font-size: 1.45rem;
+        font-size: 2rem;
+        line-height: 1;
       }
 
       .engine-scoreline {
@@ -773,18 +849,12 @@
         color: var(--ink);
       }
 
-      .engine-list {
-        margin: 8px 0 14px;
-        padding-left: 18px;
-        color: #2b342f;
-      }
-
-      .engine-list li + li {
-        margin-top: 5px;
-      }
-
-      #rejection-engine .opportunity-table td {
-        overflow-wrap: anywhere;
+      .engine-kicker {
+        margin: 0 0 8px;
+        color: var(--orange);
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
       }
 
       .feedback-signal {
@@ -1031,6 +1101,8 @@
         .workbook-library,
         .grader-shell,
         .engine-shell,
+        .engine-pick-grid,
+        .engine-check-grid,
         .source-graph-shell,
         .source-family-grid,
         .check-grid,
@@ -1973,135 +2045,86 @@
     <section class="pipeline-band" id="rejection-engine">
       <div class="wrap">
         <div class="section-head">
-          <h2>Live contractor rejection engine.</h2>
+          <h2>Should we spend time on this public row?</h2>
           <p>
-            This is the row-specific next step: choose a public contractor source row, mark the evidence that already
-            exists, and see the no-contact prime, partner, watch, or skip call change before any portal action.
-            Summary: 16 official-source facts, 6 agency families, 11 rejection-grid rows, Proof status $0, not income proof.
+            Pick a row. Answer four yes/no checks. Get one call. This is a plain-English screen for Skip, Watch,
+            Partner check, or Make packet. Proof status $0, not income proof.
           </p>
         </div>
-        <div class="pipeline-grid" aria-label="Contractor rejection-engine summary">
+        <div class="pipeline-grid" aria-label="Simple rejection-engine summary">
           <div class="pipeline-card">
-            <strong>16</strong>
-            <span>official-source facts</span>
-            <p>Current facts from JAA, FDOT, JTA, Clay, Nassau, and St. Johns Schools procurement surfaces.</p>
+            <strong>1</strong>
+            <span>Pick a row</span>
+            <p>Choose a real public-source example with the agency and row ID visible.</p>
           </div>
           <div class="pipeline-card">
-            <strong>6</strong>
-            <span>agency families</span>
-            <p>DemandStar, CPP Online Ordering, OpenGov, PlanetBids, and VendorLink gates are separated.</p>
+            <strong>4</strong>
+            <span>Answer four yes/no checks</span>
+            <p>Capability, access, time, and risk decide whether this deserves more work.</p>
           </div>
           <div class="pipeline-card">
-            <strong>11</strong>
-            <span>rejection-grid rows</span>
-            <p>The model rejects short-deadline, portal-hidden, clearance, bond, and purchase-order traps first.</p>
-          </div>
-          <div class="pipeline-card">
-            <strong>$0</strong>
-            <span>Proof status $0</span>
-            <p>This is not income proof. It is no-charge validation of the decision logic.</p>
+            <strong>1</strong>
+            <span>Get one call</span>
+            <p>The output is the next no-contact move, not a bid plan.</p>
           </div>
         </div>
-        <div class="engine-shell" data-rejection-engine>
-          <form class="engine-controls" aria-label="Contractor bid/no-bid rejection engine">
-            <div class="field-row">
-              <label for="engine-row">Public source row</label>
-              <select id="engine-row" data-engine-row>
-                <option value="JAA-C-898">JAA-C-898 emergency curbside lane modifications</option>
-                <option value="JAA-26-16-26201">JAA-26-16-26201 waste and recycling services</option>
-                <option value="FDOT-E21R4-R0">FDOT-E21R4-R0 storm water clean, inspect, video, and map</option>
-                <option value="FDOT-E22A4-R0">FDOT-E22A4-R0 Districtwide BDI sod</option>
-                <option value="FDOT-E21R6-R0">FDOT-E21R6-R0 St. Johns BDI concrete repair</option>
-                <option value="JTA-PROCUREMENT-PORTAL">JTA-PROCUREMENT-PORTAL OpenGov process</option>
-                <option value="CLAY-OPENGOV">CLAY-OPENGOV electronic procurement process</option>
-                <option value="NASSAU-PLANETBIDS">NASSAU-PLANETBIDS electronic procurement process</option>
-                <option value="SJC-SCHOOLS-VENDORLINK">SJC-SCHOOLS-VENDORLINK school-district monitor</option>
-              </select>
+        <div class="engine-shell" data-simple-engine>
+          <form class="engine-controls" aria-label="Simple public-row decision screen">
+            <div>
+              <div class="engine-kicker">Pick a row</div>
+              <div class="engine-pick-grid" role="group" aria-label="Public source examples">
+                <button class="engine-pick" type="button" data-engine-pick="JAA-C-898" aria-pressed="true">
+                  <strong>Airport curb lane work</strong>
+                  <span>JAA-C-898 / DemandStar</span>
+                  <small>Construction-looking row with airport, traffic, package, and bond unknowns.</small>
+                </button>
+                <button class="engine-pick" type="button" data-engine-pick="FDOT-E21R4-R0" aria-pressed="false">
+                  <strong>FDOT stormwater inspection</strong>
+                  <span>FDOT-E21R4-R0 / CPP Online Ordering</span>
+                  <small>Possible partner lane if the contractor already has video/GPS capability.</small>
+                </button>
+                <button class="engine-pick" type="button" data-engine-pick="SJC-SCHOOLS-VENDORLINK" aria-pressed="false">
+                  <strong>School vendor work</strong>
+                  <span>SJC-SCHOOLS-VENDORLINK / VendorLink</span>
+                  <small>Process row with purchase-order and clearance traps.</small>
+                </button>
+              </div>
             </div>
-            <div class="check-grid" aria-label="Readiness evidence checks">
-              <label><input type="checkbox" data-engine-check value="capability" /> Existing capability matches the work</label>
-              <label><input type="checkbox" data-engine-check value="portal" /> Portal or package gate is already clear</label>
-              <label><input type="checkbox" data-engine-check value="deadline" /> Deadline window is not compressed</label>
-              <label><input type="checkbox" data-engine-check value="workclass" /> Work class, license, BDI, or credential fit is known</label>
-              <label><input type="checkbox" data-engine-check value="cash" /> Bond, insurance, bid security, or cash exposure is known</label>
-              <label><input type="checkbox" data-engine-check value="capacity" /> Crew, fleet, equipment, or site access capacity is known</label>
-              <label><input type="checkbox" data-engine-check value="documents" /> Public docs, addenda, Q&A, or source updates are available</label>
-              <label><input type="checkbox" data-engine-check value="reviewer" /> Qualified operator or advisor can judge usefulness</label>
+            <div>
+              <div class="engine-kicker">Answer four checks</div>
+              <div class="engine-check-grid">
+                <label><input type="checkbox" data-engine-check value="capability" /> We already do this work</label>
+                <label><input type="checkbox" data-engine-check value="access" /> Portal/package is accessible</label>
+                <label><input type="checkbox" data-engine-check value="time" /> Enough time remains</label>
+                <label><input type="checkbox" data-engine-check value="risk" /> Risk is understood</label>
+              </div>
             </div>
           </form>
           <aside class="engine-result" aria-live="polite">
-            <h3 data-engine-call>Watch.</h3>
-            <p><b>Action:</b> <span data-engine-action>validate only</span></p>
+            <div class="engine-kicker">Current call</div>
+            <h3 data-engine-call>SKIP FOR NOW</h3>
             <div class="engine-scoreline">
-              <span>Readiness <b data-engine-score>0 / 8</b></span>
-              <span data-engine-fit>watch</span>
+              <span><b data-engine-score>0 / 4</b> checks true</span>
+              <span data-engine-row-label>Airport curb lane work</span>
             </div>
-            <p><b>Why:</b> <span data-engine-why>Current row, but airport curbside work hides staging, traffic-control, security, bond, insurance, and package requirements.</span></p>
-            <p><b>Blockers:</b></p>
-            <ul class="engine-list" data-engine-blockers>
-              <li>DemandStar/electronic response</li>
-              <li>airport security and staging</li>
-              <li>traffic control and public access</li>
-            </ul>
-            <p><b>Evidence needed:</b> <span data-engine-evidence>public bid details or approved package review; contractor capability profile; bond/insurance evidence</span></p>
-            <p><b>Kill rule:</b> <span data-engine-kill-rule>Skip if the contractor cannot show airport/traffic/staging readiness or if package access is required and not approved.</span></p>
-            <p><b>Boundary:</b> No supplier registration, no portal login, no gated package download, no bid, no quote, no proposal, no invoice, and no payment request.</p>
+            <p data-engine-reason>Too many checks are missing to spend time on this row yet.</p>
+            <p><b>Next:</b> <span data-engine-next>Park it and keep watching the official source.</span></p>
+            <p><b>Stop:</b> <span data-engine-stop>No bid, no portal login, no gated package download, no agency contact, no contractor contact, and no invoice.</span></p>
           </aside>
         </div>
-        <table class="opportunity-table" aria-label="Contractor rejection-engine source families">
-          <thead>
-            <tr>
-              <th>Source family</th>
-              <th>What the engine tests</th>
-              <th>Default disposition</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>JAA rows: JAA-C-898, JAA-26-16-26201, and JAA-DEMANDSTAR</td>
-              <td>DemandStar, electronic solicitation submission, 2 p.m. cutoff, airport access, service scale, and deadline compression.</td>
-              <td class="fit">Validate or benchmark only.</td>
-            </tr>
-            <tr>
-              <td>FDOT rows: FDOT-E21R4-R0, FDOT-E22A4-R0, FDOT-E21R6-R0, and FDOT-LETTING-DOCS</td>
-              <td>CPP Online Ordering, Work Class Breakouts, BDI status, right-of-way work, GPS/video mapping capability, and amendments.</td>
-              <td class="fit">Partner or watch until evidence is source-complete.</td>
-            </tr>
-            <tr>
-              <td>JTA-PROCUREMENT-PORTAL and JTA-FORMAL-APPROVAL</td>
-              <td>OpenGov, electronic workflow, formal approval, public notice monitoring, and Board/committee timing.</td>
-              <td class="fit">Process reference only.</td>
-            </tr>
-            <tr>
-              <td>CLAY-OPENGOV and CLAY-ELECTRONIC-DUE</td>
-              <td>OpenGov transition, electronic-only handling, addenda notification, and row-specific public scope gaps.</td>
-              <td class="fit">Process reference only.</td>
-            </tr>
-            <tr>
-              <td>NASSAU-PLANETBIDS and NASSAU-COMPETITION</td>
-              <td>PlanetBids, electronic response, competition density, state/federal procurement rules, and row-specific fit gaps.</td>
-              <td class="fit">Watch until a specific row has a real user.</td>
-            </tr>
-            <tr>
-              <td>SJC-SCHOOLS-VENDORLINK, SJC-SCHOOLS-PO-RISK, and SJC-SCHOOLS-CLEARANCE</td>
-              <td>VendorLink, purchase-order and clearance traps, school-ground access, nonpayment risk, and threshold rules.</td>
-              <td class="fit">Skip any work-now story without PO authorization.</td>
-            </tr>
-          </tbody>
-        </table>
         <div class="pipeline-notes">
           <div class="pipeline-note">
-            <h3>How to read it</h3>
+            <h3>What this is doing</h3>
             <p>
-              The engine is not asking who to email. It asks which official-source blockers are already resolved.
-              More checked evidence can upgrade a row toward validation, but hidden portal/package or credential gaps keep it in watch or skip.
+              It turns official-source rows into a simple time-spend decision. DemandStar, CPP Online Ordering, and
+              VendorLink are treated as blockers unless the business already has the access and evidence.
             </p>
           </div>
           <div class="pipeline-note">
-            <h3>Validation question</h3>
+            <h3>Useful signal</h3>
             <p>
-              Would this interactive rejection engine prevent a small contractor, advisor, or procurement reviewer from
-              wasting time on a public row, or is it still too generic or risky?
+              Did this make the next step obvious? If not, the tool is too generic or risky and should be narrowed again.
+              No supplier registration. No gated package download. No payment request.
             </p>
           </div>
         </div>
@@ -2829,117 +2852,88 @@
         render();
       }
 
-      const rejectionEngine = document.querySelector("[data-rejection-engine]");
+      const rejectionEngine = document.querySelector("[data-simple-engine]");
       if (rejectionEngine) {
-        const rowSelect = rejectionEngine.querySelector("[data-engine-row]");
+        const picks = [...rejectionEngine.querySelectorAll("[data-engine-pick]")];
         const checks = [...rejectionEngine.querySelectorAll("[data-engine-check]")];
         const callEl = rejectionEngine.querySelector("[data-engine-call]");
-        const actionEl = rejectionEngine.querySelector("[data-engine-action]");
         const scoreEl = rejectionEngine.querySelector("[data-engine-score]");
-        const fitEl = rejectionEngine.querySelector("[data-engine-fit]");
-        const whyEl = rejectionEngine.querySelector("[data-engine-why]");
-        const blockersEl = rejectionEngine.querySelector("[data-engine-blockers]");
-        const evidenceEl = rejectionEngine.querySelector("[data-engine-evidence]");
-        const killRuleEl = rejectionEngine.querySelector("[data-engine-kill-rule]");
+        const rowLabelEl = rejectionEngine.querySelector("[data-engine-row-label]");
+        const reasonEl = rejectionEngine.querySelector("[data-engine-reason]");
+        const nextEl = rejectionEngine.querySelector("[data-engine-next]");
+        const stopEl = rejectionEngine.querySelector("[data-engine-stop]");
+        let selected = "JAA-C-898";
 
         const rows = {
           "JAA-C-898": {
-            fit: "watch",
-            action: "validate only",
-            why: "Current row, but airport curbside work hides staging, traffic-control, security, bond, insurance, and package requirements.",
-            blockers: ["DemandStar/electronic response", "airport security and staging", "traffic control and public access", "bond/insurance unknown", "package details not reviewed"],
-            evidence: "public bid details or approved package review; contractor capability profile; bond/insurance evidence",
-            killRule: "Skip if the contractor cannot show airport/traffic/staging readiness or if package access is required and not approved."
-          },
-          "JAA-26-16-26201": {
-            fit: "skip",
-            action: "benchmark only",
-            why: "Near-term 2026-05-19 2 p.m. deadline, fleet scale, airport service requirements, and electronic response make this too compressed.",
-            blockers: ["short deadline", "fleet scale unknown", "airport service requirements", "DemandStar/electronic response", "package details not reviewed"],
-            evidence: "incumbent/service capability benchmark; fleet and insurance profile",
-            killRule: "Skip unless a qualified waste-service operator is already known and approved for separate review."
+            label: "Airport curb lane work",
+            skipReason: "Airport traffic, DemandStar package, bond, and staging checks are still missing.",
+            watchReason: "Some basics are known, but this row still needs package and site-risk clarity.",
+            readyReason: "Enough is known to make a source-backed one-page packet without touching DemandStar.",
+            next: "Make a no-charge validation packet only if an operator can confirm airport and traffic readiness.",
+            stop: "No bid, no DemandStar login, no gated package download, no agency contact, and no invoice."
           },
           "FDOT-E21R4-R0": {
-            fit: "partner",
-            action: "validate only",
-            why: "Specialty partner path if a contractor has CCTV/GPS stormwater inspection capability and FDOT work-class readiness.",
-            blockers: ["Work Class Breakouts", "CPP Online Ordering", "GPS/video mapping capability", "multi-county coverage", "amendment/Q&A status"],
-            evidence: "work class fit; equipment proof; coverage and crew capacity",
-            killRule: "Skip prime path if video/GPS inspection or FDOT work-class fit is missing."
-          },
-          "FDOT-E22A4-R0": {
-            fit: "watch",
-            action: "validate only",
-            why: "BDI can be a better small-business angle, but districtwide sod requires eligibility, supply, crews, and schedule control.",
-            blockers: ["BDI eligibility", "sod supply", "districtwide travel", "work-class fit", "CPP/amendment status"],
-            evidence: "BDI status evidence; supplier and crew capacity; work-class check",
-            killRule: "Skip if BDI eligibility or districtwide capacity is unknown."
-          },
-          "FDOT-E21R6-R0": {
-            fit: "partner",
-            action: "validate only",
-            why: "Concrete repair is tangible, but right-of-way, work class, safety, BDI, and CPP gates still decide fit.",
-            blockers: ["BDI eligibility", "concrete crew capability", "right-of-way safety", "Work Class Breakouts", "CPP Online Ordering"],
-            evidence: "work-class fit; concrete crew evidence; safety and traffic-control plan",
-            killRule: "Skip if concrete/right-of-way experience or BDI fit is missing."
-          },
-          "JTA-PROCUREMENT-PORTAL": {
-            fit: "watch",
-            action: "process reference",
-            why: "JTA validates OpenGov and electronic workflow friction, but no specific current contractor row is selected here.",
-            blockers: ["OpenGov portal", "current row not selected", "formal approval process", "public notice monitoring", "board/committee timing"],
-            evidence: "specific JTA row; approval path; scope/category fit",
-            killRule: "Do not turn the portal into a prospecting list; use only as a process check until a row is verified."
-          },
-          "CLAY-OPENGOV": {
-            fit: "watch",
-            action: "process reference",
-            why: "Clay validates OpenGov readiness and electronic-only handling, but portal action is outside the no-contact boundary.",
-            blockers: ["OpenGov account boundary", "electronic-only response", "addenda notifications", "row-specific scope unknown", "local purchasing rules"],
-            evidence: "specific open row; public scope text; contractor capability profile",
-            killRule: "Stop before portal account activity or row-specific response work."
-          },
-          "NASSAU-PLANETBIDS": {
-            fit: "watch",
-            action: "process reference",
-            why: "Nassau validates PlanetBids and competition density, but no specific fit row is selected.",
-            blockers: ["PlanetBids platform", "competition density", "state/federal procurement rules", "row-specific scope unknown", "award criteria unknown"],
-            evidence: "specific PlanetBids row; scope/category; capability and bond/insurance profile",
-            killRule: "Stop if the output becomes portal monitoring without a clear user or usefulness proof."
+            label: "FDOT stormwater inspection",
+            skipReason: "Video/GPS equipment, CPP access, time, or work-class risk is still missing.",
+            watchReason: "This could become a partner check, but CPP Online Ordering or capability evidence is not clear yet.",
+            readyReason: "Enough is known to make a source-backed one-page packet for a stormwater inspection partner path.",
+            next: "Make a no-charge validation packet around capability, CPP access, work class, and coverage.",
+            stop: "No bid, no CPP Online Ordering action, no gated package download, no contractor contact, and no invoice."
           },
           "SJC-SCHOOLS-VENDORLINK": {
-            fit: "watch",
-            action: "process reference",
-            why: "VendorLink is a real monitor surface, but school-district work adds purchase-order and clearance traps.",
-            blockers: ["VendorLink monitor responsibility", "purchase-order and clearance", "contractor background screening", "insurance/threshold rules", "specific row unknown"],
-            evidence: "specific VendorLink row; clearance need; purchase-order and threshold category",
-            killRule: "Skip any school-ground work path unless clearance and PO authorization risks are explicit."
+            label: "School vendor work",
+            skipReason: "Purchase-order, clearance, VendorLink, or school-access risk is still missing.",
+            watchReason: "This stays a process watch until PO authorization and clearance risk are clear.",
+            readyReason: "Enough is known to make a source-backed one-page packet about PO, clearance, and VendorLink risk.",
+            next: "Make a no-charge validation packet only for the process risk, not a work-now pitch.",
+            stop: "No work-now claim, no VendorLink login, no school contact, no contractor contact, and no invoice."
           }
         };
 
-        const labelCall = (fit, score) => {
-          if (fit === "skip") return "Skip / benchmark.";
-          if (score >= 6 && fit === "partner") return "Partner-ready validation.";
-          if (score >= 6 && fit === "watch") return "Watch-ready validation.";
-          if (score >= 4 && fit === "partner") return "Partner or watch.";
-          if (score >= 3) return "Watch.";
-          return "Watch.";
-        };
-
         const renderEngine = () => {
-          const row = rows[rowSelect.value];
           const score = checks.filter((check) => check.checked).length;
-          callEl.textContent = labelCall(row.fit, score);
-          actionEl.textContent = row.action;
-          scoreEl.textContent = `${score} / 8`;
-          fitEl.textContent = row.fit;
-          whyEl.textContent = row.why;
-          blockersEl.innerHTML = row.blockers.map((blocker) => `<li>${blocker}</li>`).join("");
-          evidenceEl.textContent = row.evidence;
-          killRuleEl.textContent = row.killRule;
+          const row = rows[selected];
+          let call = "SKIP FOR NOW";
+          let reason = row.skipReason;
+          let next = "Park it and keep watching the official source.";
+
+          if (score === 2) {
+            call = "WATCH";
+            reason = row.watchReason;
+            next = "Keep it on the monitor; do not contact anyone yet.";
+          } else if (score === 3) {
+            call = "PARTNER CHECK";
+            reason = "This may be useful, but one blocker still needs evidence before a packet is worth making.";
+            next = "Write the missing blocker as one plain question for a qualified reviewer.";
+          } else if (score === 4) {
+            call = "MAKE PACKET";
+            reason = row.readyReason;
+            next = row.next;
+          }
+
+          picks.forEach((pick) => {
+            const active = pick.dataset.enginePick === selected;
+            pick.setAttribute("aria-pressed", active ? "true" : "false");
+          });
+
+          callEl.textContent = call;
+          scoreEl.textContent = `${score} / 4`;
+          rowLabelEl.textContent = row.label;
+          reasonEl.textContent = reason;
+          nextEl.textContent = next;
+          stopEl.textContent = row.stop;
         };
 
-        rowSelect.addEventListener("change", renderEngine);
+        picks.forEach((pick) => {
+          pick.addEventListener("click", () => {
+            selected = pick.dataset.enginePick;
+            checks.forEach((check) => {
+              check.checked = false;
+            });
+            renderEngine();
+          });
+        });
         checks.forEach((check) => check.addEventListener("change", renderEngine));
         renderEngine();
       }
