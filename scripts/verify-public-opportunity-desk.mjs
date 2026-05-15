@@ -96,6 +96,18 @@ async function inspectViewport(name, viewport) {
       title: document.title,
       description: document.querySelector('meta[name="description"]')?.getAttribute("content") ?? "",
       hasHeroVisual: Boolean(heroReport && heroReport.width > 250 && heroReport.height > 250),
+      hasContractorTriagePositioning: text.includes("Small-contractor public bid triage") &&
+        text.includes("For small North Florida contractors") &&
+        text.includes("Skip, watch, partner, or make a packet") &&
+        text.includes("before you touch a portal"),
+      hasAudienceGoalPositioning: text.includes("Target audience") &&
+        text.includes("small North Florida contractors") &&
+        text.includes("The goal") &&
+        text.includes("prevent wasted bid time") &&
+        text.includes("one no-contact validation packet"),
+      hasScopeBoundaryPositioning: text.includes("not a grant marketplace") &&
+        text.includes("not a bid submission service") &&
+        text.includes("not a lead list"),
       hasSample: Boolean(document.querySelector("#sample")),
       hasPipeline: Boolean(document.querySelector("#pipeline")),
       hasValidation: Boolean(document.querySelector("#validation")),
@@ -563,9 +575,12 @@ async function inspectViewport(name, viewport) {
   });
   await page.close();
 
-  if (report.title !== "North Florida Public Opportunity Desk | Andrew Barnes") failures.push(`${name}: unexpected title ${report.title}`);
-  if (!report.description.includes("public opportunity validation")) failures.push(`${name}: missing useful meta description`);
+  if (report.title !== "Small Contractor Public Bid Triage | Andrew Barnes") failures.push(`${name}: unexpected title ${report.title}`);
+  if (!report.description.includes("small North Florida contractors") || !report.description.includes("skip, watch, partner, or make a packet")) failures.push(`${name}: missing contractor triage meta description`);
   if (!report.hasHeroVisual) failures.push(`${name}: missing substantial hero report visual`);
+  if (!report.hasContractorTriagePositioning) failures.push(`${name}: missing clear small-contractor bid-triage hero positioning`);
+  if (!report.hasAudienceGoalPositioning) failures.push(`${name}: missing target audience and goal positioning`);
+  if (!report.hasScopeBoundaryPositioning) failures.push(`${name}: missing scope boundary positioning`);
   if (!report.hasSample) failures.push(`${name}: missing #sample section`);
   if (!report.hasPipeline) failures.push(`${name}: missing #pipeline section`);
   if (!report.hasValidation) failures.push(`${name}: missing #validation section`);
