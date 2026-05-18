@@ -1,6 +1,12 @@
 import { readFile } from "node:fs/promises";
 
-import { analyzeCsvText } from "../public/variance-memo/src/variance.js";
+import {
+  analyzeCsvText,
+  analyzeVariance,
+  buildBoardMemo,
+  normalizeFinancialRecords,
+  rowsToObjects,
+} from "../public/variance-memo/src/variance.js";
 
 const root = new URL("../", import.meta.url);
 
@@ -61,6 +67,35 @@ if (result.analysis.variances.length !== 2) {
 
 if (!result.memo.markdown.includes("## Board Commentary") || !result.memo.markdown.includes("[row 2]")) {
   throw new Error("Generated memo is missing board commentary or source row references");
+}
+
+const preambleRows = [
+  ["Monthly Board Package"],
+  ["Generated", "2026-02-05"],
+  ["Account", "Department", "Category", "Period", "Actual", "Budget", "Forecast"],
+  ["Implementation revenue", "Services", "Revenue", "Feb 2026", "$84,000", "$70,000", "$150,000"],
+];
+const preambleResult = analyzeVariance(normalizeFinancialRecords(rowsToObjects(preambleRows)), {
+  dollarThreshold: 5000,
+  percentThreshold: 0.1,
+});
+const preambleMemo = buildBoardMemo(preambleResult);
+if (!preambleMemo.markdown.includes("Implementation revenue") || preambleMemo.markdown.includes("Monthly Board Package")) {
+  throw new Error("Header preamble handling is not anchored to the uploaded file rows");
+}
+
+const noAnchorResult = analyzeVariance(
+  normalizeFinancialRecords([
+    {
+      "Jan 2026 Actual": "$120,000",
+      "Jan 2026 Budget": "$100,000",
+    },
+  ]),
+  { dollarThreshold: 5000, percentThreshold: 0.1 },
+);
+const noAnchorMemo = buildBoardMemo(noAnchorResult);
+if (noAnchorResult.variances.length !== 0 || noAnchorMemo.markdown.includes("Unspecified account")) {
+  throw new Error("Verifier caught invented commentary without an account anchor");
 }
 
 console.log("variance-memo verifier ok: public files, sitemap, project card, deterministic analysis, and privacy guardrails passed");

@@ -2,7 +2,7 @@ const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
 
 const FIELD_SYNONYMS = {
-  account: ["account", "gl account", "gl account name", "line item", "line_item", "name"],
+  account: ["account", "account name", "account description", "description", "gl account", "gl account name", "line item", "line_item", "name", "p&l line", "pl line", "financial statement line"],
   category: ["category", "type", "p&l category", "pl category", "statement category"],
   department: ["department", "dept", "function", "team", "cost center", "cost centre"],
   period: ["period", "month", "date", "fiscal period"],
@@ -72,12 +72,13 @@ export function rowsToObjects(rows) {
     return [];
   }
 
-  const headers = rows[0].map((header, index) => String(header || `Column ${index + 1}`).trim());
+  const headerIndex = findHeaderRowIndex(rows);
+  const headers = rows[headerIndex].map((header, index) => String(header || `Column ${index + 1}`).trim());
   return rows
-    .slice(1)
+    .slice(headerIndex + 1)
     .filter((row) => row.some((cell) => String(cell ?? "").trim().length > 0))
     .map((row, rowIndex) => {
-      const record = { __sourceRow: rowIndex + 2 };
+      const record = { __sourceRow: headerIndex + rowIndex + 2 };
       for (let index = 0; index < headers.length; index += 1) {
         record[headers[index]] = row[index] ?? "";
       }
@@ -129,6 +130,9 @@ export function normalizeFinancialRecords(records) {
 
   const headers = collectHeaders(records);
   const fieldMap = buildFieldMap(headers);
+  if (!fieldMap.account) {
+    return [];
+  }
   const hasVerticalShape = Boolean(fieldMap.period && (fieldMap.actual || fieldMap.budget || fieldMap.forecast || fieldMap.priorYear));
 
   if (hasVerticalShape) {
@@ -199,7 +203,7 @@ export function buildBoardMemo(analysis) {
 
   lines.push("## Executive Summary");
   if (variances.length === 0) {
-    lines.push("- No material actual-vs-budget variances were detected using the selected thresholds.");
+    lines.push("- No material actual-vs-budget variances were detected using the selected thresholds, or the importer could not map account, actual, and budget columns from the uploaded file.");
   } else {
     lines.push(`- ${variances.length} material variance${variances.length === 1 ? "" : "s"} were detected across the uploaded file.`);
     if (topFavorable[0]) {
@@ -229,7 +233,7 @@ export function buildBoardMemo(analysis) {
   lines.push("");
   lines.push("## Board Commentary");
   if (variances.length === 0) {
-    lines.push("Actuals landed close to plan across the uploaded lines. No board-level variance explanation was generated without a material variance anchor.");
+    lines.push("No board-level variance explanation was generated without a material variance anchor from mapped account, actual, and budget rows.");
   } else {
     for (const variance of variances.slice(0, 4)) {
       lines.push(`${commentarySentence(variance)}`);
@@ -346,6 +350,38 @@ function normalizeWideRecords(records, headers, fieldMap) {
   }
 
   return rows;
+}
+
+function findHeaderRowIndex(rows) {
+  let bestIndex = 0;
+  let bestScore = -1;
+  const limit = Math.min(rows.length, 25);
+
+  for (let index = 0; index < limit; index += 1) {
+    const row = rows[index] ?? [];
+    const score = scoreHeaderRow(row);
+    if (score > bestScore) {
+      bestIndex = index;
+      bestScore = score;
+    }
+  }
+
+  return bestScore >= 2 ? bestIndex : 0;
+}
+
+function scoreHeaderRow(row) {
+  const values = row.map((cell) => String(cell ?? "").trim()).filter(Boolean);
+  if (values.length < 2) {
+    return 0;
+  }
+
+  const fieldMap = buildFieldMap(values);
+  const mappedFields = Object.keys(fieldMap).length;
+  const measureHeaders = values.filter((value) => parseMeasureHeader(value)).length;
+  const hasAccount = fieldMap.account ? 4 : 0;
+  const hasComparableMeasures = fieldMap.actual && fieldMap.budget ? 4 : 0;
+
+  return mappedFields + measureHeaders * 2 + hasAccount + hasComparableMeasures;
 }
 
 function parseMeasureHeader(header) {
