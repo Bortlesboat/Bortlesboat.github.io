@@ -28,7 +28,7 @@ const requiredTokens = [
   ["html", "previewRows"],
   ["html", "chooseFileButton"],
   ["html", "Load demo sample"],
-  ["html", "app.js?v=upload-ui-20260518"],
+  ["html", "app.js?v=messy-v02-20260518"],
   ["app", "synthetic-saas-pl.csv"],
   ["app", "analyzeFile"],
   ["app", "renderImportAudit"],
