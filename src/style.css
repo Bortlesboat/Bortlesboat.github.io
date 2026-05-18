@@ -858,3 +858,371 @@ p {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* Professional-facing polish pass: tighter executive portfolio surface. */
+:root {
+  --paper: #f4f1ea;
+  --paper-strong: #fffdf8;
+  --paper-soft: #ebe5da;
+  --ink: #202226;
+  --ink-soft: #4a4d52;
+  --muted: #6f7176;
+  --line: #d9d0c2;
+  --line-strong: #2f343a;
+  --navy: #1f2e43;
+  --copper: #a75d38;
+  --copper-wash: #f0dfd2;
+  --brass: #bd8741;
+  --amber: #d8a24a;
+  --brick: #913f35;
+  --blue: #355c72;
+  --slate: #384554;
+  --shadow: 0 1.25rem 3.5rem rgba(35, 38, 43, 0.1);
+}
+
+body {
+  background:
+    linear-gradient(90deg, rgba(255, 253, 248, 0.96) 0 52%, rgba(235, 229, 218, 0.82) 52% 100%),
+    var(--paper);
+  font-family: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+body::before {
+  opacity: 0.08;
+}
+
+.site-top,
+.hero,
+.evidence-board,
+.artifact-section,
+.case-section,
+.proof-split,
+.contact-panel,
+.operator-strip {
+  width: min(76rem, calc(100% - 2rem));
+}
+
+.site-top {
+  border-bottom: 1px solid var(--line);
+  padding: 0.85rem 0;
+}
+
+.wordmark {
+  font-family: "Azeret Mono", ui-monospace, monospace;
+  font-size: 0.78rem;
+}
+
+.wordmark-mark {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.2rem;
+}
+
+.top-nav a {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.65rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.hero {
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 26rem);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  min-height: auto;
+  padding: clamp(3rem, 7vw, 5.2rem) 0 1.25rem;
+}
+
+.hero-copy {
+  border-right: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  justify-content: center;
+}
+
+.kicker,
+.rail-kicker,
+.ticket-label,
+.artifact-shot figcaption span,
+.operator-cell span {
+  letter-spacing: 0.08em;
+}
+
+.hero h1 {
+  max-width: 13ch;
+  margin-top: 1rem;
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: clamp(3.1rem, 7vw, 5.65rem);
+  font-weight: 750;
+  line-height: 0.93;
+}
+
+.hero-lede {
+  max-width: 43rem;
+  margin-top: 1.25rem;
+  color: var(--ink-soft);
+  font-family: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(1.08rem, 1.9vw, 1.35rem);
+  line-height: 1.45;
+}
+
+.hero-actions {
+  margin-top: 1.6rem;
+}
+
+.button {
+  min-height: 2.55rem;
+  border-radius: 0.25rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.button-secondary {
+  background: var(--paper-strong);
+  border-color: var(--line);
+}
+
+.reputation-rail {
+  align-self: center;
+  border: 1px solid color-mix(in srgb, var(--paper) 18%, transparent);
+  border-radius: 0.35rem;
+  padding: 0.8rem;
+  box-shadow: 0 2rem 4rem rgba(31, 46, 67, 0.16);
+}
+
+.reputation-list {
+  border: 0;
+}
+
+.reputation-item {
+  min-height: auto;
+  gap: 0.2rem;
+  padding: 0.75rem 0.7rem;
+  border-bottom: 1px solid rgba(244, 241, 234, 0.14);
+}
+
+.reputation-item strong {
+  font-size: 1rem;
+}
+
+.reputation-item small {
+  font-size: 0.78rem;
+}
+
+.reputation-note {
+  border-top: 1px solid rgba(244, 241, 234, 0.18);
+  padding-top: 0.85rem;
+  font-size: 0.68rem;
+}
+
+.evidence-board {
+  margin-top: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  overflow: hidden;
+  background: rgba(255, 253, 248, 0.82);
+  box-shadow: 0 1rem 2.5rem rgba(35, 38, 43, 0.06);
+}
+
+.evidence-ticket {
+  min-height: 8.5rem;
+  padding: 0.9rem;
+  border-right: 1px solid var(--line);
+}
+
+.evidence-ticket strong {
+  font-size: 1.12rem;
+}
+
+.evidence-ticket span:last-child {
+  font-size: 0.82rem;
+}
+
+.artifact-section,
+.case-section,
+.proof-split {
+  padding-top: clamp(3rem, 6vw, 4.5rem);
+}
+
+.section-intro {
+  grid-template-columns: minmax(0, 0.78fr) minmax(18rem, 0.72fr);
+  margin-bottom: 1.4rem;
+}
+
+.section-intro h2,
+.merged-wall h2,
+.contact-panel h2 {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: clamp(2.2rem, 4.6vw, 3.8rem);
+  font-weight: 750;
+  letter-spacing: 0;
+}
+
+.section-intro p,
+.contact-panel p {
+  font-family: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.48;
+}
+
+.artifact-layout {
+  grid-template-columns: minmax(18rem, 0.82fr) minmax(0, 1fr);
+  gap: clamp(1.25rem, 4vw, 3rem);
+}
+
+.artifact-shot {
+  border: 1px solid var(--line);
+  border-radius: 0.35rem;
+  box-shadow: 0 1.5rem 3rem rgba(35, 38, 43, 0.12);
+}
+
+.artifact-shot figcaption {
+  grid-template-columns: 7rem 1fr;
+  border-top: 1px solid var(--line);
+  padding: 0.8rem;
+}
+
+.artifact-list,
+.case-ledger,
+.merge-list {
+  border-top: 1px solid var(--line);
+}
+
+.artifact-row {
+  grid-template-columns: 2.65rem minmax(0, 1fr);
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.artifact-number,
+.case-index {
+  color: var(--copper);
+  font-size: 0.78rem;
+}
+
+.artifact-copy strong {
+  font-size: 1.08rem;
+}
+
+.artifact-copy span,
+.case-problem,
+.case-proof {
+  font-size: 0.84rem;
+}
+
+.artifact-tags span,
+.case-tags span {
+  min-height: 1.45rem;
+  border-color: var(--line);
+  background: var(--paper-strong);
+  font-size: 0.6rem;
+}
+
+.operator-strip {
+  margin-top: 1.4rem;
+  border: 0;
+  border-radius: 0.4rem;
+  overflow: hidden;
+  box-shadow: 0 1rem 2rem rgba(35, 38, 43, 0.08);
+}
+
+.operator-cell {
+  min-height: 7.5rem;
+  border-right: 1px solid rgba(244, 241, 234, 0.18);
+}
+
+.operator-cell strong {
+  font-size: 1.08rem;
+  line-height: 1.25;
+}
+
+.case-row {
+  grid-template-columns: 2.65rem minmax(13rem, 0.8fr) minmax(16rem, 1fr) minmax(11rem, 0.5fr);
+  gap: 0.85rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.case-main strong {
+  font-size: 1rem;
+}
+
+.proof-split {
+  grid-template-columns: minmax(18rem, 0.72fr) minmax(0, 1fr);
+}
+
+.merged-wall,
+.contact-panel {
+  border: 1px solid var(--line);
+  border-radius: 0.35rem;
+}
+
+.merge-list a {
+  grid-template-columns: 8rem 1fr;
+  padding: 0.72rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.merge-list strong {
+  font-size: 0.92rem;
+}
+
+.contact-panel {
+  margin-top: clamp(3.5rem, 6vw, 5rem);
+  background:
+    linear-gradient(135deg, rgba(31, 46, 67, 0.98), rgba(53, 92, 114, 0.98));
+}
+
+@media (max-width: 1100px) {
+  .hero,
+  .artifact-layout,
+  .proof-split,
+  .section-intro {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-copy {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  body {
+    background: var(--paper);
+  }
+
+  .site-top,
+  .hero,
+  .evidence-board,
+  .artifact-section,
+  .case-section,
+  .proof-split,
+  .contact-panel,
+  .operator-strip {
+    width: min(100% - 1.25rem, 76rem);
+  }
+
+  .hero {
+    padding-top: 2rem;
+  }
+
+  .hero h1 {
+    max-width: 11ch;
+    font-size: clamp(2.65rem, 14vw, 3.8rem);
+  }
+
+  .evidence-board,
+  .operator-strip {
+    border-right: 1px solid var(--line);
+  }
+
+  .evidence-ticket,
+  .operator-cell {
+    min-height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .case-row {
+    grid-template-columns: 2rem minmax(0, 1fr);
+  }
+}
