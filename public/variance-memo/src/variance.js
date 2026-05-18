@@ -31,6 +31,17 @@ const PORTFOLIO_FIELD_SYNONYMS = {
   type: ["type", "asset type", "security type", "category"],
 };
 
+const TRANSACTION_FIELD_SYNONYMS = {
+  date: ["date", "transaction date", "posted date", "post date", "posting date"],
+  account: ["account", "account name", "account number"],
+  description: ["description", "merchant", "payee", "name", "memo", "transaction", "details"],
+  category: ["category", "type", "classification"],
+  amount: ["amount", "transaction amount", "net amount"],
+  debit: ["debit", "withdrawal", "withdrawals", "charge", "charges", "spent"],
+  credit: ["credit", "deposit", "deposits", "payment", "payments", "received"],
+  balance: ["balance", "running balance", "available balance"],
+};
+
 const MEASURE_PATTERNS = [
   ["priorYear", /\b(prior[\s_-]*year|last[\s_-]*year|py)\b/i],
   ["forecast", /\b(forecast|fcst|outlook|projection)\b/i],
@@ -189,6 +200,23 @@ export function inspectRows(rows, sourceSheet = "") {
       headerRowNumber: headerRowIndex + 1,
       headers,
       mappedFields: portfolioFieldMap,
+      missingRequiredFields,
+      canAnalyze: missingRequiredFields.length === 0,
+      score: scoreHeaderRow(headers) + Math.min(10, countDataRowsAfterHeader(rows, headerRowIndex)),
+      previewRows: rows.slice(headerRowIndex, headerRowIndex + 6),
+    };
+  }
+
+  const transactionFieldMap = buildTransactionFieldMap(headers);
+  if (isTransactionFieldMap(transactionFieldMap)) {
+    const missingRequiredFields = requiredTransactionFieldGaps(transactionFieldMap);
+    return {
+      mode: "financial_transactions",
+      sourceSheet,
+      headerRowIndex,
+      headerRowNumber: headerRowIndex + 1,
+      headers,
+      mappedFields: transactionFieldMap,
       missingRequiredFields,
       canAnalyze: missingRequiredFields.length === 0,
       score: scoreHeaderRow(headers) + Math.min(10, countDataRowsAfterHeader(rows, headerRowIndex)),
@@ -374,6 +402,26 @@ export function analyzeRows(rows, options = {}, context = {}) {
       },
       analysis,
       memo: buildPortfolioMemo(analysis),
+    };
+  }
+
+  if (importReport.mode === "financial_transactions") {
+    const transactions = normalizeFinancialTransactions(records, importReport.mappedFields);
+    const analysis = analyzeFinancialTransactions(transactions, options);
+    return {
+      rows,
+      records,
+      normalizedRows: transactions,
+      importReport: {
+        ...importReport,
+        canAnalyze: transactions.length > 0 && importReport.missingRequiredFields.length === 0,
+        normalizedRowCount: transactions.length,
+        transactionCount: transactions.length,
+        varianceCount: 0,
+        sheetReports: context.sheetReports ?? [],
+      },
+      analysis,
+      memo: buildTransactionMemo(analysis),
     };
   }
 
@@ -588,6 +636,112 @@ function buildPortfolioMemo(analysis) {
   };
 }
 
+function normalizeFinancialTransactions(records, fieldMap) {
+  return records
+    .map((record, index) => {
+      const amount = transactionAmount(record, fieldMap);
+      const description = cleanValue(record[fieldMap.description]);
+      if (!Number.isFinite(amount) || !description) {
+        return null;
+      }
+
+      return {
+        sourceRow: record.__sourceRow ?? index + 1,
+        date: cleanValue(record[fieldMap.date]) || "Unspecified date",
+        account: cleanValue(record[fieldMap.account]) || "Unspecified account",
+        description,
+        category: cleanValue(record[fieldMap.category]) || "Uncategorized",
+        amount,
+        direction: amount >= 0 ? "inflow" : "outflow",
+        balance: parseAmount(record[fieldMap.balance]),
+      };
+    })
+    .filter(Boolean);
+}
+
+function analyzeFinancialTransactions(transactions) {
+  const totalInflows = transactions.filter((transaction) => transaction.amount > 0).reduce((sum, transaction) => sum + transaction.amount, 0);
+  const totalOutflows = Math.abs(transactions.filter((transaction) => transaction.amount < 0).reduce((sum, transaction) => sum + transaction.amount, 0));
+  const netCashFlow = totalInflows - totalOutflows;
+  const sortedTransactions = [...transactions].sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount));
+  const summary = {
+    transactionCount: transactions.length,
+    accountCount: countDistinct(transactions.map((transaction) => transaction.account).filter(Boolean)),
+    totalInflows,
+    totalOutflows,
+    netCashFlow,
+    dateRange: transactionDateRange(transactions),
+  };
+  const largestTransactions = sortedTransactions.slice(0, 10);
+  const categoryMix = groupTransactions(transactions, "category");
+  const accountMix = groupTransactions(transactions, "account");
+  const driverNotes = generateTransactionNotes({ transactions, summary, largestTransactions, categoryMix, accountMix });
+
+  return {
+    kind: "transactions",
+    generatedAt: new Date().toISOString(),
+    transactions,
+    largestTransactions,
+    categoryMix,
+    accountMix,
+    driverNotes,
+    variances: [],
+    summary,
+  };
+}
+
+function buildTransactionMemo(analysis) {
+  const summary = analysis.summary;
+  const lines = [];
+
+  lines.push("## Cash Activity Snapshot");
+  if (summary.transactionCount === 0) {
+    lines.push("- No transactions were detected from the uploaded file.");
+  } else {
+    const range = summary.dateRange.start && summary.dateRange.end ? ` from ${summary.dateRange.start} to ${summary.dateRange.end}` : "";
+    lines.push(`- The file maps ${summary.transactionCount} transaction${summary.transactionCount === 1 ? "" : "s"} across ${summary.accountCount} account${summary.accountCount === 1 ? "" : "s"}${range}.`);
+    lines.push(`- Parsed inflows total ${formatCurrency(summary.totalInflows)}, outflows total ${formatCurrency(summary.totalOutflows)}, and net cash flow is ${formatCurrency(summary.netCashFlow)}.`);
+  }
+
+  lines.push("");
+  lines.push("## Largest transactions");
+  if (analysis.largestTransactions.length === 0) {
+    lines.push("- No ranked transactions available.");
+  } else {
+    for (const transaction of analysis.largestTransactions.slice(0, 8)) {
+      lines.push(`- ${transactionSentence(transaction)}.`);
+    }
+  }
+
+  lines.push("");
+  lines.push("## Category and account mix");
+  for (const bucket of analysis.categoryMix.slice(0, 6)) {
+    lines.push(`- ${bucket.label}: ${formatCurrency(bucket.netAmount)} net, ${formatCurrency(bucket.outflows)} outflows, ${formatCurrency(bucket.inflows)} inflows across ${bucket.count} transaction${bucket.count === 1 ? "" : "s"}.`);
+  }
+  const topAccount = analysis.accountMix[0];
+  if (topAccount) {
+    lines.push(`- Largest account bucket by absolute activity: ${topAccount.label} at ${formatCurrency(topAccount.absoluteActivity)} across ${topAccount.count} transaction${topAccount.count === 1 ? "" : "s"}.`);
+  }
+
+  lines.push("");
+  lines.push("## Checks to run");
+  for (const note of analysis.driverNotes.slice(0, 8)) {
+    lines.push(`- [row ${note.rowRefs.join(", row ")}] ${note.text}`);
+  }
+
+  lines.push("");
+  lines.push("## Needs context before acting");
+  lines.push("- This is a transaction-file summary, not tax, budgeting, accounting, or investment advice.");
+  lines.push("- Verify pending/duplicate transactions, transfer treatment, refunds, split categories, account ownership, and whether debits/credits use the expected sign convention.");
+  lines.push("- The file does not know your monthly budget, income timing, savings targets, taxes, or whether a transaction is reimbursable or one-time.");
+
+  return {
+    markdown: lines.join("\n"),
+    varianceTable: [],
+    driverNotes: analysis.driverNotes,
+  };
+}
+
 function inferHeaders(rows, headerRowIndex) {
   const rawHeaders = rows[headerRowIndex] ?? [];
   const headers = rawHeaders.map((header, index) => String(header || `Column ${index + 1}`).trim());
@@ -634,6 +788,7 @@ function scoreHeaderRow(row) {
 
   const fieldMap = buildFieldMap(values);
   const portfolioFieldMap = buildPortfolioFieldMap(values);
+  const transactionFieldMap = buildTransactionFieldMap(values);
   const mappedFields = Object.keys(fieldMap).length;
   const measureHeaders = values.filter((value) => parseMeasureHeader(value)).length;
   const hasAccount = fieldMap.account ? 4 : 0;
@@ -641,8 +796,11 @@ function scoreHeaderRow(row) {
   const portfolioScore = isPortfolioFieldMap(portfolioFieldMap)
     ? Object.keys(portfolioFieldMap).length + (portfolioFieldMap.currentValue ? 4 : 0) + (portfolioFieldMap.symbol || portfolioFieldMap.description ? 3 : 0)
     : 0;
+  const transactionScore = isTransactionFieldMap(transactionFieldMap)
+    ? Object.keys(transactionFieldMap).length + (transactionFieldMap.date ? 2 : 0) + (transactionFieldMap.description ? 3 : 0) + (transactionFieldMap.amount || (transactionFieldMap.debit && transactionFieldMap.credit) ? 4 : 0)
+    : 0;
 
-  return Math.max(mappedFields + measureHeaders * 2 + hasAccount + hasComparableMeasures, portfolioScore);
+  return Math.max(mappedFields + measureHeaders * 2 + hasAccount + hasComparableMeasures, portfolioScore, transactionScore);
 }
 
 function requiredFieldGaps(headers, fieldMap) {
@@ -717,8 +875,25 @@ function buildPortfolioFieldMap(headers) {
   return fieldMap;
 }
 
+function buildTransactionFieldMap(headers) {
+  const fieldMap = {};
+  for (const header of headers) {
+    const normalized = normalizeHeader(header);
+    for (const [field, synonyms] of Object.entries(TRANSACTION_FIELD_SYNONYMS)) {
+      if (!fieldMap[field] && synonyms.some((synonym) => normalizeHeader(synonym) === normalized)) {
+        fieldMap[field] = header;
+      }
+    }
+  }
+  return fieldMap;
+}
+
 function isPortfolioFieldMap(fieldMap) {
   return Boolean(fieldMap.currentValue && (fieldMap.symbol || fieldMap.description) && (fieldMap.quantity || fieldMap.type || fieldMap.accountName));
+}
+
+function isTransactionFieldMap(fieldMap) {
+  return Boolean(fieldMap.description && fieldMap.date && (fieldMap.amount || fieldMap.debit || fieldMap.credit));
 }
 
 function requiredPortfolioFieldGaps(fieldMap) {
@@ -728,6 +903,20 @@ function requiredPortfolioFieldGaps(fieldMap) {
   }
   if (!fieldMap.symbol && !fieldMap.description) {
     gaps.push("symbol");
+  }
+  return gaps;
+}
+
+function requiredTransactionFieldGaps(fieldMap) {
+  const gaps = [];
+  if (!fieldMap.date) {
+    gaps.push("date");
+  }
+  if (!fieldMap.description) {
+    gaps.push("description");
+  }
+  if (!fieldMap.amount && !fieldMap.debit && !fieldMap.credit) {
+    gaps.push("amount");
   }
   return gaps;
 }
@@ -781,6 +970,18 @@ function parsePercent(value) {
     return null;
   }
   return raw.includes("%") || Math.abs(amount) > 1 ? amount / 100 : amount;
+}
+
+function transactionAmount(record, fieldMap) {
+  if (fieldMap.amount) {
+    return parseAmount(record[fieldMap.amount]);
+  }
+  const debit = parseAmount(record[fieldMap.debit]) ?? 0;
+  const credit = parseAmount(record[fieldMap.credit]) ?? 0;
+  if (debit === 0 && credit === 0) {
+    return null;
+  }
+  return credit - debit;
 }
 
 function classifyLineType(row) {
@@ -929,6 +1130,60 @@ function generatePortfolioNotes({ positions, summary, topPositions, assetMix, ac
   return notes;
 }
 
+function generateTransactionNotes({ summary, largestTransactions, categoryMix, accountMix }) {
+  const notes = [];
+  const largest = largestTransactions[0];
+  if (largest) {
+    notes.push({
+      kind: "largest_transaction",
+      severity: "context",
+      rowRefs: [largest.sourceRow],
+      text: `${largest.description} is the largest parsed transaction at ${formatCurrency(Math.abs(largest.amount))} ${largest.direction}.`,
+    });
+  }
+
+  const topOutflowCategory = categoryMix.find((bucket) => bucket.outflows > 0);
+  if (topOutflowCategory) {
+    notes.push({
+      kind: "outflow_category",
+      severity: "context",
+      rowRefs: topOutflowCategory.rowRefs.slice(0, 5),
+      text: `${topOutflowCategory.label} is the largest outflow category at ${formatCurrency(topOutflowCategory.outflows)} across ${topOutflowCategory.count} transaction${topOutflowCategory.count === 1 ? "" : "s"}.`,
+    });
+  }
+
+  const topAccount = accountMix[0];
+  if (topAccount && summary.accountCount > 1) {
+    notes.push({
+      kind: "account_activity",
+      severity: "context",
+      rowRefs: topAccount.rowRefs.slice(0, 5),
+      text: `${topAccount.label} has the most parsed activity at ${formatCurrency(topAccount.absoluteActivity)} across ${topAccount.count} transaction${topAccount.count === 1 ? "" : "s"}.`,
+    });
+  }
+
+  const transferBucket = categoryMix.find((bucket) => /\btransfer\b/i.test(bucket.label));
+  if (transferBucket) {
+    notes.push({
+      kind: "transfer_treatment",
+      severity: "watch",
+      rowRefs: transferBucket.rowRefs.slice(0, 5),
+      text: `Transfers appear in the file; confirm whether to exclude them from spend or income views before using totals.`,
+    });
+  }
+
+  if (summary.netCashFlow < 0) {
+    notes.push({
+      kind: "negative_net_cash_flow",
+      severity: "watch",
+      rowRefs: largestTransactions.slice(0, 3).map((transaction) => transaction.sourceRow),
+      text: `Parsed outflows exceed inflows by ${formatCurrency(Math.abs(summary.netCashFlow))} for this file period.`,
+    });
+  }
+
+  return notes;
+}
+
 function groupPositions(positions, field, totalValue) {
   const groups = new Map();
   for (const position of positions) {
@@ -945,6 +1200,33 @@ function groupPositions(positions, field, totalValue) {
       percentOfPortfolio: totalValue === 0 ? 0 : group.value / totalValue,
     }))
     .sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
+}
+
+function groupTransactions(transactions, field) {
+  const groups = new Map();
+  for (const transaction of transactions) {
+    const label = cleanValue(transaction[field]) || "Unspecified";
+    const group = groups.get(label) ?? { label, netAmount: 0, inflows: 0, outflows: 0, absoluteActivity: 0, count: 0, rowRefs: [] };
+    group.netAmount += transaction.amount;
+    if (transaction.amount >= 0) {
+      group.inflows += transaction.amount;
+    } else {
+      group.outflows += Math.abs(transaction.amount);
+    }
+    group.absoluteActivity += Math.abs(transaction.amount);
+    group.count += 1;
+    group.rowRefs.push(transaction.sourceRow);
+    groups.set(label, group);
+  }
+  return [...groups.values()].sort((a, b) => b.absoluteActivity - a.absoluteActivity);
+}
+
+function transactionDateRange(transactions) {
+  const dates = transactions.map((transaction) => transaction.date).filter((date) => date && date !== "Unspecified date").sort();
+  return {
+    start: dates[0] ?? "",
+    end: dates.at(-1) ?? "",
+  };
 }
 
 function sumFinite(values) {
@@ -977,6 +1259,10 @@ function portfolioPositionSentence(position) {
   const pct = position.percentOfPortfolio === null ? "" : `, ${formatPercent(position.percentOfPortfolio)} of parsed value`;
   const gainLoss = Number.isFinite(position.totalGainLossDollar) ? `, total gain/loss ${formatCurrency(position.totalGainLossDollar)}` : "";
   return `[row ${position.sourceRow}] ${position.symbol} - ${position.description} (${position.type}) is ${formatCurrency(position.currentValue)}${pct}${gainLoss}`;
+}
+
+function transactionSentence(transaction) {
+  return `[row ${transaction.sourceRow}] ${transaction.date} ${transaction.description} (${transaction.category}, ${transaction.account}) is ${transaction.direction} ${formatCurrency(Math.abs(transaction.amount))}${Number.isFinite(transaction.balance) ? `; balance ${formatCurrency(transaction.balance)}` : ""}`;
 }
 
 function commentarySentence(variance) {

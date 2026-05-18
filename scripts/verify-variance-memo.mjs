@@ -28,21 +28,25 @@ const requiredTokens = [
   ["html", "previewRows"],
   ["html", "chooseFileButton"],
   ["html", "Load demo sample"],
-  ["html", "app.js?v=portfolio-v01-20260518"],
+  ["html", "app.js?v=financial-router-v01-20260518"],
   ["html", "analysisHead"],
   ["app", "synthetic-saas-pl.csv"],
   ["app", "analyzeFile"],
   ["app", "renderImportAudit"],
   ["app", "renderPortfolioRows"],
+  ["app", "renderTransactionRows"],
   ["app", "Portfolio positions"],
+  ["app", "Financial transactions"],
   ["app", "chooseFileButton.addEventListener(\"click\""],
   ["app", "sourceMode = \"upload\""],
   ["app", "sourceMode = \"demo\""],
-  ["app", "variance.js?v=portfolio-v01-20260518"],
+  ["app", "variance.js?v=financial-router-v01-20260518"],
   ["variance", "What the file supports"],
   ["variance", "needs context"],
   ["variance", "Portfolio Snapshot"],
   ["variance", "portfolio_positions"],
+  ["variance", "Cash Activity Snapshot"],
+  ["variance", "financial_transactions"],
   ["variance", "parseWorkbook"],
   ["variance", "analyzeWorkbook"],
   ["variance", "inspectRows"],
@@ -185,6 +189,26 @@ if (
   portfolioResult.memo.markdown.includes("actual-vs-budget")
 ) {
   throw new Error("Portfolio positions export did not produce a useful holdings summary");
+}
+
+const transactionCsv = `Date,Account,Description,Category,Debit,Credit,Balance
+2026-04-01,Checking,Payroll deposit,Income,,$5000.00,$5000.00
+2026-04-02,Checking,Rent payment,Housing,$1800.00,,$3200.00
+2026-04-03,Credit Card,Grocery store,Groceries,$125.50,,$3074.50
+2026-04-04,Credit Card,Software subscription,Software,$49.00,,$3025.50
+2026-04-05,Savings,Transfer to savings,Transfer,$500.00,,$2525.50`;
+const transactionResult = analyzeCsvText(transactionCsv, { dollarThreshold: 5000, percentThreshold: 0.1 });
+if (
+  transactionResult.importReport.mode !== "financial_transactions" ||
+  transactionResult.normalizedRows.length !== 5 ||
+  transactionResult.analysis.kind !== "transactions" ||
+  transactionResult.analysis.summary.totalInflows !== 5000 ||
+  transactionResult.analysis.summary.totalOutflows !== 2474.5 ||
+  !transactionResult.memo.markdown.includes("Cash Activity Snapshot") ||
+  !transactionResult.memo.markdown.includes("Needs context before acting") ||
+  transactionResult.memo.markdown.includes("actual-vs-budget")
+) {
+  throw new Error("Transaction export did not produce a useful cash activity summary");
 }
 
 console.log("variance-memo verifier ok: public files, sitemap, project card, deterministic analysis, and privacy guardrails passed");

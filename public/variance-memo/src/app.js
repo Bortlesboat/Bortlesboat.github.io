@@ -1,4 +1,4 @@
-import { analyzeCsvText, analyzeFile } from "./variance.js?v=portfolio-v01-20260518";
+import { analyzeCsvText, analyzeFile } from "./variance.js?v=financial-router-v01-20260518";
 
 const sampleCsv = `Account,Department,Category,Period,Actual,Budget,Forecast,Prior Year
 SaaS recurring revenue,Sales,Revenue,Jan 2026,"$120,000","$100,000","$245,000","$92,000"
@@ -183,25 +183,34 @@ function render() {
     return;
   }
 
-  const portfolio = isPortfolioResult(result);
-  renderAnalysisHeader(portfolio ? "portfolio" : "variance");
-  elements.analysisEyebrow.textContent = portfolio ? "Positions file" : "Actual vs budget";
-  elements.analysisTitle.textContent = portfolio ? "Largest Positions" : "Material Variances";
-  elements.rowCount.textContent = portfolio ? `${result.analysis.summary.positionCount} positions` : `${result.normalizedRows.length} rows`;
-  elements.varianceCount.textContent = portfolio ? `${formatCurrency(result.analysis.summary.totalValue)} parsed value` : `${result.analysis.variances.length} variances`;
-  elements.varianceRows.innerHTML = portfolio
+  const mode = resultMode(result);
+  renderAnalysisHeader(mode);
+  elements.analysisEyebrow.textContent = mode === "portfolio" ? "Positions file" : mode === "transactions" ? "Transactions file" : "Actual vs budget";
+  elements.analysisTitle.textContent = mode === "portfolio" ? "Largest Positions" : mode === "transactions" ? "Cash Activity" : "Material Variances";
+  elements.rowCount.textContent =
+    mode === "portfolio" ? `${result.analysis.summary.positionCount} positions` :
+    mode === "transactions" ? `${result.analysis.summary.transactionCount} transactions` :
+    `${result.normalizedRows.length} rows`;
+  elements.varianceCount.textContent =
+    mode === "portfolio" ? `${formatCurrency(result.analysis.summary.totalValue)} parsed value` :
+    mode === "transactions" ? `${formatCurrency(result.analysis.summary.netCashFlow)} net cash flow` :
+    `${result.analysis.variances.length} variances`;
+  elements.varianceRows.innerHTML = mode === "portfolio"
     ? renderPortfolioRows(result)
-    : result.analysis.variances.length
+    : mode === "transactions"
+      ? renderTransactionRows(result)
+      : result.analysis.variances.length
       ? result.analysis.variances.map(renderVarianceRow).join("")
       : `<tr class="empty-row"><td colspan="8">No material variances found.</td></tr>`;
   elements.importAudit.innerHTML = renderImportAudit(result.importReport);
   elements.previewRows.innerHTML = renderPreviewRows(result.importReport);
   elements.driverNotes.innerHTML = result.memo.driverNotes.length
     ? result.memo.driverNotes.map(renderDriverNote).join("")
-    : `<li>${portfolio ? "No portfolio checks generated." : "No forecast driver notes generated."}</li>`;
+    : `<li>${mode === "portfolio" ? "No portfolio checks generated." : mode === "transactions" ? "No transaction checks generated." : "No forecast driver notes generated."}</li>`;
   elements.memoOutput.textContent = result.memo.markdown;
   elements.sheetCheck.textContent = result.importReport?.sourceSheet || "CSV";
-  elements.normalizationCheck.textContent = result.importReport?.canAnalyze ? (portfolio ? "Positions mapped" : "Mapped") : "Mapping needed";
+  elements.normalizationCheck.textContent =
+    result.importReport?.canAnalyze ? (mode === "portfolio" ? "Positions mapped" : mode === "transactions" ? "Transactions mapped" : "Mapped") : "Mapping needed";
   elements.commentaryCheck.textContent = result.memo.markdown.includes("[row ") ? "Row-linked" : "Needs review";
   elements.caveatCheck.textContent = result.memo.markdown.includes("Needs context") ? "Included" : "Missing";
 }
@@ -216,7 +225,7 @@ function renderImportAudit(report) {
     .join("");
   const missing = report.missingRequiredFields?.length
     ? `<p class="audit-warning">Missing required mapping: ${report.missingRequiredFields.map(escapeHtml).join(", ")}. No commentary should be used until this maps.</p>`
-    : `<p class="audit-good">${report.mode === "portfolio_positions" ? "Mapped portfolio position fields from the uploaded file." : "Mapped account, actual, and budget from the uploaded file."}</p>`;
+    : `<p class="audit-good">${mappedMessage(report.mode)}</p>`;
 
   const sheets = report.sheetReports?.length
     ? `<p class="audit-muted">Workbook sheets scored: ${report.sheetReports.map((sheet) => `${escapeHtml(sheet.sourceSheet || "Sheet")} (${sheet.score})`).join(", ")}</p>`
@@ -224,7 +233,7 @@ function renderImportAudit(report) {
 
   return `
     <p><strong>Source:</strong> ${state.sourceMode === "demo" ? "Demo sample" : "Uploaded file"}</p>
-    <p><strong>Detected mode:</strong> ${report.mode === "portfolio_positions" ? "Portfolio positions" : "FP&amp;A variance"}</p>
+    <p><strong>Detected mode:</strong> ${modeLabel(report.mode)}</p>
     <p><strong>File basis:</strong> ${escapeHtml(state.fileName || "Upload")} ${report.sourceSheet ? `- sheet ${escapeHtml(report.sourceSheet)}` : ""} - header row ${report.headerRowNumber || "not found"}</p>
     <div class="mapped-fields">${mapped || "<span>No fields mapped</span>"}</div>
     ${missing}
@@ -284,6 +293,28 @@ function renderPortfolioRow(row) {
   </tr>`;
 }
 
+function renderTransactionRows(result) {
+  const rows = result.analysis.largestTransactions ?? [];
+  if (!rows.length) {
+    return `<tr class="empty-row"><td colspan="8">No transactions found.</td></tr>`;
+  }
+
+  return rows.slice(0, 10).map(renderTransactionRow).join("");
+}
+
+function renderTransactionRow(row) {
+  return `<tr>
+    <td>${escapeHtml(row.sourceRow)}</td>
+    <td>${escapeHtml(row.date)}</td>
+    <td>${escapeHtml(row.account)}</td>
+    <td>${escapeHtml(row.description)}</td>
+    <td>${escapeHtml(row.category)}</td>
+    <td class="${row.amount >= 0 ? "good" : "watch"}">${formatCurrency(row.amount)}</td>
+    <td>${escapeHtml(row.direction)}</td>
+    <td>${formatMaybeCurrency(row.balance)}</td>
+  </tr>`;
+}
+
 function renderDriverNote(note) {
   return `<li>
     <span class="note-kind">${escapeHtml(note.kind.replaceAll("_", " "))}</span>
@@ -306,6 +337,20 @@ function renderAnalysisHeader(kind) {
     return;
   }
 
+  if (kind === "transactions") {
+    elements.analysisHead.innerHTML = `
+      <th>Row</th>
+      <th>Date</th>
+      <th>Account</th>
+      <th>Description</th>
+      <th>Category</th>
+      <th>Amount</th>
+      <th>Direction</th>
+      <th>Balance</th>
+    `;
+    return;
+  }
+
   elements.analysisHead.innerHTML = `
     <th>Row</th>
     <th>Period</th>
@@ -318,8 +363,34 @@ function renderAnalysisHeader(kind) {
   `;
 }
 
-function isPortfolioResult(result) {
-  return result?.analysis?.kind === "portfolio";
+function resultMode(result) {
+  if (result?.analysis?.kind === "portfolio") {
+    return "portfolio";
+  }
+  if (result?.analysis?.kind === "transactions") {
+    return "transactions";
+  }
+  return "variance";
+}
+
+function modeLabel(mode) {
+  if (mode === "portfolio_positions") {
+    return "Portfolio positions";
+  }
+  if (mode === "financial_transactions") {
+    return "Financial transactions";
+  }
+  return "FP&amp;A variance";
+}
+
+function mappedMessage(mode) {
+  if (mode === "portfolio_positions") {
+    return "Mapped portfolio position fields from the uploaded file.";
+  }
+  if (mode === "financial_transactions") {
+    return "Mapped transaction fields from the uploaded file.";
+  }
+  return "Mapped account, actual, and budget from the uploaded file.";
 }
 
 function setStatus(message) {
