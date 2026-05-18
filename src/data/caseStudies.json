@@ -9,7 +9,7 @@
   {
     "name": "AgentOps Ledger",
     "problem": "Enterprise AI teams need inspectable run evidence before agents can use real tools, approvals, and paid APIs.",
-    "proof": "Hosted demo, case study, release, architecture diagram, and Splunk HEC proof.",
+    "proof": "launch page, judge index, hosted demo, release, architecture diagram, and Splunk HEC proof.",
     "url": "https://bortlesboat.github.io/x402-insights/case-study.html",
     "tags": ["AI Workflow", "x402", "Telemetry"]
   },
