@@ -1,4 +1,4 @@
-import { analyzeCsvText, analyzeFile } from "./variance.js?v=messy-v02-20260518";
+import { analyzeCsvText, analyzeFile } from "./variance.js?v=portfolio-v01-20260518";
 
 const sampleCsv = `Account,Department,Category,Period,Actual,Budget,Forecast,Prior Year
 SaaS recurring revenue,Sales,Revenue,Jan 2026,"$120,000","$100,000","$245,000","$92,000"
@@ -28,6 +28,9 @@ const elements = {
   statusLabel: document.querySelector("#statusLabel"),
   rowCount: document.querySelector("#rowCount"),
   varianceCount: document.querySelector("#varianceCount"),
+  analysisEyebrow: document.querySelector("#analysisEyebrow"),
+  analysisTitle: document.querySelector("#analysisTitle"),
+  analysisHead: document.querySelector("#analysisHead"),
   varianceRows: document.querySelector("#varianceRows"),
   importAudit: document.querySelector("#importAudit"),
   previewRows: document.querySelector("#previewRows"),
@@ -163,6 +166,9 @@ function render() {
   elements.fileName.textContent = state.fileName || "No file selected";
 
   if (!result) {
+    renderAnalysisHeader("variance");
+    elements.analysisEyebrow.textContent = "Actual vs budget";
+    elements.analysisTitle.textContent = "Material Variances";
     elements.rowCount.textContent = "0 rows";
     elements.varianceCount.textContent = "0 variances";
     elements.varianceRows.innerHTML = `<tr class="empty-row"><td colspan="8">No analysis loaded.</td></tr>`;
@@ -177,21 +183,27 @@ function render() {
     return;
   }
 
-  elements.rowCount.textContent = `${result.normalizedRows.length} rows`;
-  elements.varianceCount.textContent = `${result.analysis.variances.length} variances`;
-  elements.varianceRows.innerHTML = result.analysis.variances.length
-    ? result.analysis.variances.map(renderVarianceRow).join("")
-    : `<tr class="empty-row"><td colspan="8">No material variances found.</td></tr>`;
+  const portfolio = isPortfolioResult(result);
+  renderAnalysisHeader(portfolio ? "portfolio" : "variance");
+  elements.analysisEyebrow.textContent = portfolio ? "Positions file" : "Actual vs budget";
+  elements.analysisTitle.textContent = portfolio ? "Largest Positions" : "Material Variances";
+  elements.rowCount.textContent = portfolio ? `${result.analysis.summary.positionCount} positions` : `${result.normalizedRows.length} rows`;
+  elements.varianceCount.textContent = portfolio ? `${formatCurrency(result.analysis.summary.totalValue)} parsed value` : `${result.analysis.variances.length} variances`;
+  elements.varianceRows.innerHTML = portfolio
+    ? renderPortfolioRows(result)
+    : result.analysis.variances.length
+      ? result.analysis.variances.map(renderVarianceRow).join("")
+      : `<tr class="empty-row"><td colspan="8">No material variances found.</td></tr>`;
   elements.importAudit.innerHTML = renderImportAudit(result.importReport);
   elements.previewRows.innerHTML = renderPreviewRows(result.importReport);
   elements.driverNotes.innerHTML = result.memo.driverNotes.length
     ? result.memo.driverNotes.map(renderDriverNote).join("")
-    : `<li>No forecast driver notes generated.</li>`;
+    : `<li>${portfolio ? "No portfolio checks generated." : "No forecast driver notes generated."}</li>`;
   elements.memoOutput.textContent = result.memo.markdown;
   elements.sheetCheck.textContent = result.importReport?.sourceSheet || "CSV";
-  elements.normalizationCheck.textContent = result.importReport?.canAnalyze ? "Mapped" : "Mapping needed";
+  elements.normalizationCheck.textContent = result.importReport?.canAnalyze ? (portfolio ? "Positions mapped" : "Mapped") : "Mapping needed";
   elements.commentaryCheck.textContent = result.memo.markdown.includes("[row ") ? "Row-linked" : "Needs review";
-  elements.caveatCheck.textContent = result.memo.markdown.includes("Caveats") ? "Included" : "Missing";
+  elements.caveatCheck.textContent = result.memo.markdown.includes("Needs context") ? "Included" : "Missing";
 }
 
 function renderImportAudit(report) {
@@ -204,7 +216,7 @@ function renderImportAudit(report) {
     .join("");
   const missing = report.missingRequiredFields?.length
     ? `<p class="audit-warning">Missing required mapping: ${report.missingRequiredFields.map(escapeHtml).join(", ")}. No commentary should be used until this maps.</p>`
-    : `<p class="audit-good">Mapped account, actual, and budget from the uploaded file.</p>`;
+    : `<p class="audit-good">${report.mode === "portfolio_positions" ? "Mapped portfolio position fields from the uploaded file." : "Mapped account, actual, and budget from the uploaded file."}</p>`;
 
   const sheets = report.sheetReports?.length
     ? `<p class="audit-muted">Workbook sheets scored: ${report.sheetReports.map((sheet) => `${escapeHtml(sheet.sourceSheet || "Sheet")} (${sheet.score})`).join(", ")}</p>`
@@ -212,6 +224,7 @@ function renderImportAudit(report) {
 
   return `
     <p><strong>Source:</strong> ${state.sourceMode === "demo" ? "Demo sample" : "Uploaded file"}</p>
+    <p><strong>Detected mode:</strong> ${report.mode === "portfolio_positions" ? "Portfolio positions" : "FP&amp;A variance"}</p>
     <p><strong>File basis:</strong> ${escapeHtml(state.fileName || "Upload")} ${report.sourceSheet ? `- sheet ${escapeHtml(report.sourceSheet)}` : ""} - header row ${report.headerRowNumber || "not found"}</p>
     <div class="mapped-fields">${mapped || "<span>No fields mapped</span>"}</div>
     ${missing}
@@ -249,11 +262,64 @@ function renderVarianceRow(row) {
   </tr>`;
 }
 
+function renderPortfolioRows(result) {
+  const rows = result.analysis.topPositions ?? [];
+  if (!rows.length) {
+    return `<tr class="empty-row"><td colspan="8">No portfolio positions found.</td></tr>`;
+  }
+
+  return rows.slice(0, 10).map(renderPortfolioRow).join("");
+}
+
+function renderPortfolioRow(row) {
+  return `<tr>
+    <td>${escapeHtml(row.sourceRow)}</td>
+    <td>${escapeHtml(row.accountName)}</td>
+    <td>${escapeHtml(row.symbol)}</td>
+    <td>${escapeHtml(row.type)}</td>
+    <td>${formatCurrency(row.currentValue)}</td>
+    <td class="${Number(row.totalGainLossDollar) >= 0 ? "good" : "watch"}">${formatMaybeCurrency(row.totalGainLossDollar)}</td>
+    <td>${formatMaybePercent(row.percentOfAccount)}</td>
+    <td>${formatMaybeCurrency(row.costBasisTotal)}</td>
+  </tr>`;
+}
+
 function renderDriverNote(note) {
   return `<li>
     <span class="note-kind">${escapeHtml(note.kind.replaceAll("_", " "))}</span>
     <span>${escapeHtml(note.text)}</span>
   </li>`;
+}
+
+function renderAnalysisHeader(kind) {
+  if (kind === "portfolio") {
+    elements.analysisHead.innerHTML = `
+      <th>Row</th>
+      <th>Account</th>
+      <th>Symbol</th>
+      <th>Type</th>
+      <th>Current Value</th>
+      <th>Total G/L</th>
+      <th>% Account</th>
+      <th>Cost Basis</th>
+    `;
+    return;
+  }
+
+  elements.analysisHead.innerHTML = `
+    <th>Row</th>
+    <th>Period</th>
+    <th>Account</th>
+    <th>Dept</th>
+    <th>Actual</th>
+    <th>Budget</th>
+    <th>Variance</th>
+    <th>Fav</th>
+  `;
+}
+
+function isPortfolioResult(result) {
+  return result?.analysis?.kind === "portfolio";
 }
 
 function setStatus(message) {
@@ -266,6 +332,19 @@ function formatCurrency(value) {
     currency: "USD",
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+function formatMaybeCurrency(value) {
+  return Number.isFinite(value) ? formatCurrency(value) : "n/a";
+}
+
+function formatMaybePercent(value) {
+  return Number.isFinite(value)
+    ? new Intl.NumberFormat("en-US", {
+        style: "percent",
+        maximumFractionDigits: 1,
+      }).format(value)
+    : "n/a";
 }
 
 function escapeHtml(value) {

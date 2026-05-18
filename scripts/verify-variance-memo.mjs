@@ -28,16 +28,21 @@ const requiredTokens = [
   ["html", "previewRows"],
   ["html", "chooseFileButton"],
   ["html", "Load demo sample"],
-  ["html", "app.js?v=messy-v02-20260518"],
+  ["html", "app.js?v=portfolio-v01-20260518"],
+  ["html", "analysisHead"],
   ["app", "synthetic-saas-pl.csv"],
   ["app", "analyzeFile"],
   ["app", "renderImportAudit"],
+  ["app", "renderPortfolioRows"],
+  ["app", "Portfolio positions"],
   ["app", "chooseFileButton.addEventListener(\"click\""],
   ["app", "sourceMode = \"upload\""],
   ["app", "sourceMode = \"demo\""],
-  ["app", "variance.js?v=messy-v02-20260518"],
+  ["app", "variance.js?v=portfolio-v01-20260518"],
   ["variance", "What the file supports"],
   ["variance", "needs context"],
+  ["variance", "Portfolio Snapshot"],
+  ["variance", "portfolio_positions"],
   ["variance", "parseWorkbook"],
   ["variance", "analyzeWorkbook"],
   ["variance", "inspectRows"],
@@ -162,6 +167,24 @@ if (
   !messyResult.memo.markdown.includes("needs context")
 ) {
   throw new Error("Messy semi-structured finance export did not produce a useful caveated analyst draft");
+}
+
+const portfolioCsv = `Account Number,Account Name,Symbol,Description,Quantity,Last Price,Last Price Change,Current Value,Today's Gain/Loss Dollar,Today's Gain/Loss Percent,Total Gain/Loss Dollar,Total Gain/Loss Percent,Percent Of Account,Cost Basis Total,Average Cost Basis,Type
+111111111,Taxable Brokerage,ABC,Example Equity Fund,10,$100.00,$1.00,$1000.00,$10.00,1.00%,$125.00,14.29%,50.00%,$875.00,$87.50,Stock
+111111111,Taxable Brokerage,XYZ,Example Bond Fund,20,$25.00,-$0.10,$500.00,-$2.00,-0.40%,-$25.00,-4.76%,25.00%,$525.00,$26.25,Bond
+222222222,Retirement Account,CASH**,Held in money market,,,$0.00,$250.00,,,,$0.00,100.00%,,,Cash
+"The data and information in this spreadsheet is provided for informational purposes only."`;
+const portfolioResult = analyzeCsvText(portfolioCsv, { dollarThreshold: 5000, percentThreshold: 0.1 });
+if (
+  portfolioResult.importReport.mode !== "portfolio_positions" ||
+  portfolioResult.normalizedRows.length !== 3 ||
+  portfolioResult.analysis.kind !== "portfolio" ||
+  portfolioResult.analysis.summary.totalValue !== 1750 ||
+  !portfolioResult.memo.markdown.includes("Portfolio Snapshot") ||
+  !portfolioResult.memo.markdown.includes("Needs context before acting") ||
+  portfolioResult.memo.markdown.includes("actual-vs-budget")
+) {
+  throw new Error("Portfolio positions export did not produce a useful holdings summary");
 }
 
 console.log("variance-memo verifier ok: public files, sitemap, project card, deterministic analysis, and privacy guardrails passed");

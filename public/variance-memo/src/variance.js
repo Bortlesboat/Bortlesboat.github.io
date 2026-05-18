@@ -12,6 +12,25 @@ const FIELD_SYNONYMS = {
   priorYear: ["prior year", "prior_year", "last year", "py", "prior year actual"],
 };
 
+const PORTFOLIO_FIELD_SYNONYMS = {
+  accountNumber: ["account number", "account no", "account #"],
+  accountName: ["account name", "account"],
+  symbol: ["symbol", "ticker", "ticker symbol"],
+  description: ["description", "security description", "security name", "holding", "position"],
+  quantity: ["quantity", "qty", "shares"],
+  lastPrice: ["last price", "price", "market price"],
+  lastPriceChange: ["last price change", "price change"],
+  currentValue: ["current value", "market value", "value"],
+  todayGainLossDollar: ["today's gain/loss dollar", "todays gain/loss dollar", "day gain/loss dollar", "today gain loss dollar"],
+  todayGainLossPercent: ["today's gain/loss percent", "todays gain/loss percent", "day gain/loss percent", "today gain loss percent"],
+  totalGainLossDollar: ["total gain/loss dollar", "total gain loss dollar", "unrealized gain/loss dollar", "gain/loss dollar"],
+  totalGainLossPercent: ["total gain/loss percent", "total gain loss percent", "unrealized gain/loss percent", "gain/loss percent"],
+  percentOfAccount: ["percent of account", "% of account", "percent account"],
+  costBasisTotal: ["cost basis total", "total cost basis", "cost basis"],
+  averageCostBasis: ["average cost basis", "avg cost basis"],
+  type: ["type", "asset type", "security type", "category"],
+};
+
 const MEASURE_PATTERNS = [
   ["priorYear", /\b(prior[\s_-]*year|last[\s_-]*year|py)\b/i],
   ["forecast", /\b(forecast|fcst|outlook|projection)\b/i],
@@ -145,6 +164,7 @@ export function normalizeFinancialRecords(records) {
 export function inspectRows(rows, sourceSheet = "") {
   if (!Array.isArray(rows) || rows.length === 0) {
     return {
+      mode: "fpna_variance",
       sourceSheet,
       headerRowIndex: 0,
       headerRowNumber: 0,
@@ -159,9 +179,27 @@ export function inspectRows(rows, sourceSheet = "") {
 
   const headerRowIndex = findHeaderRowIndex(rows);
   const headers = inferHeaders(rows, headerRowIndex);
+  const portfolioFieldMap = buildPortfolioFieldMap(headers);
+  if (isPortfolioFieldMap(portfolioFieldMap)) {
+    const missingRequiredFields = requiredPortfolioFieldGaps(portfolioFieldMap);
+    return {
+      mode: "portfolio_positions",
+      sourceSheet,
+      headerRowIndex,
+      headerRowNumber: headerRowIndex + 1,
+      headers,
+      mappedFields: portfolioFieldMap,
+      missingRequiredFields,
+      canAnalyze: missingRequiredFields.length === 0,
+      score: scoreHeaderRow(headers) + Math.min(10, countDataRowsAfterHeader(rows, headerRowIndex)),
+      previewRows: rows.slice(headerRowIndex, headerRowIndex + 6),
+    };
+  }
+
   const mappedFields = buildFieldMap(headers);
   const missingRequiredFields = requiredFieldGaps(headers, mappedFields);
   return {
+    mode: "fpna_variance",
     sourceSheet,
     headerRowIndex,
     headerRowNumber: headerRowIndex + 1,
@@ -319,6 +357,26 @@ export function analyzeCsvText(text, options = {}) {
 export function analyzeRows(rows, options = {}, context = {}) {
   const importReport = inspectRows(rows, context.sourceSheet ?? "");
   const records = rowsToObjects(rows);
+  if (importReport.mode === "portfolio_positions") {
+    const positions = normalizePortfolioPositions(records, importReport.mappedFields);
+    const analysis = analyzePortfolioPositions(positions, options);
+    return {
+      rows,
+      records,
+      normalizedRows: positions,
+      importReport: {
+        ...importReport,
+        canAnalyze: positions.length > 0 && importReport.missingRequiredFields.length === 0,
+        normalizedRowCount: positions.length,
+        positionCount: positions.length,
+        varianceCount: 0,
+        sheetReports: context.sheetReports ?? [],
+      },
+      analysis,
+      memo: buildPortfolioMemo(analysis),
+    };
+  }
+
   const normalizedRows = normalizeFinancialRecords(records);
   const analysis = analyzeVariance(normalizedRows, options);
   return {
@@ -400,6 +458,136 @@ function normalizeWideRecords(records, headers, fieldMap) {
   return rows;
 }
 
+function normalizePortfolioPositions(records, fieldMap) {
+  return records
+    .map((record, index) => {
+      const currentValue = parseAmount(record[fieldMap.currentValue]);
+      const symbol = cleanValue(record[fieldMap.symbol]);
+      const description = cleanValue(record[fieldMap.description]);
+      if (currentValue === null || (!symbol && !description)) {
+        return null;
+      }
+
+      return {
+        sourceRow: record.__sourceRow ?? index + 1,
+        accountNumber: cleanValue(record[fieldMap.accountNumber]),
+        accountName: cleanValue(record[fieldMap.accountName]) || "Unspecified account",
+        symbol: symbol || "Unspecified symbol",
+        description: description || symbol || "Unspecified holding",
+        quantity: parseAmount(record[fieldMap.quantity]),
+        lastPrice: parseAmount(record[fieldMap.lastPrice]),
+        lastPriceChange: parseAmount(record[fieldMap.lastPriceChange]),
+        currentValue,
+        todayGainLossDollar: parseAmount(record[fieldMap.todayGainLossDollar]),
+        todayGainLossPercent: parsePercent(record[fieldMap.todayGainLossPercent]),
+        totalGainLossDollar: parseAmount(record[fieldMap.totalGainLossDollar]),
+        totalGainLossPercent: parsePercent(record[fieldMap.totalGainLossPercent]),
+        percentOfAccount: parsePercent(record[fieldMap.percentOfAccount]),
+        costBasisTotal: parseAmount(record[fieldMap.costBasisTotal]),
+        averageCostBasis: parseAmount(record[fieldMap.averageCostBasis]),
+        type: cleanValue(record[fieldMap.type]) || inferPositionType(symbol, description),
+      };
+    })
+    .filter(Boolean);
+}
+
+function analyzePortfolioPositions(positions) {
+  const sortedPositions = [...positions].sort((a, b) => Math.abs(b.currentValue) - Math.abs(a.currentValue));
+  const totalValue = positions.reduce((sum, position) => sum + position.currentValue, 0);
+  const cashValue = positions.filter(isCashPosition).reduce((sum, position) => sum + position.currentValue, 0);
+  const costBasisTotal = sumFinite(positions.map((position) => position.costBasisTotal));
+  const totalGainLossDollar = sumFinite(positions.map((position) => position.totalGainLossDollar));
+  const summary = {
+    positionCount: positions.length,
+    accountCount: countDistinct(positions.map((position) => position.accountName || position.accountNumber).filter(Boolean)),
+    totalValue,
+    cashValue,
+    cashPercent: totalValue === 0 ? null : cashValue / totalValue,
+    costBasisTotal,
+    totalGainLossDollar,
+    totalGainLossPercent: costBasisTotal ? totalGainLossDollar / costBasisTotal : null,
+  };
+  const assetMix = groupPositions(positions, "type", totalValue);
+  const accountMix = groupPositions(positions, "accountName", totalValue);
+  const topPositions = sortedPositions.slice(0, 10).map((position) => ({
+    ...position,
+    percentOfPortfolio: totalValue === 0 ? null : position.currentValue / totalValue,
+  }));
+  const driverNotes = generatePortfolioNotes({ positions, summary, topPositions, assetMix, accountMix });
+
+  return {
+    kind: "portfolio",
+    generatedAt: new Date().toISOString(),
+    positions,
+    topPositions,
+    assetMix,
+    accountMix,
+    driverNotes,
+    variances: [],
+    summary,
+  };
+}
+
+function buildPortfolioMemo(analysis) {
+  const lines = [];
+  const summary = analysis.summary;
+  const topPosition = analysis.topPositions[0];
+  const topAccount = analysis.accountMix[0];
+
+  lines.push("## Portfolio Snapshot");
+  if (summary.positionCount === 0) {
+    lines.push("- No portfolio positions were detected from the uploaded file.");
+  } else {
+    lines.push(`- The file maps ${summary.positionCount} position${summary.positionCount === 1 ? "" : "s"} across ${summary.accountCount} account${summary.accountCount === 1 ? "" : "s"} with parsed current value of ${formatCurrency(summary.totalValue)}.`);
+    if (topPosition) {
+      lines.push(`- Largest position: ${portfolioPositionSentence(topPosition)}.`);
+    }
+    if (summary.cashValue > 0) {
+      lines.push(`- Cash and money-market rows total ${formatCurrency(summary.cashValue)}${summary.cashPercent === null ? "" : ` (${formatPercent(summary.cashPercent)} of parsed value)`}.`);
+    }
+    if (Number.isFinite(summary.totalGainLossDollar) && summary.costBasisTotal > 0) {
+      lines.push(`- Rows with cost basis show total gain/loss of ${formatCurrency(summary.totalGainLossDollar)}${summary.totalGainLossPercent === null ? "" : ` (${formatPercent(summary.totalGainLossPercent)})`}.`);
+    }
+  }
+
+  lines.push("");
+  lines.push("## Largest positions");
+  if (analysis.topPositions.length === 0) {
+    lines.push("- No ranked positions available.");
+  } else {
+    for (const position of analysis.topPositions.slice(0, 8)) {
+      lines.push(`- ${portfolioPositionSentence(position)}.`);
+    }
+  }
+
+  lines.push("");
+  lines.push("## Account and type mix");
+  if (topAccount) {
+    lines.push(`- Largest account bucket: ${topAccount.label} at ${formatCurrency(topAccount.value)} (${formatPercent(topAccount.percentOfPortfolio)} of parsed value).`);
+  }
+  for (const bucket of analysis.assetMix.slice(0, 6)) {
+    lines.push(`- ${bucket.label}: ${formatCurrency(bucket.value)} (${formatPercent(bucket.percentOfPortfolio)}), ${bucket.count} row${bucket.count === 1 ? "" : "s"}.`);
+  }
+
+  lines.push("");
+  lines.push("## Checks to run");
+  for (const note of analysis.driverNotes.slice(0, 8)) {
+    lines.push(`- [row ${note.rowRefs.join(", row ")}] ${note.text}`);
+  }
+
+  lines.push("");
+  lines.push("## Needs context before acting");
+  lines.push("- This is a position-file summary, not investment advice or a recommendation to buy, sell, rebalance, or change allocations.");
+  lines.push("- Verify prices, unsettled activity, account ownership, tax status, and whether rows are duplicated across account sections before using this in a decision.");
+  lines.push("- The file does not explain goals, time horizon, cash needs, risk tolerance, outside accounts, or tax constraints.");
+
+  return {
+    markdown: lines.join("\n"),
+    varianceTable: [],
+    driverNotes: analysis.driverNotes,
+  };
+}
+
 function inferHeaders(rows, headerRowIndex) {
   const rawHeaders = rows[headerRowIndex] ?? [];
   const headers = rawHeaders.map((header, index) => String(header || `Column ${index + 1}`).trim());
@@ -445,12 +633,16 @@ function scoreHeaderRow(row) {
   }
 
   const fieldMap = buildFieldMap(values);
+  const portfolioFieldMap = buildPortfolioFieldMap(values);
   const mappedFields = Object.keys(fieldMap).length;
   const measureHeaders = values.filter((value) => parseMeasureHeader(value)).length;
   const hasAccount = fieldMap.account ? 4 : 0;
   const hasComparableMeasures = fieldMap.actual && fieldMap.budget ? 4 : 0;
+  const portfolioScore = isPortfolioFieldMap(portfolioFieldMap)
+    ? Object.keys(portfolioFieldMap).length + (portfolioFieldMap.currentValue ? 4 : 0) + (portfolioFieldMap.symbol || portfolioFieldMap.description ? 3 : 0)
+    : 0;
 
-  return mappedFields + measureHeaders * 2 + hasAccount + hasComparableMeasures;
+  return Math.max(mappedFields + measureHeaders * 2 + hasAccount + hasComparableMeasures, portfolioScore);
 }
 
 function requiredFieldGaps(headers, fieldMap) {
@@ -512,6 +704,34 @@ function buildFieldMap(headers) {
   return fieldMap;
 }
 
+function buildPortfolioFieldMap(headers) {
+  const fieldMap = {};
+  for (const header of headers) {
+    const normalized = normalizeHeader(header);
+    for (const [field, synonyms] of Object.entries(PORTFOLIO_FIELD_SYNONYMS)) {
+      if (!fieldMap[field] && synonyms.some((synonym) => normalizeHeader(synonym) === normalized)) {
+        fieldMap[field] = header;
+      }
+    }
+  }
+  return fieldMap;
+}
+
+function isPortfolioFieldMap(fieldMap) {
+  return Boolean(fieldMap.currentValue && (fieldMap.symbol || fieldMap.description) && (fieldMap.quantity || fieldMap.type || fieldMap.accountName));
+}
+
+function requiredPortfolioFieldGaps(fieldMap) {
+  const gaps = [];
+  if (!fieldMap.currentValue) {
+    gaps.push("currentValue");
+  }
+  if (!fieldMap.symbol && !fieldMap.description) {
+    gaps.push("symbol");
+  }
+  return gaps;
+}
+
 function collectHeaders(records) {
   const seen = new Set();
   const headers = [];
@@ -549,6 +769,18 @@ function parseAmount(value) {
     return null;
   }
   return isParenthetical ? -number : number;
+}
+
+function parsePercent(value) {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+  const raw = String(value).trim();
+  const amount = parseAmount(raw);
+  if (amount === null) {
+    return null;
+  }
+  return raw.includes("%") || Math.abs(amount) > 1 ? amount / 100 : amount;
 }
 
 function classifyLineType(row) {
@@ -642,9 +874,109 @@ function summarizeVariances(variances) {
   };
 }
 
+function generatePortfolioNotes({ positions, summary, topPositions, assetMix, accountMix }) {
+  const notes = [];
+  const topPosition = topPositions[0];
+  if (topPosition && topPosition.percentOfPortfolio !== null) {
+    notes.push({
+      kind: "position_concentration",
+      severity: topPosition.percentOfPortfolio >= 0.2 ? "watch" : "context",
+      rowRefs: [topPosition.sourceRow],
+      text: `${topPosition.symbol} is the largest parsed position at ${formatCurrency(topPosition.currentValue)} (${formatPercent(topPosition.percentOfPortfolio)} of parsed value).`,
+    });
+  }
+
+  const topAccount = accountMix[0];
+  if (topAccount && topAccount.percentOfPortfolio >= 0.5 && summary.accountCount > 1) {
+    notes.push({
+      kind: "account_concentration",
+      severity: "context",
+      rowRefs: topAccount.rowRefs.slice(0, 3),
+      text: `${topAccount.label} holds ${formatPercent(topAccount.percentOfPortfolio)} of parsed value across ${topAccount.count} row${topAccount.count === 1 ? "" : "s"}.`,
+    });
+  }
+
+  if (summary.cashValue > 0) {
+    const cashRows = positions.filter(isCashPosition).map((position) => position.sourceRow);
+    notes.push({
+      kind: "cash_bucket",
+      severity: "context",
+      rowRefs: cashRows.slice(0, 5),
+      text: `Cash or money-market rows total ${formatCurrency(summary.cashValue)}${summary.cashPercent === null ? "" : ` (${formatPercent(summary.cashPercent)} of parsed value)`}.`,
+    });
+  }
+
+  const missingCostBasis = positions.filter((position) => position.costBasisTotal === null && !isCashPosition(position));
+  if (missingCostBasis.length > 0) {
+    notes.push({
+      kind: "missing_cost_basis",
+      severity: "watch",
+      rowRefs: missingCostBasis.slice(0, 5).map((position) => position.sourceRow),
+      text: `${missingCostBasis.length} non-cash position row${missingCostBasis.length === 1 ? "" : "s"} did not include parsed cost basis, so total gain/loss may be incomplete.`,
+    });
+  }
+
+  const largestType = assetMix[0];
+  if (largestType) {
+    notes.push({
+      kind: "type_mix",
+      severity: "context",
+      rowRefs: largestType.rowRefs.slice(0, 5),
+      text: `${largestType.label} is the largest parsed type bucket at ${formatCurrency(largestType.value)} (${formatPercent(largestType.percentOfPortfolio)}).`,
+    });
+  }
+
+  return notes;
+}
+
+function groupPositions(positions, field, totalValue) {
+  const groups = new Map();
+  for (const position of positions) {
+    const label = cleanValue(position[field]) || "Unspecified";
+    const group = groups.get(label) ?? { label, value: 0, count: 0, rowRefs: [] };
+    group.value += position.currentValue;
+    group.count += 1;
+    group.rowRefs.push(position.sourceRow);
+    groups.set(label, group);
+  }
+  return [...groups.values()]
+    .map((group) => ({
+      ...group,
+      percentOfPortfolio: totalValue === 0 ? 0 : group.value / totalValue,
+    }))
+    .sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
+}
+
+function sumFinite(values) {
+  return values.reduce((sum, value) => (Number.isFinite(value) ? sum + value : sum), 0);
+}
+
+function countDistinct(values) {
+  return new Set(values.map((value) => String(value ?? "").trim()).filter(Boolean)).size;
+}
+
+function isCashPosition(position) {
+  const haystack = `${position.type ?? ""} ${position.symbol ?? ""} ${position.description ?? ""}`.toLowerCase();
+  return /\b(cash|money market|treasury|settlement|sweep)\b/.test(haystack) || /\b(spaxx|fdrxx|fdlxx|vmfxx)\b/.test(haystack);
+}
+
+function inferPositionType(symbol, description) {
+  const haystack = `${symbol ?? ""} ${description ?? ""}`.toLowerCase();
+  if (/\b(cash|money market|sweep)\b/.test(haystack) || /\b(spaxx|fdrxx|fdlxx|vmfxx)\b/.test(haystack)) {
+    return "Cash";
+  }
+  return "Unclassified";
+}
+
 function varianceSentence(variance) {
   const pct = variance.variancePct === null ? "n/a" : formatPercent(Math.abs(variance.variancePct));
   return `[row ${variance.rowRef}] ${variance.account} (${variance.department}, ${variance.period}) is ${variance.favorability} by ${formatCurrency(Math.abs(variance.variance))} (${pct}); actual ${formatCurrency(variance.actual)} vs budget ${formatCurrency(variance.budget)}.`;
+}
+
+function portfolioPositionSentence(position) {
+  const pct = position.percentOfPortfolio === null ? "" : `, ${formatPercent(position.percentOfPortfolio)} of parsed value`;
+  const gainLoss = Number.isFinite(position.totalGainLossDollar) ? `, total gain/loss ${formatCurrency(position.totalGainLossDollar)}` : "";
+  return `[row ${position.sourceRow}] ${position.symbol} - ${position.description} (${position.type}) is ${formatCurrency(position.currentValue)}${pct}${gainLoss}`;
 }
 
 function commentarySentence(variance) {
