@@ -2,8 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://bortlesboat.github.io/</loc>
-    <lastmod>2026-03-30</lastmod>
+    <lastmod>2026-05-18</lastmod>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://bortlesboat.github.io/fpa-advisory/</loc>
+    <lastmod>2026-05-18</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://bortlesboat.github.io/public-opportunity-desk/</loc>

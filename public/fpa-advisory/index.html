@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FP&A Automation Advisory - Andrew Barnes</title>
+    <meta
+      name="description"
+      content="SaaS FP&A, NetSuite, Looker, Excel, Google Sheets, and Python automation advisory for expert-network calls, operators, NetSuite partners, and fractional CFO firms."
+    />
+    <meta name="theme-color" content="#111118" />
+    <link rel="canonical" href="https://bortlesboat.github.io/fpa-advisory/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <meta property="og:title" content="FP&A Automation Advisory - Andrew Barnes" />
+    <meta
+      property="og:description"
+      content="Operator-level guidance on SaaS FP&A workflows, NetSuite and Looker export reporting, workbook automation, and Python finance automation."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bortlesboat.github.io/fpa-advisory/" />
+    <meta property="og:image" content="https://bortlesboat.github.io/og-image.svg" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "FP&A Automation Advisory - Andrew Barnes",
+        "url": "https://bortlesboat.github.io/fpa-advisory/",
+        "areaServed": "United States",
+        "description": "SaaS FP&A, NetSuite, Looker, Excel, Google Sheets, and Python automation advisory for expert-network calls and selective consulting.",
+        "provider": {
+          "@type": "Person",
+          "name": "Andrew Barnes",
+          "sameAs": [
+            "https://github.com/Bortlesboat",
+            "https://linkedin.com/in/andrew-barnes-fp-a"
+          ],
+          "knowsAbout": [
+            "SaaS FP&A",
+            "NetSuite",
+            "Looker",
+            "Excel automation",
+            "Google Sheets automation",
+            "Python automation",
+            "Variance analysis",
+            "Cost-center reporting"
+          ]
+        }
+      }
+    </script>
+    <style>
+      :root {
+        --bg: #111118;
+        --surface: #1a1a24;
+        --surface-2: #20202b;
+        --border: #2d2d3d;
+        --text: #e1e1e5;
+        --muted: #9a9aaa;
+        --subtle: #737387;
+        --accent: #f7931a;
+        --accent-soft: rgba(247, 147, 26, 0.1);
+        --green: #86d6a0;
+        --blue: #9cb9ff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at 18% 12%, rgba(247, 147, 26, 0.07), transparent 28rem),
+          linear-gradient(180deg, #12121b 0%, var(--bg) 42%, #0f0f15 100%);
+        color: var(--text);
+        font-family: "IBM Plex Sans", system-ui, sans-serif;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        color: #ffb04a;
+      }
+
+      .shell {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 24px 0;
+        color: var(--muted);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.78rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .hero {
+        min-height: 76vh;
+        display: grid;
+        grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.8fr);
+        align-items: center;
+        gap: clamp(34px, 7vw, 96px);
+        padding: clamp(54px, 8vw, 96px) 0 clamp(44px, 7vw, 72px);
+      }
+
+      .eyebrow,
+      .section-label {
+        color: var(--accent);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "IBM Plex Mono", monospace;
+        line-height: 1.15;
+      }
+
+      h1 {
+        font-size: clamp(2.45rem, 6vw, 5.9rem);
+        letter-spacing: 0;
+        margin: 14px 0 22px;
+        max-width: 10ch;
+      }
+
+      .lead {
+        color: var(--muted);
+        font-size: clamp(1.05rem, 1.9vw, 1.28rem);
+        max-width: 660px;
+        margin: 0 0 28px;
+      }
+
+      .cta-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0.78rem 1.15rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #111118;
+      }
+
+      .btn-secondary {
+        border: 1px solid var(--border);
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .workflow {
+        position: relative;
+        border: 1px solid var(--border);
+        background: rgba(26, 26, 36, 0.72);
+        border-radius: 8px;
+        padding: 22px;
+      }
+
+      .workflow-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: baseline;
+        margin-bottom: 20px;
+        font-family: "IBM Plex Mono", monospace;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .workflow-map {
+        display: grid;
+        gap: 10px;
+      }
+
+      .stage {
+        display: grid;
+        grid-template-columns: 44px 1fr;
+        gap: 12px;
+        align-items: center;
+        padding: 13px;
+        background: var(--surface-2);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+      }
+
+      .stage code {
+        color: var(--accent);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.82rem;
+      }
+
+      .stage strong {
+        display: block;
+        color: var(--text);
+        font-size: 0.96rem;
+        margin-bottom: 2px;
+      }
+
+      .stage span {
+        color: var(--subtle);
+        font-size: 0.86rem;
+      }
+
+      .node {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 1px solid rgba(247, 147, 26, 0.45);
+        display: grid;
+        place-items: center;
+        color: var(--accent);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.72rem;
+        background: var(--accent-soft);
+      }
+
+      section {
+        padding: clamp(54px, 8vw, 84px) 0;
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(0, 0.65fr) minmax(280px, 0.35fr);
+        gap: 32px;
+        align-items: end;
+        margin-bottom: 32px;
+      }
+
+      .section-head h2 {
+        margin: 8px 0 0;
+        font-size: clamp(1.75rem, 3vw, 3rem);
+      }
+
+      .section-head p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .panel {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        border-radius: 8px;
+        padding: 22px;
+      }
+
+      .panel h3 {
+        margin: 0 0 10px;
+        color: var(--text);
+        font-size: 1rem;
+      }
+
+      .panel p,
+      .panel li {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .panel p {
+        margin: 0;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 1.1rem;
+      }
+
+      li + li {
+        margin-top: 7px;
+      }
+
+      .topic-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        list-style: none;
+        padding: 0;
+      }
+
+      .topic-list li {
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        background: rgba(26, 26, 36, 0.72);
+        border-radius: 8px;
+      }
+
+      .boundary {
+        border-color: rgba(134, 214, 160, 0.35);
+        background: rgba(134, 214, 160, 0.06);
+      }
+
+      .boundary h3 {
+        color: var(--green);
+      }
+
+      .no-list {
+        border-color: rgba(255, 115, 115, 0.3);
+        background: rgba(255, 115, 115, 0.055);
+      }
+
+      .rate {
+        font-family: "IBM Plex Mono", monospace;
+        color: var(--blue);
+        font-size: 1.3rem;
+      }
+
+      footer {
+        padding: 56px 0 72px;
+        color: var(--subtle);
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 840px) {
+        .hero,
+        .section-head,
+        .grid-2,
+        .grid-3,
+        .topic-list {
+          grid-template-columns: 1fr;
+        }
+
+        .hero {
+          min-height: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="shell nav">
+      <a href="/">Andrew Barnes</a>
+      <nav class="nav-links" aria-label="Page">
+        <a href="#topics">Topics</a>
+        <a href="#advisory">Advisory</a>
+        <a href="#boundary">Boundary</a>
+        <a href="mailto:bortlesboat@gmail.com?subject=FP%26A%20automation%20advisory">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="shell hero">
+        <div>
+          <div class="eyebrow">SaaS FP&A + automation</div>
+          <h1>Finance work, after the export.</h1>
+          <p class="lead">
+            Operator-level advisory for the messy last mile of SaaS finance:
+            NetSuite actuals, Looker exports, Excel and Google Sheets workbooks,
+            close cadence, variance analysis, and Python automation.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="mailto:bortlesboat@gmail.com?subject=FP%26A%20automation%20advisory">Start a diagnostic</a>
+            <a class="btn btn-secondary" href="#topics">See call topics</a>
+          </div>
+        </div>
+
+        <aside class="workflow" aria-label="Finance workflow map">
+          <div class="workflow-title">
+            <span>Workflow map</span>
+            <span>operator view</span>
+          </div>
+          <div class="workflow-map">
+            <div class="stage">
+              <div class="node">01</div>
+              <div>
+                <strong>NetSuite actuals</strong>
+                <span>ERP source of truth, mapped to finance reporting needs</span>
+              </div>
+            </div>
+            <div class="stage">
+              <div class="node">02</div>
+              <div>
+                <strong>Looker export</strong>
+                <span>Clean the extract before the workbook becomes the system</span>
+              </div>
+            </div>
+            <div class="stage">
+              <div class="node">03</div>
+              <div>
+                <strong>Budget-owner workbook</strong>
+                <span>Variance logic, close cadence, and repeatable review paths</span>
+              </div>
+            </div>
+            <div class="stage">
+              <div class="node">04</div>
+              <div>
+                <strong>Python automation</strong>
+                <span>pandas, openpyxl, SQL, Streamlit, and review-controlled output</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section id="topics" class="shell">
+        <div class="section-head">
+          <div>
+            <div class="section-label">Expert-network fit</div>
+            <h2>Topics I can discuss without touching confidential data.</h2>
+          </div>
+          <p>
+            Useful for expert networks, SaaS operators, NetSuite partners, PE/VC
+            diligence teams, and fractional CFO firms evaluating finance workflow pain.
+          </p>
+        </div>
+
+        <ul class="topic-list">
+          <li>SaaS FP&A close and reporting workflows</li>
+          <li>NetSuite and Looker export-to-workbook operations</li>
+          <li>Excel and Google Sheets automation for finance teams</li>
+          <li>Python automation for recurring FP&A workflows</li>
+          <li>Cost-center reporting and budget-owner review packs</li>
+          <li>Finance-tool adoption and build-vs-buy tradeoffs</li>
+          <li>Variance analysis, forecast governance, and data quality</li>
+          <li>AI-assisted finance productivity with review controls</li>
+        </ul>
+      </section>
+
+      <section id="advisory" class="shell">
+        <div class="section-head">
+          <div>
+            <div class="section-label">Selective advisory</div>
+            <h2>FP&A Automation Diagnostic</h2>
+          </div>
+          <p>
+            A short, practical review for teams with a recurring finance workflow
+            that is too operational for a strategy deck and too painful to keep
+            rebuilding by hand.
+          </p>
+        </div>
+
+        <div class="grid grid-3">
+          <div class="panel">
+            <h3>Who it fits</h3>
+            <p>
+              SaaS finance teams, NetSuite partners, fractional CFO firms, and
+              operators with recurring workbook/reporting drag.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>What it produces</h3>
+            <p>
+              A short automation map: source systems, manual steps, failure
+              points, quick wins, risks, and a practical next build.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>Starting scope</h3>
+            <p>
+              <span class="rate">$350</span><br />
+              90-minute diagnostic plus a concise action memo. Follow-on advisory starts at $125/hr.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="boundary" class="shell">
+        <div class="grid grid-2">
+          <div class="panel boundary">
+            <h3>Safe ground</h3>
+            <ul>
+              <li>General SaaS FP&A workflow patterns</li>
+              <li>NetSuite, Looker, Excel, Sheets, SQL, and Python automation tradeoffs</li>
+              <li>Operator-level finance-tool buying criteria</li>
+              <li>Anonymized process lessons and implementation pitfalls</li>
+            </ul>
+          </div>
+          <div class="panel no-list">
+            <h3>Off limits</h3>
+            <ul>
+              <li>Current-employer financials, customers, pricing, contracts, or forecasts</li>
+              <li>Board materials, unreleased metrics, pipeline, or internal process details</li>
+              <li>Material non-public information</li>
+              <li>Anything that conflicts with employment, NDA, or network terms</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="shell">
+        <div class="panel">
+          <div class="section-label">Signal</div>
+          <h2>FP&A operator who can also build.</h2>
+          <p>
+            I bring 7+ years of FP&A experience across SaaS, capital markets,
+            corporate FP&A, and operations-heavy finance teams, plus hands-on
+            Python, SQL, Streamlit, Excel, Google Sheets, Tableau, Power BI,
+            NetSuite, and Looker workflow experience. The value is not abstract
+            automation talk. It is knowing which manual finance steps are worth
+            automating, which ones need human review, and how to keep the output
+            usable by real budget owners.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="shell">
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="https://github.com/Bortlesboat" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/andrew-barnes-fp-a" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="mailto:bortlesboat@gmail.com?subject=FP%26A%20automation%20advisory">Email</a>
+      </div>
+      <p>General workflow advisory only. No current-employer confidential information.</p>
+    </footer>
+  </body>
+</html>
