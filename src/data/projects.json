@@ -1,5 +1,11 @@
 [
   {
+    "name": "Variance Memo",
+    "description": "Upload-first FP&A workbench that turns messy CSV/XLSX exports into traceable variance explanations, forecast driver notes, and board-ready Markdown commentary.",
+    "url": "/variance-memo/",
+    "tags": ["Finance", "JavaScript", "FP&A"]
+  },
+  {
     "name": "Satoshi API",
     "description": "Bitcoin fee intelligence API that turns node and mempool data into send/wait decisions. Live at bitcoinsapi.com with x402 pay-per-call support.",
     "url": "https://github.com/Bortlesboat/bitcoin-api",

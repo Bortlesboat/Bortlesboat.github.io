@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Variance Memo</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">FP&amp;A workbench</p>
+          <h1>Variance Memo</h1>
+        </div>
+        <div class="status-strip" aria-live="polite">
+          <span id="statusLabel">Ready</span>
+          <span id="rowCount">0 rows</span>
+          <span id="varianceCount">0 variances</span>
+        </div>
+      </header>
+
+      <section class="workspace" aria-label="Variance memo workspace">
+        <aside class="input-panel" aria-label="Input controls">
+          <label class="dropzone" for="fileInput" id="dropzone">
+            <span class="dropzone-title">CSV or XLSX</span>
+            <span class="dropzone-file" id="fileName">No file selected</span>
+            <input id="fileInput" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+          </label>
+
+          <div class="control-row">
+            <label for="dollarThreshold">Dollar threshold</label>
+            <input id="dollarThreshold" type="number" min="0" step="1000" value="5000" />
+          </div>
+
+          <div class="control-row">
+            <label for="percentThreshold">Percent threshold</label>
+            <input id="percentThreshold" type="number" min="0" step="1" value="10" />
+          </div>
+
+          <div class="button-row">
+            <button id="sampleButton" type="button">Load sample</button>
+            <button id="clearButton" type="button" class="secondary">Clear</button>
+          </div>
+
+          <div class="quality-panel" aria-label="Trust checks">
+            <h2>Trace checks</h2>
+            <dl>
+              <div>
+                <dt>Normalization</dt>
+                <dd id="normalizationCheck">Waiting</dd>
+              </div>
+              <div>
+                <dt>Commentary</dt>
+                <dd id="commentaryCheck">Waiting</dd>
+              </div>
+              <div>
+                <dt>Caveats</dt>
+                <dd id="caveatCheck">Waiting</dd>
+              </div>
+            </dl>
+          </div>
+        </aside>
+
+        <section class="output-grid" aria-label="Analysis outputs">
+          <section class="panel variance-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Actual vs budget</p>
+                <h2>Material Variances</h2>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Row</th>
+                    <th>Period</th>
+                    <th>Account</th>
+                    <th>Dept</th>
+                    <th>Actual</th>
+                    <th>Budget</th>
+                    <th>Variance</th>
+                    <th>Fav</th>
+                  </tr>
+                </thead>
+                <tbody id="varianceRows">
+                  <tr class="empty-row">
+                    <td colspan="8">No analysis loaded.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel driver-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Forecast lens</p>
+                <h2>Driver Notes</h2>
+              </div>
+            </div>
+            <ul id="driverNotes" class="note-list">
+              <li>No driver notes yet.</li>
+            </ul>
+          </section>
+
+          <section class="panel memo-panel">
+            <div class="panel-head memo-head">
+              <div>
+                <p class="eyebrow">Markdown draft</p>
+                <h2>Board Commentary</h2>
+              </div>
+              <div class="button-row compact">
+                <button id="copyButton" type="button" class="secondary">Copy</button>
+                <button id="exportButton" type="button" class="secondary">Export</button>
+              </div>
+            </div>
+            <pre id="memoOutput">Run an analysis to create a memo.</pre>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
