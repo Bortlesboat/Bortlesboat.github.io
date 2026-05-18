@@ -1,4 +1,4 @@
-import { analyzeCsvText, analyzeFile } from "./variance.js?v=043b845";
+import { analyzeCsvText, analyzeFile } from "./variance.js?v=upload-ui-20260518";
 
 const sampleCsv = `Account,Department,Category,Period,Actual,Budget,Forecast,Prior Year
 SaaS recurring revenue,Sales,Revenue,Jan 2026,"$120,000","$100,000","$245,000","$92,000"
@@ -10,10 +10,13 @@ Support software,Support,Expense,Jan 2026,"$18,000","$12,000","$37,000","$11,000
 const state = {
   result: null,
   fileName: "",
+  sourceMode: "empty",
+  currentFile: null,
 };
 
 const elements = {
   fileInput: document.querySelector("#fileInput"),
+  chooseFileButton: document.querySelector("#chooseFileButton"),
   dropzone: document.querySelector("#dropzone"),
   fileName: document.querySelector("#fileName"),
   dollarThreshold: document.querySelector("#dollarThreshold"),
@@ -36,23 +39,45 @@ const elements = {
   caveatCheck: document.querySelector("#caveatCheck"),
 };
 
+elements.chooseFileButton.addEventListener("click", () => {
+  state.result = null;
+  state.fileName = "";
+  state.sourceMode = "upload";
+  state.currentFile = null;
+  elements.fileInput.value = "";
+  render();
+  setStatus("Choose a CSV or XLSX file");
+  elements.fileInput.click();
+});
+
 elements.fileInput.addEventListener("change", async (event) => {
   const [file] = event.target.files;
   if (!file) {
+    if (!state.result) {
+      state.sourceMode = "empty";
+      render();
+    }
     return;
   }
   state.fileName = file.name;
+  state.sourceMode = "upload";
+  state.currentFile = file;
   await runAnalysis(() => analyzeFile(file, thresholds()));
 });
 
 elements.sampleButton.addEventListener("click", async () => {
   state.fileName = "synthetic-saas-pl.csv";
+  state.sourceMode = "demo";
+  state.currentFile = null;
+  elements.fileInput.value = "";
   await runAnalysis(() => Promise.resolve(analyzeCsvText(sampleCsv, thresholds())));
 });
 
 elements.clearButton.addEventListener("click", () => {
   state.result = null;
   state.fileName = "";
+  state.sourceMode = "empty";
+  state.currentFile = null;
   elements.fileInput.value = "";
   render();
 });
@@ -96,23 +121,22 @@ elements.dropzone.addEventListener("drop", async (event) => {
     return;
   }
   state.fileName = file.name;
+  state.sourceMode = "upload";
+  state.currentFile = file;
   await runAnalysis(() => analyzeFile(file, thresholds()));
 });
 
 for (const input of [elements.dollarThreshold, elements.percentThreshold]) {
   input.addEventListener("change", async () => {
-    if (state.fileName === "synthetic-saas-pl.csv") {
+    if (state.sourceMode === "demo") {
       await runAnalysis(() => Promise.resolve(analyzeCsvText(sampleCsv, thresholds())));
+    } else if (state.sourceMode === "upload" && state.currentFile) {
+      await runAnalysis(() => analyzeFile(state.currentFile, thresholds()));
     }
   });
 }
 
-if (new URLSearchParams(window.location.search).get("sample") === "1") {
-  state.fileName = "synthetic-saas-pl.csv";
-  await runAnalysis(() => Promise.resolve(analyzeCsvText(sampleCsv, thresholds())));
-} else {
-  render();
-}
+render();
 
 async function runAnalysis(action) {
   setStatus("Analyzing");
@@ -187,7 +211,8 @@ function renderImportAudit(report) {
     : "";
 
   return `
-    <p><strong>File basis:</strong> ${escapeHtml(state.fileName || "Upload")} ${report.sourceSheet ? `· sheet ${escapeHtml(report.sourceSheet)}` : ""} · header row ${report.headerRowNumber || "not found"}</p>
+    <p><strong>Source:</strong> ${state.sourceMode === "demo" ? "Demo sample" : "Uploaded file"}</p>
+    <p><strong>File basis:</strong> ${escapeHtml(state.fileName || "Upload")} ${report.sourceSheet ? `- sheet ${escapeHtml(report.sourceSheet)}` : ""} - header row ${report.headerRowNumber || "not found"}</p>
     <div class="mapped-fields">${mapped || "<span>No fields mapped</span>"}</div>
     ${missing}
     ${sheets}

@@ -22,11 +22,12 @@
 
       <section class="workspace" aria-label="Variance memo workspace">
         <aside class="input-panel" aria-label="Input controls">
-          <label class="dropzone" for="fileInput" id="dropzone">
+          <div class="dropzone" id="dropzone">
             <span class="dropzone-title">CSV or XLSX</span>
             <span class="dropzone-file" id="fileName">No file selected</span>
-            <input id="fileInput" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
-          </label>
+            <input class="visually-hidden" id="fileInput" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+            <button id="chooseFileButton" type="button">Choose file</button>
+          </div>
 
           <div class="control-row">
             <label for="dollarThreshold">Dollar threshold</label>
@@ -39,7 +40,7 @@
           </div>
 
           <div class="button-row">
-            <button id="sampleButton" type="button">Load sample</button>
+            <button id="sampleButton" type="button" class="secondary">Load demo sample</button>
             <button id="clearButton" type="button" class="secondary">Clear</button>
           </div>
 
@@ -147,6 +148,6 @@
       </section>
     </main>
 
-    <script type="module" src="./src/app.js?v=043b845"></script>
+    <script type="module" src="./src/app.js?v=upload-ui-20260518"></script>
   </body>
 </html>

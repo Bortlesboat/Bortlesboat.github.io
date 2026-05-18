@@ -26,9 +26,16 @@ const requiredTokens = [
   ["html", "Board Commentary"],
   ["html", "importAudit"],
   ["html", "previewRows"],
+  ["html", "chooseFileButton"],
+  ["html", "Load demo sample"],
+  ["html", "app.js?v=upload-ui-20260518"],
   ["app", "synthetic-saas-pl.csv"],
   ["app", "analyzeFile"],
   ["app", "renderImportAudit"],
+  ["app", "chooseFileButton.addEventListener(\"click\""],
+  ["app", "sourceMode = \"upload\""],
+  ["app", "sourceMode = \"demo\""],
+  ["app", "variance.js?v=upload-ui-20260518"],
   ["variance", "parseWorkbook"],
   ["variance", "analyzeWorkbook"],
   ["variance", "inspectRows"],
@@ -43,6 +50,10 @@ for (const [file, token] of requiredTokens) {
   if (!files[file].includes(token)) {
     throw new Error(`${file} is missing required token: ${token}`);
   }
+}
+
+if (/searchParams[\s\S]*sample/.test(files.app)) {
+  throw new Error("App still auto-loads the synthetic sample from URL params");
 }
 
 const bannedTokens = ["EasyPost", "NetSuite", "OneDrive - Trane", "C:\\\\Users\\\\andre"];
