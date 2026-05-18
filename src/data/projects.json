@@ -1,7 +1,7 @@
 [
   {
-    "name": "Variance Memo",
-    "description": "For FP&A managers and senior analysts: CSV/XLSX uploads, variance explanations, forecast driver notes, and Markdown board commentary.",
+    "name": "Finance File Triage",
+    "description": "For finance operators and founders: private browser-side routing for messy FP&A, brokerage, transaction, and invoice exports with traceable Markdown commentary.",
     "url": "/variance-memo/",
     "tags": ["Finance", "JavaScript", "FP&A"]
   },

@@ -3,15 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Variance Memo</title>
+    <title>Finance File Triage</title>
     <link rel="stylesheet" href="./src/styles.css" />
   </head>
   <body>
     <main class="app-shell">
       <header class="topbar">
         <div>
-          <p class="eyebrow">FP&amp;A workbench</p>
-          <h1>Variance Memo</h1>
+          <p class="eyebrow">Private finance workbench</p>
+          <h1>Finance File Triage</h1>
+          <p class="subhead">Messy CSV/XLSX intake for finance exports.</p>
         </div>
         <div class="status-strip" aria-live="polite">
           <span id="statusLabel">Ready</span>
@@ -29,6 +30,8 @@
             <button id="chooseFileButton" type="button">Choose file</button>
           </div>
 
+          <p class="privacy-note">Local browser processing. No upload.</p>
+
           <div class="control-row">
             <label for="dollarThreshold">Dollar threshold</label>
             <input id="dollarThreshold" type="number" min="0" step="1000" value="5000" />
@@ -44,11 +47,19 @@
             <button id="clearButton" type="button" class="secondary">Clear</button>
           </div>
 
-          <div class="quality-panel" aria-label="Trust checks">
-            <h2>Trace checks</h2>
+          <div class="quality-panel" aria-label="File diagnostics">
+            <h2>File Diagnostics</h2>
             <dl>
               <div>
-                <dt>Sheet</dt>
+                <dt>Mode</dt>
+                <dd id="modeCheck">Waiting</dd>
+              </div>
+              <div>
+                <dt>Confidence</dt>
+                <dd id="confidenceCheck">Waiting</dd>
+              </div>
+              <div>
+                <dt>Sheet/Header</dt>
                 <dd id="sheetCheck">Waiting</dd>
               </div>
               <div>
@@ -56,12 +67,16 @@
                 <dd id="normalizationCheck">Waiting</dd>
               </div>
               <div>
-                <dt>Commentary</dt>
-                <dd id="commentaryCheck">Waiting</dd>
+                <dt>Mapped</dt>
+                <dd id="mappedCheck">Waiting</dd>
               </div>
               <div>
-                <dt>Caveats</dt>
-                <dd id="caveatCheck">Waiting</dd>
+                <dt>Unmapped</dt>
+                <dd id="unmappedCheck">Waiting</dd>
+              </div>
+              <div>
+                <dt>Refused</dt>
+                <dd id="refusalCheck">Waiting</dd>
               </div>
             </dl>
           </div>
@@ -138,8 +153,8 @@
                 <h2>Analyst Draft</h2>
               </div>
               <div class="button-row compact">
-                <button id="copyButton" type="button" class="secondary">Copy</button>
-                <button id="exportButton" type="button" class="secondary">Export</button>
+                <button id="copyButton" type="button" class="secondary">Copy Memo</button>
+                <button id="exportButton" type="button" class="secondary">Download Markdown</button>
               </div>
             </div>
             <pre id="memoOutput">Run an analysis to create a memo.</pre>
@@ -148,6 +163,6 @@
       </section>
     </main>
 
-    <script type="module" src="./src/app.js?v=financial-router-v02-20260518"></script>
+    <script type="module" src="./src/app.js?v=financial-triage-v01-20260518"></script>
   </body>
 </html>

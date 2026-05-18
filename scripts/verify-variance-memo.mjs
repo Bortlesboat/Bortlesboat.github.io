@@ -21,18 +21,30 @@ const files = {
 };
 
 const requiredTokens = [
-  ["html", "Variance Memo"],
+  ["html", "Finance File Triage"],
+  ["html", "Private finance workbench"],
+  ["html", "Local browser processing"],
+  ["html", "No upload"],
   ["html", "CSV or XLSX"],
   ["html", "Analyst Draft"],
   ["html", "importAudit"],
   ["html", "previewRows"],
   ["html", "chooseFileButton"],
   ["html", "Load demo sample"],
-  ["html", "app.js?v=financial-router-v02-20260518"],
+  ["html", "Download Markdown"],
+  ["html", "confidenceCheck"],
+  ["html", "unmappedCheck"],
+  ["html", "refusalCheck"],
+  ["html", "app.js?v=financial-triage-v01-20260518"],
   ["html", "analysisHead"],
   ["app", "synthetic-saas-pl.csv"],
   ["app", "analyzeFile"],
   ["app", "renderImportAudit"],
+  ["app", "renderDiagnosticSummary"],
+  ["app", "confidenceLabel"],
+  ["app", "unmappedColumns"],
+  ["app", "refusedInferences"],
+  ["app", "finance-file-triage"],
   ["app", "renderPortfolioRows"],
   ["app", "renderTransactionRows"],
   ["app", "renderInvoiceRows"],
@@ -43,7 +55,7 @@ const requiredTokens = [
   ["app", "chooseFileButton.addEventListener(\"click\""],
   ["app", "sourceMode = \"upload\""],
   ["app", "sourceMode = \"demo\""],
-  ["app", "variance.js?v=financial-router-v02-20260518"],
+  ["app", "variance.js?v=financial-triage-v01-20260518"],
   ["variance", "What the file supports"],
   ["variance", "needs context"],
   ["variance", "Portfolio Snapshot"],
@@ -59,7 +71,7 @@ const requiredTokens = [
   ["variance", "inspectRows"],
   ["variance", "normalizeFinancialRecords"],
   ["variance", "forecast_risk"],
-  ["projects", "Variance Memo"],
+  ["projects", "Finance File Triage"],
   ["projects", "/variance-memo/"],
   ["sitemap", "https://bortlesboat.github.io/variance-memo/"],
 ];
@@ -253,7 +265,7 @@ if (
   throw new Error("Unsupported financial file did not produce a clear unsupported-mode message");
 }
 
-console.log("variance-memo verifier ok: public files, sitemap, project card, deterministic analysis, and privacy guardrails passed");
+console.log("finance-file-triage verifier ok: public files, sitemap, project card, deterministic analysis, and privacy guardrails passed");
 
 async function read(path) {
   return readFile(new URL(path, root), "utf8");

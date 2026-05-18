@@ -97,6 +97,13 @@ h1 {
   line-height: 0.95;
 }
 
+.subhead {
+  max-width: 48rem;
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
 h2 {
   font-size: 1rem;
   font-weight: 750;
@@ -218,6 +225,16 @@ h2 {
   margin-bottom: 10px;
 }
 
+.privacy-note {
+  margin: -4px 0 0;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line));
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 8%, #fffdf7);
+  color: var(--accent);
+  font-weight: 750;
+  padding: 9px 10px;
+}
+
 dl {
   display: grid;
   gap: 8px;
@@ -237,6 +254,7 @@ dt {
 dd {
   margin: 0;
   font-weight: 750;
+  text-align: right;
 }
 
 .output-grid {
@@ -329,6 +347,27 @@ td {
 
 .import-audit p {
   margin: 0;
+}
+
+.diagnostic-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.diagnostic-summary span {
+  display: grid;
+  gap: 3px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fffdf7;
+  padding: 8px 10px;
+}
+
+.diagnostic-summary strong {
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
 }
 
 .mapped-fields {
@@ -444,6 +483,10 @@ pre {
     grid-template-columns: 1fr;
   }
 
+  .diagnostic-summary {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
+
   .variance-panel,
   .driver-panel,
   .memo-panel {
@@ -478,5 +521,9 @@ pre {
 
   .button-row.compact {
     justify-content: flex-start;
+  }
+
+  .diagnostic-summary {
+    grid-template-columns: 1fr;
   }
 }

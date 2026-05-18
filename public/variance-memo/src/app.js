@@ -1,4 +1,4 @@
-import { analyzeCsvText, analyzeFile } from "./variance.js?v=financial-router-v02-20260518";
+import { analyzeCsvText, analyzeFile } from "./variance.js?v=financial-triage-v01-20260518";
 
 const sampleCsv = `Account,Department,Category,Period,Actual,Budget,Forecast,Prior Year
 SaaS recurring revenue,Sales,Revenue,Jan 2026,"$120,000","$100,000","$245,000","$92,000"
@@ -36,10 +36,13 @@ const elements = {
   previewRows: document.querySelector("#previewRows"),
   driverNotes: document.querySelector("#driverNotes"),
   memoOutput: document.querySelector("#memoOutput"),
+  modeCheck: document.querySelector("#modeCheck"),
+  confidenceCheck: document.querySelector("#confidenceCheck"),
   sheetCheck: document.querySelector("#sheetCheck"),
   normalizationCheck: document.querySelector("#normalizationCheck"),
-  commentaryCheck: document.querySelector("#commentaryCheck"),
-  caveatCheck: document.querySelector("#caveatCheck"),
+  mappedCheck: document.querySelector("#mappedCheck"),
+  unmappedCheck: document.querySelector("#unmappedCheck"),
+  refusalCheck: document.querySelector("#refusalCheck"),
 };
 
 elements.chooseFileButton.addEventListener("click", () => {
@@ -101,7 +104,7 @@ elements.exportButton.addEventListener("click", () => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "variance-memo.md";
+  link.download = `${exportSlug(state.result)}.md`;
   link.click();
   URL.revokeObjectURL(url);
   setStatus("Exported memo");
@@ -176,10 +179,13 @@ function render() {
     elements.previewRows.innerHTML = `<tr class="empty-row"><td>No parsed rows yet.</td></tr>`;
     elements.driverNotes.innerHTML = `<li>No driver notes yet.</li>`;
     elements.memoOutput.textContent = "Run an analysis to create a memo.";
+    elements.modeCheck.textContent = "Waiting";
+    elements.confidenceCheck.textContent = "Waiting";
     elements.sheetCheck.textContent = "Waiting";
     elements.normalizationCheck.textContent = "Waiting";
-    elements.commentaryCheck.textContent = "Waiting";
-    elements.caveatCheck.textContent = "Waiting";
+    elements.mappedCheck.textContent = "Waiting";
+    elements.unmappedCheck.textContent = "Waiting";
+    elements.refusalCheck.textContent = "Waiting";
     return;
   }
 
@@ -232,13 +238,17 @@ function render() {
         "No forecast driver notes generated."
       }</li>`;
   elements.memoOutput.textContent = result.memo.markdown;
-  elements.sheetCheck.textContent = result.importReport?.sourceSheet || "CSV";
+  const diagnostics = renderDiagnosticSummary(result.importReport);
+  elements.modeCheck.textContent = diagnostics.mode;
+  elements.confidenceCheck.textContent = diagnostics.confidence;
+  elements.sheetCheck.textContent = diagnostics.sheet;
   elements.normalizationCheck.textContent =
     result.importReport?.canAnalyze
       ? (mode === "portfolio" ? "Positions mapped" : mode === "transactions" ? "Transactions mapped" : mode === "invoices" ? "Invoices mapped" : "Mapped")
       : (mode === "unsupported" ? "Unsupported" : "Mapping needed");
-  elements.commentaryCheck.textContent = result.memo.markdown.includes("[row ") ? "Row-linked" : "Needs review";
-  elements.caveatCheck.textContent = result.memo.markdown.includes("Needs context") ? "Included" : "Missing";
+  elements.mappedCheck.textContent = diagnostics.mapped;
+  elements.unmappedCheck.textContent = diagnostics.unmapped;
+  elements.refusalCheck.textContent = diagnostics.refused;
 }
 
 function renderImportAudit(report) {
@@ -246,25 +256,104 @@ function renderImportAudit(report) {
     return `<p>No import report available.</p>`;
   }
 
+  const diagnostics = renderDiagnosticSummary(report);
   const mapped = Object.entries(report.mappedFields ?? {})
     .map(([field, column]) => `<span><strong>${escapeHtml(field)}</strong>: ${escapeHtml(column)}</span>`)
     .join("");
+  const unmapped = unmappedColumns(report);
   const missing = report.missingRequiredFields?.length
     ? `<p class="audit-warning">Missing required mapping: ${report.missingRequiredFields.map(escapeHtml).join(", ")}. No commentary should be used until this maps.</p>`
     : `<p class="audit-good">${mappedMessage(report.mode)}</p>`;
+  const unmappedList = unmapped.length
+    ? `<p class="audit-muted"><strong>Unmapped columns:</strong> ${unmapped.slice(0, 12).map(escapeHtml).join(", ")}${unmapped.length > 12 ? ", ..." : ""}</p>`
+    : `<p class="audit-muted"><strong>Unmapped columns:</strong> none detected.</p>`;
 
   const sheets = report.sheetReports?.length
     ? `<p class="audit-muted">Workbook sheets scored: ${report.sheetReports.map((sheet) => `${escapeHtml(sheet.sourceSheet || "Sheet")} (${sheet.score})`).join(", ")}</p>`
     : "";
 
   return `
+    <div class="diagnostic-summary">
+      <span><strong>Mode</strong>${escapeHtml(diagnostics.mode)}</span>
+      <span><strong>Confidence</strong>${escapeHtml(diagnostics.confidence)}</span>
+      <span><strong>Mapped</strong>${escapeHtml(diagnostics.mapped)}</span>
+      <span><strong>Refused</strong>${escapeHtml(diagnostics.refused)}</span>
+    </div>
     <p><strong>Source:</strong> ${state.sourceMode === "demo" ? "Demo sample" : "Uploaded file"}</p>
     <p><strong>Detected mode:</strong> ${modeLabel(report.mode)}</p>
     <p><strong>File basis:</strong> ${escapeHtml(state.fileName || "Upload")} ${report.sourceSheet ? `- sheet ${escapeHtml(report.sourceSheet)}` : ""} - header row ${report.headerRowNumber || "not found"}</p>
     <div class="mapped-fields">${mapped || "<span>No fields mapped</span>"}</div>
     ${missing}
+    ${unmappedList}
     ${sheets}
   `;
+}
+
+function renderDiagnosticSummary(report) {
+  if (!report) {
+    return {
+      mode: "Waiting",
+      confidence: "Waiting",
+      sheet: "Waiting",
+      mapped: "Waiting",
+      unmapped: "Waiting",
+      refused: "Waiting",
+    };
+  }
+
+  const mappedCount = Object.keys(report.mappedFields ?? {}).length;
+  const unmappedCount = unmappedColumns(report).length;
+  const headerLabel = report.sourceSheet ? report.sourceSheet : "CSV";
+  const headerRow = report.headerRowNumber ? `row ${report.headerRowNumber}` : "not found";
+
+  return {
+    mode: modeLabelText(report.mode),
+    confidence: confidenceLabel(report),
+    sheet: `${headerLabel} / ${headerRow}`,
+    mapped: `${mappedCount} fields`,
+    unmapped: unmappedCount === 0 ? "0 columns" : `${unmappedCount} columns`,
+    refused: refusedInferences(report),
+  };
+}
+
+function confidenceLabel(report) {
+  if (!report?.canAnalyze) {
+    return report?.mode === "unsupported_financial_file" ? "Unsupported" : "Needs mapping";
+  }
+
+  const mappedCount = Object.keys(report.mappedFields ?? {}).length;
+  if ((report.score ?? 0) >= 8 && mappedCount >= 3 && !report.missingRequiredFields?.length) {
+    return "High";
+  }
+
+  return "Review";
+}
+
+function unmappedColumns(report) {
+  const mappedColumns = new Set(Object.values(report?.mappedFields ?? {}).map((column) => String(column)));
+  return (report?.headers ?? [])
+    .map((header) => String(header ?? "").trim())
+    .filter((header) => header.length > 0 && !mappedColumns.has(header));
+}
+
+function refusedInferences(report) {
+  if (!report?.canAnalyze) {
+    return "memo";
+  }
+
+  if (report.mode === "portfolio_positions") {
+    return "allocation advice";
+  }
+
+  if (report.mode === "financial_transactions") {
+    return "recurring intent";
+  }
+
+  if (report.mode === "invoice_aging") {
+    return "payment decisions";
+  }
+
+  return "root causes";
 }
 
 function renderPreviewRows(report) {
@@ -475,6 +564,15 @@ function modeLabel(mode) {
     return "Unsupported file";
   }
   return "FP&amp;A variance";
+}
+
+function modeLabelText(mode) {
+  return modeLabel(mode).replace("&amp;", "&");
+}
+
+function exportSlug(result) {
+  const mode = result?.importReport?.mode ?? "analysis";
+  return `finance-file-triage-${mode.replaceAll("_", "-")}`;
 }
 
 function mappedMessage(mode) {
