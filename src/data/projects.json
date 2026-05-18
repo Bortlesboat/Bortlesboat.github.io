@@ -19,9 +19,9 @@
   },
   {
     "name": "AgentOps Ledger",
-    "description": "For enterprise AI workflow teams: hosted run ledger for tool calls, approvals, retries, errors, x402 payments, and final outcomes.",
-    "url": "https://bortlesboat.github.io/x402-insights/case-study.html",
-    "tags": ["AI Workflow", "x402", "Observability"]
+    "description": "For enterprise-agent hackathon judges and AI workflow teams: launch hub for tool-call evidence, approvals, retries, x402 payments, final outcomes, and Splunk proof.",
+    "url": "https://bortlesboat.github.io/x402-insights/launch.html",
+    "tags": ["AgentOps", "Splunk", "x402"]
   },
   {
     "name": "Google Workspace CLI",
