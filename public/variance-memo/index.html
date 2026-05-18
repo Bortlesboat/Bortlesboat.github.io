@@ -47,6 +47,10 @@
             <h2>Trace checks</h2>
             <dl>
               <div>
+                <dt>Sheet</dt>
+                <dd id="sheetCheck">Waiting</dd>
+              </div>
+              <div>
                 <dt>Normalization</dt>
                 <dd id="normalizationCheck">Waiting</dd>
               </div>
@@ -70,6 +74,9 @@
                 <h2>Material Variances</h2>
               </div>
             </div>
+            <div class="import-audit" id="importAudit">
+              <p>No file parsed yet.</p>
+            </div>
             <div class="table-wrap">
               <table>
                 <thead>
@@ -87,6 +94,24 @@
                 <tbody id="varianceRows">
                   <tr class="empty-row">
                     <td colspan="8">No analysis loaded.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel preview-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Parser view</p>
+                <h2>Rows Used</h2>
+              </div>
+            </div>
+            <div class="table-wrap small">
+              <table>
+                <tbody id="previewRows">
+                  <tr class="empty-row">
+                    <td>No parsed rows yet.</td>
                   </tr>
                 </tbody>
               </table>

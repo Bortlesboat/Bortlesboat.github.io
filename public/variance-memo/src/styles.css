@@ -259,6 +259,10 @@ dd {
   grid-row: 1;
 }
 
+.preview-panel {
+  grid-column: 1 / -1;
+}
+
 .panel-head {
   display: flex;
   align-items: center;
@@ -275,6 +279,10 @@ dd {
 .table-wrap {
   overflow: auto;
   max-height: 360px;
+}
+
+.table-wrap.small {
+  max-height: 220px;
 }
 
 table {
@@ -303,6 +311,47 @@ th {
 
 td {
   background: #fffdf7;
+}
+
+.import-audit {
+  display: grid;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  background: #fbf7ec;
+  padding: 12px 14px;
+}
+
+.import-audit p {
+  margin: 0;
+}
+
+.mapped-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.mapped-fields span {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fffdf7;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+.audit-good {
+  color: var(--good);
+  font-weight: 720;
+}
+
+.audit-warning {
+  color: var(--risk);
+  font-weight: 720;
+}
+
+.audit-muted {
+  color: var(--muted);
+  font-size: 0.86rem;
 }
 
 .empty-row td {

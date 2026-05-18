@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import {
   analyzeCsvText,
   analyzeVariance,
+  analyzeWorkbook,
   buildBoardMemo,
   normalizeFinancialRecords,
   rowsToObjects,
@@ -23,9 +24,14 @@ const requiredTokens = [
   ["html", "Variance Memo"],
   ["html", "CSV or XLSX"],
   ["html", "Board Commentary"],
+  ["html", "importAudit"],
+  ["html", "previewRows"],
   ["app", "synthetic-saas-pl.csv"],
   ["app", "analyzeFile"],
+  ["app", "renderImportAudit"],
   ["variance", "parseWorkbook"],
+  ["variance", "analyzeWorkbook"],
+  ["variance", "inspectRows"],
   ["variance", "normalizeFinancialRecords"],
   ["variance", "forecast_risk"],
   ["projects", "Variance Memo"],
@@ -96,6 +102,29 @@ const noAnchorResult = analyzeVariance(
 const noAnchorMemo = buildBoardMemo(noAnchorResult);
 if (noAnchorResult.variances.length !== 0 || noAnchorMemo.markdown.includes("Unspecified account")) {
   throw new Error("Verifier caught invented commentary without an account anchor");
+}
+
+const workbookResult = analyzeWorkbook(
+  {
+    sheets: [
+      {
+        name: "Cover",
+        rows: [["Board package"], ["Prepared for leadership"]],
+      },
+      {
+        name: "P&L Export",
+        rows: [
+          ["Monthly Board Package"],
+          ["Account", "Department", "Category", "Period", "Actual", "Budget", "Forecast"],
+          ["Implementation revenue", "Services", "Revenue", "Feb 2026", "84000", "70000", "150000"],
+        ],
+      },
+    ],
+  },
+  { dollarThreshold: 5000, percentThreshold: 0.1 },
+);
+if (workbookResult.importReport.sourceSheet !== "P&L Export" || !workbookResult.memo.markdown.includes("Implementation revenue")) {
+  throw new Error("Workbook sheet selection did not choose the mappable uploaded sheet");
 }
 
 console.log("variance-memo verifier ok: public files, sitemap, project card, deterministic analysis, and privacy guardrails passed");

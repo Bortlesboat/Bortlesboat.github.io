@@ -142,6 +142,38 @@ export function normalizeFinancialRecords(records) {
   return normalizeWideRecords(records, headers, fieldMap);
 }
 
+export function inspectRows(rows, sourceSheet = "") {
+  if (!Array.isArray(rows) || rows.length === 0) {
+    return {
+      sourceSheet,
+      headerRowIndex: 0,
+      headerRowNumber: 0,
+      headers: [],
+      mappedFields: {},
+      missingRequiredFields: ["account", "actual", "budget"],
+      canAnalyze: false,
+      score: 0,
+      previewRows: [],
+    };
+  }
+
+  const headerRowIndex = findHeaderRowIndex(rows);
+  const headers = (rows[headerRowIndex] ?? []).map((header, index) => String(header || `Column ${index + 1}`).trim());
+  const mappedFields = buildFieldMap(headers);
+  const missingRequiredFields = requiredFieldGaps(headers, mappedFields);
+  return {
+    sourceSheet,
+    headerRowIndex,
+    headerRowNumber: headerRowIndex + 1,
+    headers,
+    mappedFields,
+    missingRequiredFields,
+    canAnalyze: missingRequiredFields.length === 0,
+    score: scoreHeaderRow(headers) + Math.min(10, countDataRowsAfterHeader(rows, headerRowIndex)),
+    previewRows: rows.slice(headerRowIndex, headerRowIndex + 6),
+  };
+}
+
 export function analyzeVariance(rows, options = {}) {
   const dollarThreshold = options.dollarThreshold ?? 5000;
   const percentThreshold = options.percentThreshold ?? 0.1;
@@ -254,28 +286,37 @@ export function buildBoardMemo(analysis) {
 
 export async function analyzeFile(file, options = {}) {
   const name = file?.name?.toLowerCase() ?? "";
-  let rows;
   if (name.endsWith(".xlsx")) {
     const workbook = await parseWorkbook(await file.arrayBuffer());
-    rows = workbook.sheets[0].rows;
+    return {
+      fileName: file.name,
+      ...analyzeWorkbook(workbook, options),
+    };
   } else {
-    rows = parseCsv(await file.text());
+    return {
+      fileName: file.name,
+      ...analyzeRows(parseCsv(await file.text()), options, { sourceSheet: "CSV" }),
+    };
   }
-  const records = rowsToObjects(rows);
-  const normalizedRows = normalizeFinancialRecords(records);
-  const analysis = analyzeVariance(normalizedRows, options);
-  return {
-    fileName: file.name,
-    rows,
-    records,
-    normalizedRows,
-    analysis,
-    memo: buildBoardMemo(analysis),
-  };
+}
+
+export function analyzeWorkbook(workbook, options = {}) {
+  const sheets = workbook?.sheets ?? [];
+  const sheetReports = sheets.map((sheet) => inspectRows(sheet.rows, sheet.name));
+  const bestReport = sheetReports.toSorted((a, b) => b.score - a.score)[0] ?? inspectRows([], "");
+  const sheet = sheets.find((candidate) => candidate.name === bestReport.sourceSheet) ?? sheets[0] ?? { rows: [] };
+  return analyzeRows(sheet.rows, options, {
+    sourceSheet: sheet.name ?? "",
+    sheetReports,
+  });
 }
 
 export function analyzeCsvText(text, options = {}) {
-  const rows = parseCsv(text);
+  return analyzeRows(parseCsv(text), options, { sourceSheet: "CSV" });
+}
+
+export function analyzeRows(rows, options = {}, context = {}) {
+  const importReport = inspectRows(rows, context.sourceSheet ?? "");
   const records = rowsToObjects(rows);
   const normalizedRows = normalizeFinancialRecords(records);
   const analysis = analyzeVariance(normalizedRows, options);
@@ -283,6 +324,12 @@ export function analyzeCsvText(text, options = {}) {
     rows,
     records,
     normalizedRows,
+    importReport: {
+      ...importReport,
+      normalizedRowCount: normalizedRows.length,
+      varianceCount: analysis.variances.length,
+      sheetReports: context.sheetReports ?? [],
+    },
     analysis,
     memo: buildBoardMemo(analysis),
   };
@@ -382,6 +429,31 @@ function scoreHeaderRow(row) {
   const hasComparableMeasures = fieldMap.actual && fieldMap.budget ? 4 : 0;
 
   return mappedFields + measureHeaders * 2 + hasAccount + hasComparableMeasures;
+}
+
+function requiredFieldGaps(headers, fieldMap) {
+  const gaps = [];
+  if (!fieldMap.account) {
+    gaps.push("account");
+  }
+
+  const hasVerticalMeasures = Boolean(fieldMap.actual && fieldMap.budget);
+  const wideMeasures = headers.map((header) => parseMeasureHeader(header)).filter(Boolean);
+  const wideMeasureNames = new Set(wideMeasures.map((measure) => measure.measure));
+  const hasWideMeasures = wideMeasureNames.has("actual") && wideMeasureNames.has("budget");
+
+  if (!hasVerticalMeasures && !hasWideMeasures) {
+    gaps.push("actual");
+    gaps.push("budget");
+  }
+
+  return gaps;
+}
+
+function countDataRowsAfterHeader(rows, headerRowIndex) {
+  return rows
+    .slice(headerRowIndex + 1)
+    .filter((row) => row.some((cell) => String(cell ?? "").trim().length > 0)).length;
 }
 
 function parseMeasureHeader(header) {

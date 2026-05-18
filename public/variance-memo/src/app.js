@@ -26,8 +26,11 @@ const elements = {
   rowCount: document.querySelector("#rowCount"),
   varianceCount: document.querySelector("#varianceCount"),
   varianceRows: document.querySelector("#varianceRows"),
+  importAudit: document.querySelector("#importAudit"),
+  previewRows: document.querySelector("#previewRows"),
   driverNotes: document.querySelector("#driverNotes"),
   memoOutput: document.querySelector("#memoOutput"),
+  sheetCheck: document.querySelector("#sheetCheck"),
   normalizationCheck: document.querySelector("#normalizationCheck"),
   commentaryCheck: document.querySelector("#commentaryCheck"),
   caveatCheck: document.querySelector("#caveatCheck"),
@@ -139,8 +142,11 @@ function render() {
     elements.rowCount.textContent = "0 rows";
     elements.varianceCount.textContent = "0 variances";
     elements.varianceRows.innerHTML = `<tr class="empty-row"><td colspan="8">No analysis loaded.</td></tr>`;
+    elements.importAudit.innerHTML = `<p>No file parsed yet.</p>`;
+    elements.previewRows.innerHTML = `<tr class="empty-row"><td>No parsed rows yet.</td></tr>`;
     elements.driverNotes.innerHTML = `<li>No driver notes yet.</li>`;
     elements.memoOutput.textContent = "Run an analysis to create a memo.";
+    elements.sheetCheck.textContent = "Waiting";
     elements.normalizationCheck.textContent = "Waiting";
     elements.commentaryCheck.textContent = "Waiting";
     elements.caveatCheck.textContent = "Waiting";
@@ -152,13 +158,57 @@ function render() {
   elements.varianceRows.innerHTML = result.analysis.variances.length
     ? result.analysis.variances.map(renderVarianceRow).join("")
     : `<tr class="empty-row"><td colspan="8">No material variances found.</td></tr>`;
+  elements.importAudit.innerHTML = renderImportAudit(result.importReport);
+  elements.previewRows.innerHTML = renderPreviewRows(result.importReport);
   elements.driverNotes.innerHTML = result.memo.driverNotes.length
     ? result.memo.driverNotes.map(renderDriverNote).join("")
     : `<li>No forecast driver notes generated.</li>`;
   elements.memoOutput.textContent = result.memo.markdown;
-  elements.normalizationCheck.textContent = result.normalizedRows.length ? "Mapped" : "Empty";
+  elements.sheetCheck.textContent = result.importReport?.sourceSheet || "CSV";
+  elements.normalizationCheck.textContent = result.importReport?.canAnalyze ? "Mapped" : "Mapping needed";
   elements.commentaryCheck.textContent = result.memo.markdown.includes("[row ") ? "Row-linked" : "Needs review";
   elements.caveatCheck.textContent = result.memo.markdown.includes("Caveats") ? "Included" : "Missing";
+}
+
+function renderImportAudit(report) {
+  if (!report) {
+    return `<p>No import report available.</p>`;
+  }
+
+  const mapped = Object.entries(report.mappedFields ?? {})
+    .map(([field, column]) => `<span><strong>${escapeHtml(field)}</strong>: ${escapeHtml(column)}</span>`)
+    .join("");
+  const missing = report.missingRequiredFields?.length
+    ? `<p class="audit-warning">Missing required mapping: ${report.missingRequiredFields.map(escapeHtml).join(", ")}. No commentary should be used until this maps.</p>`
+    : `<p class="audit-good">Mapped account, actual, and budget from the uploaded file.</p>`;
+
+  const sheets = report.sheetReports?.length
+    ? `<p class="audit-muted">Workbook sheets scored: ${report.sheetReports.map((sheet) => `${escapeHtml(sheet.sourceSheet || "Sheet")} (${sheet.score})`).join(", ")}</p>`
+    : "";
+
+  return `
+    <p><strong>File basis:</strong> ${escapeHtml(state.fileName || "Upload")} ${report.sourceSheet ? `· sheet ${escapeHtml(report.sourceSheet)}` : ""} · header row ${report.headerRowNumber || "not found"}</p>
+    <div class="mapped-fields">${mapped || "<span>No fields mapped</span>"}</div>
+    ${missing}
+    ${sheets}
+  `;
+}
+
+function renderPreviewRows(report) {
+  const rows = report?.previewRows ?? [];
+  if (!rows.length) {
+    return `<tr class="empty-row"><td>No parsed rows available.</td></tr>`;
+  }
+
+  return rows
+    .map((row, index) => {
+      const label = index === 0 ? "Detected header" : `Row ${report.headerRowNumber + index}`;
+      return `<tr>
+        <th>${escapeHtml(label)}</th>
+        ${row.slice(0, 10).map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}
+      </tr>`;
+    })
+    .join("");
 }
 
 function renderVarianceRow(row) {
