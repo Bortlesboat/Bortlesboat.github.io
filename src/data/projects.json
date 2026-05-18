@@ -1,38 +1,38 @@
 [
   {
     "name": "Satoshi API",
-    "description": "A REST API for querying the Bitcoin network. Provides real-time mempool analysis, smart fee estimation, block inspection, and transaction decoding \u2014 designed to make Bitcoin node data accessible to any developer.",
+    "description": "Bitcoin fee intelligence API that turns node and mempool data into send/wait decisions. Live at bitcoinsapi.com with x402 pay-per-call support.",
     "url": "https://github.com/Bortlesboat/bitcoin-api",
     "tags": ["Python", "FastAPI", "Bitcoin"]
   },
   {
     "name": "bitcoin-mcp",
-    "description": "Model Context Protocol server that gives AI assistants direct access to Bitcoin network data. 32+ tools for querying blocks, transactions, and fees. Published on PyPI with 42 tests.",
+    "description": "Model Context Protocol server with 49 Bitcoin tools, 126 tests, PyPI install, and zero-config setup for Claude, Cursor, VS Code, and other MCP clients.",
     "url": "https://github.com/Bortlesboat/bitcoin-mcp",
     "tags": ["Python", "MCP", "Bitcoin"]
   },
   {
-    "name": "x402 Lightning",
-    "description": "Added Lightning Network payment support to Coinbase's x402 protocol \u2014 enabling instant micropayments over HTTP. First external contributor to get a PR merged. 39 tests with Alby wallet interop.",
-    "url": "https://github.com/coinbase/x402/pull/1873",
-    "tags": ["TypeScript", "Lightning", "Coinbase"]
+    "name": "x402 Operator Proofs",
+    "description": "Self-hosted facilitator, SIWX reuse, discovery metadata, wallet role separation, and payable MCP flows built around practical Bitcoin seller use cases.",
+    "url": "https://github.com/Bortlesboat/Bortlesboat/blob/main/case-studies.md#3-x402-operator-lab-and-payable-mcp",
+    "tags": ["x402", "MCP", "Payments"]
   },
   {
-    "name": "BAIP-1",
-    "description": "Bitcoin Automation Improvement Proposals \u2014 a standards framework for defining repeatable Bitcoin automation patterns. Includes a Python reference implementation with 61 tests and CI.",
-    "url": "https://github.com/Bortlesboat/baip-python",
-    "tags": ["Python", "Standards", "Bitcoin"]
+    "name": "mesh-llm Contributions",
+    "description": "Merged Rust AI-infrastructure work across owner keystore security, model-size health timeouts, and clearer capacity reporting.",
+    "url": "https://github.com/Mesh-LLM/mesh-llm/pulls?q=author%3ABortlesboat",
+    "tags": ["Rust", "LLM Infra", "Reliability"]
   },
   {
-    "name": "Bitcoin Core",
-    "description": "Contributor to bitcoin/bitcoin, the reference implementation used by tens of thousands of nodes. Focused on test coverage improvements and functional test infrastructure.",
-    "url": "https://github.com/bitcoin/bitcoin/pulls?q=is%3Apr+author%3ABortlesboat",
-    "tags": ["Python", "C++", "Bitcoin Core"]
+    "name": "OpenViking Fixes",
+    "description": "Merged Windows reliability fixes for PID locks, process liveness, and TUI console behavior in an agent context database.",
+    "url": "https://github.com/volcengine/OpenViking/pulls?q=author%3ABortlesboat",
+    "tags": ["Python", "Agents", "Windows"]
   },
   {
-    "name": "OSS Contributions",
-    "description": "Patches accepted by CPython, Goldman Sachs gs-quant, Microsoft qlib, scipy, and dozens more. Bug fixes, test coverage, and documentation across the Python ecosystem.",
-    "url": "https://github.com/Bortlesboat",
-    "tags": ["Python", "Finance", "Open Source"]
+    "name": "qlib-options",
+    "description": "Options-chain snapshot and factor pipeline for Microsoft qlib workflows, including ATM IV, put/call ratios, calendar normalization, and qlib binary export.",
+    "url": "https://github.com/Bortlesboat/qlib-options",
+    "tags": ["Python", "Quant", "Finance"]
   }
 ]

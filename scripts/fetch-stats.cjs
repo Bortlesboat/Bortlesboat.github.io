@@ -20,6 +20,18 @@ async function fetchJSON(url) {
   return res.json()
 }
 
+async function fetchSearchPages(query, pages = 10) {
+  const items = []
+  for (let page = 1; page <= pages; page += 1) {
+    const data = await fetchJSON(
+      `https://api.github.com/search/issues?q=${query}&per_page=100&page=${page}`
+    )
+    items.push(...data.items)
+    if (items.length >= data.total_count || data.items.length < 100) break
+  }
+  return items
+}
+
 async function main() {
   console.log('Fetching GitHub stats...')
 
@@ -33,16 +45,16 @@ async function main() {
     ),
   ])
 
-  // Count unique repos contributed to from recent PRs
+  // Count unique repos with merged PRs, which is more stable than recent activity.
   let reposContributed = '60+'
   try {
-    const recentPRs = await fetchJSON(
-      `https://api.github.com/search/issues?q=author:${USERNAME}+type:pr&per_page=100&sort=created&order=desc`
+    const mergedPRs = await fetchSearchPages(
+      `author:${USERNAME}+type:pr+is:merged`
     )
     const uniqueRepos = new Set(
-      recentPRs.items.map((pr) => pr.repository_url)
+      mergedPRs.map((pr) => pr.repository_url)
     )
-    reposContributed = `${Math.max(uniqueRepos.size, 60)}+`
+    reposContributed = `${Math.max(uniqueRepos.size, 90)}+`
   } catch {
     // Fallback to hardcoded
   }
@@ -64,10 +76,10 @@ main().catch((err) => {
   console.error('Failed to fetch stats:', err.message)
   console.log('Using fallback values...')
   const fallback = {
-    total_prs: '280+',
-    merged_prs: '62+',
-    public_repos: '107',
-    repos_contributed_to: '60+',
+    total_prs: '500+',
+    merged_prs: '125+',
+    public_repos: '265',
+    repos_contributed_to: '90+',
     fetched_at: new Date().toISOString(),
     error: err.message,
   }

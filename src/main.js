@@ -1,5 +1,6 @@
 import './style.css'
 import projects from './data/projects.json'
+import caseStudies from './data/caseStudies.json'
 
 // Render project cards
 const projectsEl = document.getElementById('projects')
@@ -45,3 +46,24 @@ async function loadStats() {
 }
 
 loadStats()
+
+// Render case-study cards
+const caseStudyEl = document.getElementById('case-study-list')
+if (caseStudyEl) {
+  caseStudyEl.innerHTML = caseStudies
+    .map(
+      (study) => `
+    <a href="${study.url}" target="_blank" rel="noopener" class="case-card block">
+      <h3 style="color: var(--color-text); font-size: 1.05rem; margin: 0 0 0.5rem;">${study.name}</h3>
+      <p class="case-label">Problem</p>
+      <p style="color: var(--color-text-muted); font-size: 0.875rem; line-height: 1.5; margin: 0 0 0.85rem;">${study.problem}</p>
+      <p class="case-label">Proof</p>
+      <p style="color: var(--color-text-muted); font-size: 0.875rem; line-height: 1.5; margin: 0 0 1rem;">${study.proof}</p>
+      <div class="flex flex-wrap gap-2">
+        ${study.tags.map((t) => `<span class="tag">${t}</span>`).join('')}
+      </div>
+    </a>
+  `
+    )
+    .join('')
+}
