@@ -23,7 +23,7 @@ const files = {
 const requiredTokens = [
   ["html", "Variance Memo"],
   ["html", "CSV or XLSX"],
-  ["html", "Board Commentary"],
+  ["html", "Analyst Draft"],
   ["html", "importAudit"],
   ["html", "previewRows"],
   ["html", "chooseFileButton"],
@@ -35,7 +35,9 @@ const requiredTokens = [
   ["app", "chooseFileButton.addEventListener(\"click\""],
   ["app", "sourceMode = \"upload\""],
   ["app", "sourceMode = \"demo\""],
-  ["app", "variance.js?v=upload-ui-20260518"],
+  ["app", "variance.js?v=messy-v02-20260518"],
+  ["variance", "What the file supports"],
+  ["variance", "needs context"],
   ["variance", "parseWorkbook"],
   ["variance", "analyzeWorkbook"],
   ["variance", "inspectRows"],
@@ -82,8 +84,8 @@ if (result.analysis.variances.length !== 2) {
   throw new Error(`Expected 2 material variances, found ${result.analysis.variances.length}`);
 }
 
-if (!result.memo.markdown.includes("## Board Commentary") || !result.memo.markdown.includes("[row 2]")) {
-  throw new Error("Generated memo is missing board commentary or source row references");
+if (!result.memo.markdown.includes("## Analyst Draft") || !result.memo.markdown.includes("[row 2]")) {
+  throw new Error("Generated memo is missing analyst draft or source row references");
 }
 
 const preambleRows = [
@@ -136,6 +138,30 @@ const workbookResult = analyzeWorkbook(
 );
 if (workbookResult.importReport.sourceSheet !== "P&L Export" || !workbookResult.memo.markdown.includes("Implementation revenue")) {
   throw new Error("Workbook sheet selection did not choose the mappable uploaded sheet");
+}
+
+const messyResult = analyzeWorkbook(
+  {
+    sheets: [
+      {
+        name: "Variance Export",
+        rows: [
+          ["Acme SaaS monthly review"],
+          ["", "Team", "Type", "Actual Jan 2026", "Budget Jan 2026", "Forecast Jan 2026"],
+          ["Recurring subscription revenue", "Sales", "Revenue", "420000", "390000", "810000"],
+          ["Customer onboarding contractors", "Success", "Expense", "66000", "45000", "120000"],
+        ],
+      },
+    ],
+  },
+  { dollarThreshold: 10000, percentThreshold: 0.08 },
+);
+if (
+  messyResult.importReport.mappedFields.account !== "Column 1" ||
+  !messyResult.memo.markdown.includes("What the file supports") ||
+  !messyResult.memo.markdown.includes("needs context")
+) {
+  throw new Error("Messy semi-structured finance export did not produce a useful caveated analyst draft");
 }
 
 console.log("variance-memo verifier ok: public files, sitemap, project card, deterministic analysis, and privacy guardrails passed");

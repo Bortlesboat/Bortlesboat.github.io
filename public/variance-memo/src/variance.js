@@ -73,7 +73,7 @@ export function rowsToObjects(rows) {
   }
 
   const headerIndex = findHeaderRowIndex(rows);
-  const headers = rows[headerIndex].map((header, index) => String(header || `Column ${index + 1}`).trim());
+  const headers = inferHeaders(rows, headerIndex);
   return rows
     .slice(headerIndex + 1)
     .filter((row) => row.some((cell) => String(cell ?? "").trim().length > 0))
@@ -158,7 +158,7 @@ export function inspectRows(rows, sourceSheet = "") {
   }
 
   const headerRowIndex = findHeaderRowIndex(rows);
-  const headers = (rows[headerRowIndex] ?? []).map((header, index) => String(header || `Column ${index + 1}`).trim());
+  const headers = inferHeaders(rows, headerRowIndex);
   const mappedFields = buildFieldMap(headers);
   const missingRequiredFields = requiredFieldGaps(headers, mappedFields);
   return {
@@ -229,33 +229,33 @@ export function analyzeVariance(rows, options = {}) {
 export function buildBoardMemo(analysis) {
   const variances = analysis.variances ?? [];
   const driverNotes = analysis.driverNotes ?? generateDriverNotes(variances);
-  const topFavorable = variances.filter((row) => row.favorability === "favorable").slice(0, 3);
-  const topUnfavorable = variances.filter((row) => row.favorability === "unfavorable").slice(0, 3);
+  const topFavorable = variances.filter((row) => row.favorability === "favorable").slice(0, 4);
+  const topUnfavorable = variances.filter((row) => row.favorability === "unfavorable").slice(0, 4);
   const lines = [];
 
-  lines.push("## Executive Summary");
+  lines.push("## Analyst Draft");
   if (variances.length === 0) {
     lines.push("- No material actual-vs-budget variances were detected using the selected thresholds, or the importer could not map account, actual, and budget columns from the uploaded file.");
   } else {
-    lines.push(`- ${variances.length} material variance${variances.length === 1 ? "" : "s"} were detected across the uploaded file.`);
+    lines.push(`- The file shows ${variances.length} material actual-vs-budget variance${variances.length === 1 ? "" : "s"} at the selected thresholds.`);
     if (topFavorable[0]) {
-      lines.push(`- Largest favorable item: ${varianceSentence(topFavorable[0])}`);
+      lines.push(`- Largest favorable variance: ${varianceSentence(topFavorable[0])}`);
     }
     if (topUnfavorable[0]) {
-      lines.push(`- Largest unfavorable item: ${varianceSentence(topUnfavorable[0])}`);
+      lines.push(`- Largest unfavorable variance: ${varianceSentence(topUnfavorable[0])}`);
     }
   }
 
   lines.push("");
-  lines.push("## Top Variances");
+  lines.push("## What the file supports");
   for (const variance of variances.slice(0, 8)) {
     lines.push(`- ${varianceSentence(variance)}`);
   }
 
   lines.push("");
-  lines.push("## Forecast Drivers");
+  lines.push("## Possible drivers to investigate");
   if (driverNotes.length === 0) {
-    lines.push("- No forecast risk or opportunity notes were generated from the available forecast columns.");
+    lines.push("- No forecast risk or opportunity notes were generated from mapped forecast columns.");
   } else {
     for (const note of driverNotes.slice(0, 8)) {
       lines.push(`- [row ${note.rowRefs.join(", row ")}] ${note.text}`);
@@ -263,7 +263,7 @@ export function buildBoardMemo(analysis) {
   }
 
   lines.push("");
-  lines.push("## Board Commentary");
+  lines.push("## Draft commentary");
   if (variances.length === 0) {
     lines.push("No board-level variance explanation was generated without a material variance anchor from mapped account, actual, and budget rows.");
   } else {
@@ -273,9 +273,10 @@ export function buildBoardMemo(analysis) {
   }
 
   lines.push("");
-  lines.push("## Caveats");
-  lines.push("- Commentary is generated from visible rows only; add business context before sending externally.");
-  lines.push("- Rows without actual and budget values are excluded from material variance ranking.");
+  lines.push("## Needs context before sending");
+  lines.push("- Confirm whether each variance is timing, volume/rate, mix, accrual/classification, or one-time activity.");
+  lines.push("- Commentary is generated from mapped rows only; it does not know contracts, invoices, headcount changes, or management decisions.");
+  lines.push("- Rows without account, actual, and budget values are excluded from material variance ranking.");
 
   return {
     markdown: lines.join("\n"),
@@ -399,6 +400,27 @@ function normalizeWideRecords(records, headers, fieldMap) {
   return rows;
 }
 
+function inferHeaders(rows, headerRowIndex) {
+  const rawHeaders = rows[headerRowIndex] ?? [];
+  const headers = rawHeaders.map((header, index) => String(header || `Column ${index + 1}`).trim());
+  const fieldMap = buildFieldMap(headers);
+  if (!fieldMap.account && looksLikeAccountColumn(rows, headerRowIndex, 0)) {
+    headers[0] = "Column 1";
+  }
+  return headers;
+}
+
+function looksLikeAccountColumn(rows, headerRowIndex, columnIndex) {
+  const dataValues = rows
+    .slice(headerRowIndex + 1, headerRowIndex + 8)
+    .map((row) => String(row[columnIndex] ?? "").trim())
+    .filter(Boolean);
+  if (dataValues.length < 2) {
+    return false;
+  }
+  return dataValues.every((value) => /[a-z]/i.test(value) && parseAmount(value) === null);
+}
+
 function findHeaderRowIndex(rows) {
   let bestIndex = 0;
   let bestScore = -1;
@@ -477,6 +499,10 @@ function buildFieldMap(headers) {
   const fieldMap = {};
   for (const header of headers) {
     const normalized = normalizeHeader(header);
+    if (!fieldMap.account && normalized === "column 1") {
+      fieldMap.account = header;
+      continue;
+    }
     for (const [field, synonyms] of Object.entries(FIELD_SYNONYMS)) {
       if (!fieldMap[field] && synonyms.some((synonym) => normalizeHeader(synonym) === normalized)) {
         fieldMap[field] = header;
@@ -622,8 +648,11 @@ function varianceSentence(variance) {
 }
 
 function commentarySentence(variance) {
-  const direction = variance.favorability === "favorable" ? "helped results" : "pressured results";
-  return `${variance.account} ${direction} in ${variance.period}, with ${variance.department} actuals ${variance.favorability} to budget by ${formatCurrency(Math.abs(variance.variance))} [row ${variance.rowRef}].`;
+  const direction = variance.variance >= 0 ? "above budget" : "below budget";
+  const contextPrompt = variance.lineType === "revenue"
+    ? "needs context on volume, pricing, timing, churn, or mix"
+    : "needs context on timing, accruals, vendor activity, headcount, or classification";
+  return `${variance.account} was ${direction} by ${formatCurrency(Math.abs(variance.variance))} in ${variance.period} [row ${variance.rowRef}]; this ${contextPrompt}.`;
 }
 
 function formatCurrency(value) {

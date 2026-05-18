@@ -1,4 +1,4 @@
-import { analyzeCsvText, analyzeFile } from "./variance.js?v=upload-ui-20260518";
+import { analyzeCsvText, analyzeFile } from "./variance.js?v=messy-v02-20260518";
 
 const sampleCsv = `Account,Department,Category,Period,Actual,Budget,Forecast,Prior Year
 SaaS recurring revenue,Sales,Revenue,Jan 2026,"$120,000","$100,000","$245,000","$92,000"
