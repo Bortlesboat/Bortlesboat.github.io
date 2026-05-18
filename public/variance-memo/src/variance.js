@@ -42,6 +42,17 @@ const TRANSACTION_FIELD_SYNONYMS = {
   balance: ["balance", "running balance", "available balance"],
 };
 
+const INVOICE_FIELD_SYNONYMS = {
+  counterparty: ["vendor", "supplier", "customer", "client", "counterparty", "payee", "payer"],
+  invoiceNumber: ["invoice number", "invoice #", "invoice no", "invoice id", "document number", "bill number"],
+  invoiceDate: ["invoice date", "bill date", "date"],
+  dueDate: ["due date", "payment due date"],
+  openAmount: ["open amount", "amount due", "balance due", "outstanding amount", "remaining balance", "amount", "invoice amount", "current balance"],
+  daysPastDue: ["days past due", "days overdue", "past due days", "days late"],
+  agingBucket: ["aging bucket", "age bucket", "bucket", "aging"],
+  status: ["status", "invoice status", "payment status"],
+};
+
 const MEASURE_PATTERNS = [
   ["priorYear", /\b(prior[\s_-]*year|last[\s_-]*year|py)\b/i],
   ["forecast", /\b(forecast|fcst|outlook|projection)\b/i],
@@ -224,8 +235,40 @@ export function inspectRows(rows, sourceSheet = "") {
     };
   }
 
+  const invoiceFieldMap = buildInvoiceFieldMap(headers);
+  if (isInvoiceFieldMap(invoiceFieldMap)) {
+    const missingRequiredFields = requiredInvoiceFieldGaps(invoiceFieldMap);
+    return {
+      mode: "invoice_aging",
+      sourceSheet,
+      headerRowIndex,
+      headerRowNumber: headerRowIndex + 1,
+      headers,
+      mappedFields: invoiceFieldMap,
+      missingRequiredFields,
+      canAnalyze: missingRequiredFields.length === 0,
+      score: scoreHeaderRow(headers) + Math.min(10, countDataRowsAfterHeader(rows, headerRowIndex)),
+      previewRows: rows.slice(headerRowIndex, headerRowIndex + 6),
+    };
+  }
+
   const mappedFields = buildFieldMap(headers);
   const missingRequiredFields = requiredFieldGaps(headers, mappedFields);
+  if (missingRequiredFields.length > 1 && !looksLikeFpnaExport(headers, mappedFields)) {
+    return {
+      mode: "unsupported_financial_file",
+      sourceSheet,
+      headerRowIndex,
+      headerRowNumber: headerRowIndex + 1,
+      headers,
+      mappedFields,
+      missingRequiredFields: ["supportedMode"],
+      canAnalyze: false,
+      score: scoreHeaderRow(headers) + Math.min(10, countDataRowsAfterHeader(rows, headerRowIndex)),
+      previewRows: rows.slice(headerRowIndex, headerRowIndex + 6),
+    };
+  }
+
   return {
     mode: "fpna_variance",
     sourceSheet,
@@ -422,6 +465,43 @@ export function analyzeRows(rows, options = {}, context = {}) {
       },
       analysis,
       memo: buildTransactionMemo(analysis),
+    };
+  }
+
+  if (importReport.mode === "invoice_aging") {
+    const invoices = normalizeInvoices(records, importReport.mappedFields);
+    const analysis = analyzeInvoices(invoices, options);
+    return {
+      rows,
+      records,
+      normalizedRows: invoices,
+      importReport: {
+        ...importReport,
+        canAnalyze: invoices.length > 0 && importReport.missingRequiredFields.length === 0,
+        normalizedRowCount: invoices.length,
+        invoiceCount: invoices.length,
+        varianceCount: 0,
+        sheetReports: context.sheetReports ?? [],
+      },
+      analysis,
+      memo: buildInvoiceMemo(analysis),
+    };
+  }
+
+  if (importReport.mode === "unsupported_financial_file") {
+    const analysis = analyzeUnsupportedFile(records, importReport);
+    return {
+      rows,
+      records,
+      normalizedRows: [],
+      importReport: {
+        ...importReport,
+        normalizedRowCount: 0,
+        varianceCount: 0,
+        sheetReports: context.sheetReports ?? [],
+      },
+      analysis,
+      memo: buildUnsupportedMemo(analysis, importReport),
     };
   }
 
@@ -742,11 +822,157 @@ function buildTransactionMemo(analysis) {
   };
 }
 
+function normalizeInvoices(records, fieldMap) {
+  return records
+    .map((record, index) => {
+      const openAmount = parseAmount(record[fieldMap.openAmount]);
+      const counterparty = cleanValue(record[fieldMap.counterparty]);
+      if (!counterparty || !Number.isFinite(openAmount)) {
+        return null;
+      }
+
+      const daysPastDue = parseAmount(record[fieldMap.daysPastDue]);
+      return {
+        sourceRow: record.__sourceRow ?? index + 1,
+        counterparty,
+        invoiceNumber: cleanValue(record[fieldMap.invoiceNumber]) || "Unspecified invoice",
+        invoiceDate: cleanValue(record[fieldMap.invoiceDate]) || "Unspecified invoice date",
+        dueDate: cleanValue(record[fieldMap.dueDate]) || "Unspecified due date",
+        openAmount,
+        daysPastDue: Number.isFinite(daysPastDue) ? daysPastDue : inferDaysPastDue(record[fieldMap.agingBucket]),
+        agingBucket: cleanValue(record[fieldMap.agingBucket]) || "Unbucketed",
+        status: cleanValue(record[fieldMap.status]) || "Unspecified status",
+      };
+    })
+    .filter(Boolean);
+}
+
+function analyzeInvoices(invoices) {
+  const openAmount = invoices.reduce((sum, invoice) => sum + invoice.openAmount, 0);
+  const overdueAmount = invoices.filter(isOverdueInvoice).reduce((sum, invoice) => sum + invoice.openAmount, 0);
+  const currentAmount = openAmount - overdueAmount;
+  const summary = {
+    invoiceCount: invoices.length,
+    counterpartyCount: countDistinct(invoices.map((invoice) => invoice.counterparty)),
+    openAmount,
+    overdueAmount,
+    currentAmount,
+    disputedAmount: invoices.filter((invoice) => /\b(dispute|disputed|hold)\b/i.test(invoice.status)).reduce((sum, invoice) => sum + invoice.openAmount, 0),
+  };
+  const largestInvoices = [...invoices].sort((a, b) => Math.abs(b.openAmount) - Math.abs(a.openAmount)).slice(0, 10);
+  const counterpartyMix = groupInvoices(invoices, "counterparty");
+  const agingMix = groupInvoices(invoices, "agingBucket");
+  const driverNotes = generateInvoiceNotes({ invoices, summary, largestInvoices, counterpartyMix, agingMix });
+
+  return {
+    kind: "invoices",
+    generatedAt: new Date().toISOString(),
+    invoices,
+    largestInvoices,
+    counterpartyMix,
+    agingMix,
+    driverNotes,
+    variances: [],
+    summary,
+  };
+}
+
+function buildInvoiceMemo(analysis) {
+  const lines = [];
+  const summary = analysis.summary;
+
+  lines.push("## Invoice Aging Snapshot");
+  if (summary.invoiceCount === 0) {
+    lines.push("- No open invoice rows were detected from the uploaded file.");
+  } else {
+    lines.push(`- The file maps ${summary.invoiceCount} invoice${summary.invoiceCount === 1 ? "" : "s"} across ${summary.counterpartyCount} counterparty bucket${summary.counterpartyCount === 1 ? "" : "s"}.`);
+    lines.push(`- Open amount totals ${formatCurrency(summary.openAmount)}; ${formatCurrency(summary.overdueAmount)} appears overdue and ${formatCurrency(summary.currentAmount)} appears current.`);
+    if (summary.disputedAmount > 0) {
+      lines.push(`- Disputed/on-hold rows total ${formatCurrency(summary.disputedAmount)} based on parsed status fields.`);
+    }
+  }
+
+  lines.push("");
+  lines.push("## Largest open invoices");
+  if (analysis.largestInvoices.length === 0) {
+    lines.push("- No ranked invoices available.");
+  } else {
+    for (const invoice of analysis.largestInvoices.slice(0, 8)) {
+      lines.push(`- ${invoiceSentence(invoice)}.`);
+    }
+  }
+
+  lines.push("");
+  lines.push("## Counterparty and aging mix");
+  for (const bucket of analysis.counterpartyMix.slice(0, 6)) {
+    lines.push(`- ${bucket.label}: ${formatCurrency(bucket.openAmount)} open across ${bucket.count} invoice${bucket.count === 1 ? "" : "s"}.`);
+  }
+  for (const bucket of analysis.agingMix.slice(0, 6)) {
+    lines.push(`- ${bucket.label}: ${formatCurrency(bucket.openAmount)} open, ${bucket.count} invoice${bucket.count === 1 ? "" : "s"}.`);
+  }
+
+  lines.push("");
+  lines.push("## Checks to run");
+  for (const note of analysis.driverNotes.slice(0, 8)) {
+    lines.push(`- [row ${note.rowRefs.join(", row ")}] ${note.text}`);
+  }
+
+  lines.push("");
+  lines.push("## Needs context before acting");
+  lines.push("- This is an invoice aging summary, not a collections, payment, accounting, or cash-management instruction.");
+  lines.push("- Verify whether this is AP or AR, whether credits/prepayments are included, disputed invoices, payment plans, duplicate invoices, and cutoff date.");
+  lines.push("- The file does not know contract terms, vendor/customer relationships, approval status, payment holds, or cash constraints.");
+
+  return {
+    markdown: lines.join("\n"),
+    varianceTable: [],
+    driverNotes: analysis.driverNotes,
+  };
+}
+
+function analyzeUnsupportedFile(records, importReport) {
+  return {
+    kind: "unsupported",
+    generatedAt: new Date().toISOString(),
+    rowCount: records.length,
+    headers: importReport.headers ?? [],
+    variances: [],
+    driverNotes: [],
+    summary: {
+      rowCount: records.length,
+      columnCount: importReport.headers?.length ?? 0,
+    },
+  };
+}
+
+function buildUnsupportedMemo(analysis, importReport) {
+  const columns = (importReport.headers ?? []).filter(Boolean);
+  const lines = [];
+  lines.push("## Unsupported File Structure");
+  lines.push(`- The file parsed ${analysis.summary.rowCount} data row${analysis.summary.rowCount === 1 ? "" : "s"} and ${analysis.summary.columnCount} detected column${analysis.summary.columnCount === 1 ? "" : "s"}, but it did not match a supported analysis mode.`);
+  lines.push(`- Detected columns: ${columns.slice(0, 12).join(", ") || "none"}.`);
+  lines.push("");
+  lines.push("## Supported modes");
+  lines.push("- FP&A variance: account/line item plus actual and budget, with optional forecast/prior-year.");
+  lines.push("- Portfolio positions: symbol or holding description plus current value, type, cost basis, and gain/loss fields.");
+  lines.push("- Financial transactions: date, description, and amount or debit/credit fields.");
+  lines.push("- Invoice aging: counterparty, invoice/open amount, and due-date/aging/status fields.");
+  lines.push("");
+  lines.push("## Next adapter candidates");
+  lines.push("- Add this file family with a synthetic fixture if it appears repeatedly.");
+  lines.push("- Do not use this output as analysis until the file maps to a supported mode.");
+  return {
+    markdown: lines.join("\n"),
+    varianceTable: [],
+    driverNotes: [],
+  };
+}
+
 function inferHeaders(rows, headerRowIndex) {
   const rawHeaders = rows[headerRowIndex] ?? [];
   const headers = rawHeaders.map((header, index) => String(header || `Column ${index + 1}`).trim());
   const fieldMap = buildFieldMap(headers);
-  if (!fieldMap.account && looksLikeAccountColumn(rows, headerRowIndex, 0)) {
+  if (!fieldMap.account && !String(rawHeaders[0] ?? "").trim() && looksLikeAccountColumn(rows, headerRowIndex, 0)) {
     headers[0] = "Column 1";
   }
   return headers;
@@ -789,6 +1015,7 @@ function scoreHeaderRow(row) {
   const fieldMap = buildFieldMap(values);
   const portfolioFieldMap = buildPortfolioFieldMap(values);
   const transactionFieldMap = buildTransactionFieldMap(values);
+  const invoiceFieldMap = buildInvoiceFieldMap(values);
   const mappedFields = Object.keys(fieldMap).length;
   const measureHeaders = values.filter((value) => parseMeasureHeader(value)).length;
   const hasAccount = fieldMap.account ? 4 : 0;
@@ -799,8 +1026,11 @@ function scoreHeaderRow(row) {
   const transactionScore = isTransactionFieldMap(transactionFieldMap)
     ? Object.keys(transactionFieldMap).length + (transactionFieldMap.date ? 2 : 0) + (transactionFieldMap.description ? 3 : 0) + (transactionFieldMap.amount || (transactionFieldMap.debit && transactionFieldMap.credit) ? 4 : 0)
     : 0;
+  const invoiceScore = isInvoiceFieldMap(invoiceFieldMap)
+    ? Object.keys(invoiceFieldMap).length + (invoiceFieldMap.counterparty ? 3 : 0) + (invoiceFieldMap.openAmount ? 4 : 0) + (invoiceFieldMap.dueDate || invoiceFieldMap.agingBucket || invoiceFieldMap.daysPastDue ? 3 : 0)
+    : 0;
 
-  return Math.max(mappedFields + measureHeaders * 2 + hasAccount + hasComparableMeasures, portfolioScore, transactionScore);
+  return Math.max(mappedFields + measureHeaders * 2 + hasAccount + hasComparableMeasures, portfolioScore, transactionScore, invoiceScore);
 }
 
 function requiredFieldGaps(headers, fieldMap) {
@@ -888,12 +1118,29 @@ function buildTransactionFieldMap(headers) {
   return fieldMap;
 }
 
+function buildInvoiceFieldMap(headers) {
+  const fieldMap = {};
+  for (const header of headers) {
+    const normalized = normalizeHeader(header);
+    for (const [field, synonyms] of Object.entries(INVOICE_FIELD_SYNONYMS)) {
+      if (!fieldMap[field] && synonyms.some((synonym) => normalizeHeader(synonym) === normalized)) {
+        fieldMap[field] = header;
+      }
+    }
+  }
+  return fieldMap;
+}
+
 function isPortfolioFieldMap(fieldMap) {
   return Boolean(fieldMap.currentValue && (fieldMap.symbol || fieldMap.description) && (fieldMap.quantity || fieldMap.type || fieldMap.accountName));
 }
 
 function isTransactionFieldMap(fieldMap) {
   return Boolean(fieldMap.description && fieldMap.date && (fieldMap.amount || fieldMap.debit || fieldMap.credit));
+}
+
+function isInvoiceFieldMap(fieldMap) {
+  return Boolean(fieldMap.counterparty && fieldMap.openAmount && (fieldMap.invoiceNumber || fieldMap.dueDate || fieldMap.agingBucket || fieldMap.daysPastDue || fieldMap.status));
 }
 
 function requiredPortfolioFieldGaps(fieldMap) {
@@ -919,6 +1166,25 @@ function requiredTransactionFieldGaps(fieldMap) {
     gaps.push("amount");
   }
   return gaps;
+}
+
+function requiredInvoiceFieldGaps(fieldMap) {
+  const gaps = [];
+  if (!fieldMap.counterparty) {
+    gaps.push("counterparty");
+  }
+  if (!fieldMap.openAmount) {
+    gaps.push("openAmount");
+  }
+  return gaps;
+}
+
+function looksLikeFpnaExport(headers, fieldMap) {
+  if (fieldMap.actual || fieldMap.budget || fieldMap.forecast || fieldMap.priorYear) {
+    return true;
+  }
+  const wideMeasures = headers.map((header) => parseMeasureHeader(header)).filter(Boolean);
+  return wideMeasures.length > 0;
 }
 
 function collectHeaders(records) {
@@ -1184,6 +1450,61 @@ function generateTransactionNotes({ summary, largestTransactions, categoryMix, a
   return notes;
 }
 
+function generateInvoiceNotes({ invoices, summary, largestInvoices, counterpartyMix, agingMix }) {
+  const notes = [];
+  const largest = largestInvoices[0];
+  if (largest) {
+    notes.push({
+      kind: "largest_invoice",
+      severity: "context",
+      rowRefs: [largest.sourceRow],
+      text: `${largest.counterparty} has the largest parsed open invoice at ${formatCurrency(largest.openAmount)}.`,
+    });
+  }
+
+  const oldest = [...invoices].sort((a, b) => (b.daysPastDue ?? 0) - (a.daysPastDue ?? 0))[0];
+  if (oldest && oldest.daysPastDue > 0) {
+    notes.push({
+      kind: "oldest_past_due",
+      severity: oldest.daysPastDue >= 60 ? "watch" : "context",
+      rowRefs: [oldest.sourceRow],
+      text: `${oldest.counterparty} has a parsed invoice ${oldest.daysPastDue} days past due for ${formatCurrency(oldest.openAmount)}.`,
+    });
+  }
+
+  const topCounterparty = counterpartyMix[0];
+  if (topCounterparty && summary.counterpartyCount > 1) {
+    notes.push({
+      kind: "counterparty_concentration",
+      severity: "context",
+      rowRefs: topCounterparty.rowRefs.slice(0, 5),
+      text: `${topCounterparty.label} is the largest counterparty bucket at ${formatCurrency(topCounterparty.openAmount)} open.`,
+    });
+  }
+
+  const oldestBucket = agingMix.find((bucket) => /60|90|\+|over|past/i.test(bucket.label));
+  if (oldestBucket) {
+    notes.push({
+      kind: "aging_bucket",
+      severity: "watch",
+      rowRefs: oldestBucket.rowRefs.slice(0, 5),
+      text: `${oldestBucket.label} contains ${formatCurrency(oldestBucket.openAmount)} open across ${oldestBucket.count} invoice${oldestBucket.count === 1 ? "" : "s"}.`,
+    });
+  }
+
+  if (summary.disputedAmount > 0) {
+    const disputedRows = invoices.filter((invoice) => /\b(dispute|disputed|hold)\b/i.test(invoice.status)).map((invoice) => invoice.sourceRow);
+    notes.push({
+      kind: "disputed_amount",
+      severity: "watch",
+      rowRefs: disputedRows.slice(0, 5),
+      text: `Disputed/on-hold rows total ${formatCurrency(summary.disputedAmount)}; separate these before collections or payment decisions.`,
+    });
+  }
+
+  return notes;
+}
+
 function groupPositions(positions, field, totalValue) {
   const groups = new Map();
   for (const position of positions) {
@@ -1200,6 +1521,19 @@ function groupPositions(positions, field, totalValue) {
       percentOfPortfolio: totalValue === 0 ? 0 : group.value / totalValue,
     }))
     .sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
+}
+
+function groupInvoices(invoices, field) {
+  const groups = new Map();
+  for (const invoice of invoices) {
+    const label = cleanValue(invoice[field]) || "Unspecified";
+    const group = groups.get(label) ?? { label, openAmount: 0, count: 0, rowRefs: [] };
+    group.openAmount += invoice.openAmount;
+    group.count += 1;
+    group.rowRefs.push(invoice.sourceRow);
+    groups.set(label, group);
+  }
+  return [...groups.values()].sort((a, b) => Math.abs(b.openAmount) - Math.abs(a.openAmount));
 }
 
 function groupTransactions(transactions, field) {
@@ -1227,6 +1561,22 @@ function transactionDateRange(transactions) {
     start: dates[0] ?? "",
     end: dates.at(-1) ?? "",
   };
+}
+
+function isOverdueInvoice(invoice) {
+  if (Number.isFinite(invoice.daysPastDue) && invoice.daysPastDue > 0) {
+    return true;
+  }
+  return /\b(past|overdue|1-30|31-60|61-90|90|\+)\b/i.test(invoice.agingBucket);
+}
+
+function inferDaysPastDue(value) {
+  const bucket = cleanValue(value).toLowerCase();
+  if (!bucket || /\bcurrent\b/.test(bucket)) {
+    return 0;
+  }
+  const match = bucket.match(/\d+/);
+  return match ? Number(match[0]) : null;
 }
 
 function sumFinite(values) {
@@ -1263,6 +1613,11 @@ function portfolioPositionSentence(position) {
 
 function transactionSentence(transaction) {
   return `[row ${transaction.sourceRow}] ${transaction.date} ${transaction.description} (${transaction.category}, ${transaction.account}) is ${transaction.direction} ${formatCurrency(Math.abs(transaction.amount))}${Number.isFinite(transaction.balance) ? `; balance ${formatCurrency(transaction.balance)}` : ""}`;
+}
+
+function invoiceSentence(invoice) {
+  const pastDue = Number.isFinite(invoice.daysPastDue) ? `, ${invoice.daysPastDue} days past due` : "";
+  return `[row ${invoice.sourceRow}] ${invoice.counterparty} invoice ${invoice.invoiceNumber} is open for ${formatCurrency(invoice.openAmount)} due ${invoice.dueDate}${pastDue} (${invoice.agingBucket}, ${invoice.status})`;
 }
 
 function commentarySentence(variance) {

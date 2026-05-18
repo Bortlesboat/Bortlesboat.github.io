@@ -1,4 +1,4 @@
-import { analyzeCsvText, analyzeFile } from "./variance.js?v=financial-router-v01-20260518";
+import { analyzeCsvText, analyzeFile } from "./variance.js?v=financial-router-v02-20260518";
 
 const sampleCsv = `Account,Department,Category,Period,Actual,Budget,Forecast,Prior Year
 SaaS recurring revenue,Sales,Revenue,Jan 2026,"$120,000","$100,000","$245,000","$92,000"
@@ -185,20 +185,38 @@ function render() {
 
   const mode = resultMode(result);
   renderAnalysisHeader(mode);
-  elements.analysisEyebrow.textContent = mode === "portfolio" ? "Positions file" : mode === "transactions" ? "Transactions file" : "Actual vs budget";
-  elements.analysisTitle.textContent = mode === "portfolio" ? "Largest Positions" : mode === "transactions" ? "Cash Activity" : "Material Variances";
+  elements.analysisEyebrow.textContent =
+    mode === "portfolio" ? "Positions file" :
+    mode === "transactions" ? "Transactions file" :
+    mode === "invoices" ? "Invoice file" :
+    mode === "unsupported" ? "Unsupported file" :
+    "Actual vs budget";
+  elements.analysisTitle.textContent =
+    mode === "portfolio" ? "Largest Positions" :
+    mode === "transactions" ? "Cash Activity" :
+    mode === "invoices" ? "Open Invoices" :
+    mode === "unsupported" ? "Unsupported Structure" :
+    "Material Variances";
   elements.rowCount.textContent =
     mode === "portfolio" ? `${result.analysis.summary.positionCount} positions` :
     mode === "transactions" ? `${result.analysis.summary.transactionCount} transactions` :
+    mode === "invoices" ? `${result.analysis.summary.invoiceCount} invoices` :
+    mode === "unsupported" ? `${result.analysis.summary.rowCount} parsed rows` :
     `${result.normalizedRows.length} rows`;
   elements.varianceCount.textContent =
     mode === "portfolio" ? `${formatCurrency(result.analysis.summary.totalValue)} parsed value` :
     mode === "transactions" ? `${formatCurrency(result.analysis.summary.netCashFlow)} net cash flow` :
+    mode === "invoices" ? `${formatCurrency(result.analysis.summary.openAmount)} open` :
+    mode === "unsupported" ? "unsupported" :
     `${result.analysis.variances.length} variances`;
   elements.varianceRows.innerHTML = mode === "portfolio"
     ? renderPortfolioRows(result)
     : mode === "transactions"
       ? renderTransactionRows(result)
+      : mode === "invoices"
+        ? renderInvoiceRows(result)
+        : mode === "unsupported"
+          ? renderUnsupportedRows(result)
       : result.analysis.variances.length
       ? result.analysis.variances.map(renderVarianceRow).join("")
       : `<tr class="empty-row"><td colspan="8">No material variances found.</td></tr>`;
@@ -206,11 +224,19 @@ function render() {
   elements.previewRows.innerHTML = renderPreviewRows(result.importReport);
   elements.driverNotes.innerHTML = result.memo.driverNotes.length
     ? result.memo.driverNotes.map(renderDriverNote).join("")
-    : `<li>${mode === "portfolio" ? "No portfolio checks generated." : mode === "transactions" ? "No transaction checks generated." : "No forecast driver notes generated."}</li>`;
+    : `<li>${
+        mode === "portfolio" ? "No portfolio checks generated." :
+        mode === "transactions" ? "No transaction checks generated." :
+        mode === "invoices" ? "No invoice checks generated." :
+        mode === "unsupported" ? "No checks generated until this file maps to a supported mode." :
+        "No forecast driver notes generated."
+      }</li>`;
   elements.memoOutput.textContent = result.memo.markdown;
   elements.sheetCheck.textContent = result.importReport?.sourceSheet || "CSV";
   elements.normalizationCheck.textContent =
-    result.importReport?.canAnalyze ? (mode === "portfolio" ? "Positions mapped" : mode === "transactions" ? "Transactions mapped" : "Mapped") : "Mapping needed";
+    result.importReport?.canAnalyze
+      ? (mode === "portfolio" ? "Positions mapped" : mode === "transactions" ? "Transactions mapped" : mode === "invoices" ? "Invoices mapped" : "Mapped")
+      : (mode === "unsupported" ? "Unsupported" : "Mapping needed");
   elements.commentaryCheck.textContent = result.memo.markdown.includes("[row ") ? "Row-linked" : "Needs review";
   elements.caveatCheck.textContent = result.memo.markdown.includes("Needs context") ? "Included" : "Missing";
 }
@@ -315,6 +341,40 @@ function renderTransactionRow(row) {
   </tr>`;
 }
 
+function renderInvoiceRows(result) {
+  const rows = result.analysis.largestInvoices ?? [];
+  if (!rows.length) {
+    return `<tr class="empty-row"><td colspan="8">No open invoices found.</td></tr>`;
+  }
+
+  return rows.slice(0, 10).map(renderInvoiceRow).join("");
+}
+
+function renderInvoiceRow(row) {
+  return `<tr>
+    <td>${escapeHtml(row.sourceRow)}</td>
+    <td>${escapeHtml(row.counterparty)}</td>
+    <td>${escapeHtml(row.invoiceNumber)}</td>
+    <td>${escapeHtml(row.dueDate)}</td>
+    <td>${formatCurrency(row.openAmount)}</td>
+    <td>${formatMaybeNumber(row.daysPastDue)}</td>
+    <td>${escapeHtml(row.agingBucket)}</td>
+    <td>${escapeHtml(row.status)}</td>
+  </tr>`;
+}
+
+function renderUnsupportedRows(result) {
+  const headers = result.analysis.headers ?? [];
+  if (!headers.length) {
+    return `<tr class="empty-row"><td colspan="8">No columns detected.</td></tr>`;
+  }
+
+  return headers.slice(0, 8).map((header, index) => `<tr>
+    <td>${index + 1}</td>
+    <td colspan="7">${escapeHtml(header)}</td>
+  </tr>`).join("");
+}
+
 function renderDriverNote(note) {
   return `<li>
     <span class="note-kind">${escapeHtml(note.kind.replaceAll("_", " "))}</span>
@@ -351,6 +411,28 @@ function renderAnalysisHeader(kind) {
     return;
   }
 
+  if (kind === "invoices") {
+    elements.analysisHead.innerHTML = `
+      <th>Row</th>
+      <th>Counterparty</th>
+      <th>Invoice</th>
+      <th>Due Date</th>
+      <th>Open Amount</th>
+      <th>Days Past Due</th>
+      <th>Aging</th>
+      <th>Status</th>
+    `;
+    return;
+  }
+
+  if (kind === "unsupported") {
+    elements.analysisHead.innerHTML = `
+      <th>#</th>
+      <th colspan="7">Detected Column</th>
+    `;
+    return;
+  }
+
   elements.analysisHead.innerHTML = `
     <th>Row</th>
     <th>Period</th>
@@ -370,6 +452,12 @@ function resultMode(result) {
   if (result?.analysis?.kind === "transactions") {
     return "transactions";
   }
+  if (result?.analysis?.kind === "invoices") {
+    return "invoices";
+  }
+  if (result?.analysis?.kind === "unsupported") {
+    return "unsupported";
+  }
   return "variance";
 }
 
@@ -380,6 +468,12 @@ function modeLabel(mode) {
   if (mode === "financial_transactions") {
     return "Financial transactions";
   }
+  if (mode === "invoice_aging") {
+    return "Invoice aging";
+  }
+  if (mode === "unsupported_financial_file") {
+    return "Unsupported file";
+  }
   return "FP&amp;A variance";
 }
 
@@ -389,6 +483,9 @@ function mappedMessage(mode) {
   }
   if (mode === "financial_transactions") {
     return "Mapped transaction fields from the uploaded file.";
+  }
+  if (mode === "invoice_aging") {
+    return "Mapped invoice aging fields from the uploaded file.";
   }
   return "Mapped account, actual, and budget from the uploaded file.";
 }
@@ -416,6 +513,10 @@ function formatMaybePercent(value) {
         maximumFractionDigits: 1,
       }).format(value)
     : "n/a";
+}
+
+function formatMaybeNumber(value) {
+  return Number.isFinite(value) ? String(value) : "n/a";
 }
 
 function escapeHtml(value) {

@@ -28,25 +28,32 @@ const requiredTokens = [
   ["html", "previewRows"],
   ["html", "chooseFileButton"],
   ["html", "Load demo sample"],
-  ["html", "app.js?v=financial-router-v01-20260518"],
+  ["html", "app.js?v=financial-router-v02-20260518"],
   ["html", "analysisHead"],
   ["app", "synthetic-saas-pl.csv"],
   ["app", "analyzeFile"],
   ["app", "renderImportAudit"],
   ["app", "renderPortfolioRows"],
   ["app", "renderTransactionRows"],
+  ["app", "renderInvoiceRows"],
   ["app", "Portfolio positions"],
   ["app", "Financial transactions"],
+  ["app", "Invoice aging"],
+  ["app", "Unsupported file"],
   ["app", "chooseFileButton.addEventListener(\"click\""],
   ["app", "sourceMode = \"upload\""],
   ["app", "sourceMode = \"demo\""],
-  ["app", "variance.js?v=financial-router-v01-20260518"],
+  ["app", "variance.js?v=financial-router-v02-20260518"],
   ["variance", "What the file supports"],
   ["variance", "needs context"],
   ["variance", "Portfolio Snapshot"],
   ["variance", "portfolio_positions"],
   ["variance", "Cash Activity Snapshot"],
   ["variance", "financial_transactions"],
+  ["variance", "Invoice Aging Snapshot"],
+  ["variance", "invoice_aging"],
+  ["variance", "Unsupported File Structure"],
+  ["variance", "unsupported_financial_file"],
   ["variance", "parseWorkbook"],
   ["variance", "analyzeWorkbook"],
   ["variance", "inspectRows"],
@@ -209,6 +216,41 @@ if (
   transactionResult.memo.markdown.includes("actual-vs-budget")
 ) {
   throw new Error("Transaction export did not produce a useful cash activity summary");
+}
+
+const invoiceCsv = `Vendor,Invoice Number,Invoice Date,Due Date,Open Amount,Days Past Due,Aging Bucket,Status
+Cloud Vendor,INV-1001,2026-03-01,2026-03-31,$1200.00,18,1-30,Open
+Contractor LLC,INV-1002,2026-02-15,2026-03-15,$3400.00,34,31-60,Open
+Software Co,INV-1003,2026-04-10,2026-05-10,$800.00,0,Current,Open
+Office Supplier,INV-1004,2026-01-15,2026-02-15,$600.00,63,61-90,Disputed`;
+const invoiceResult = analyzeCsvText(invoiceCsv, { dollarThreshold: 5000, percentThreshold: 0.1 });
+if (
+  invoiceResult.importReport.mode !== "invoice_aging" ||
+  invoiceResult.normalizedRows.length !== 4 ||
+  invoiceResult.analysis.kind !== "invoices" ||
+  invoiceResult.analysis.summary.openAmount !== 6000 ||
+  invoiceResult.analysis.summary.overdueAmount !== 5200 ||
+  !invoiceResult.memo.markdown.includes("Invoice Aging Snapshot") ||
+  !invoiceResult.memo.markdown.includes("Needs context before acting") ||
+  invoiceResult.memo.markdown.includes("actual-vs-budget")
+) {
+  throw new Error("Invoice aging export did not produce a useful invoice summary");
+}
+
+const unsupportedCsv = `Statement Section,Line Label,Value,Notes
+Summary,Opening balance,$1000.00,Statement-only rollforward
+Summary,Closing balance,$1250.00,No transaction-level detail
+Disclosure,Important note,N/A,Informational text`;
+const unsupportedResult = analyzeCsvText(unsupportedCsv, { dollarThreshold: 5000, percentThreshold: 0.1 });
+if (
+  unsupportedResult.importReport.mode !== "unsupported_financial_file" ||
+  unsupportedResult.importReport.canAnalyze ||
+  unsupportedResult.analysis.kind !== "unsupported" ||
+  !unsupportedResult.memo.markdown.includes("Unsupported File Structure") ||
+  !unsupportedResult.memo.markdown.includes("Supported modes") ||
+  unsupportedResult.memo.markdown.includes("actual-vs-budget variances were detected")
+) {
+  throw new Error("Unsupported financial file did not produce a clear unsupported-mode message");
 }
 
 console.log("variance-memo verifier ok: public files, sitemap, project card, deterministic analysis, and privacy guardrails passed");
