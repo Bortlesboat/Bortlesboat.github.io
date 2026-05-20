@@ -400,6 +400,7 @@ p {
 
 .artifact-section,
 .case-section,
+.proof-map-section,
 .proof-split,
 .contact-panel,
 .operator-strip {
@@ -631,6 +632,82 @@ p {
   margin-top: 0;
 }
 
+.proof-map-section {
+  margin: 0 auto;
+  padding-top: 4rem;
+}
+
+.proof-map {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.proof-lane {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 2px solid var(--line-strong);
+  border-radius: 0.5rem;
+  background: var(--paper-strong);
+}
+
+.proof-lane-copy {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.proof-lane-label {
+  margin: 0;
+  color: var(--brick);
+  font-family: "Azeret Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.proof-lane h3 {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.1;
+}
+
+.proof-lane p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.42;
+}
+
+.proof-links {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.proof-link {
+  display: grid;
+  gap: 0.18rem;
+  padding: 0.65rem 0;
+  border-top: 1px solid var(--line-strong);
+  color: var(--ink);
+}
+
+.proof-link:hover {
+  color: var(--brick);
+}
+
+.proof-link strong {
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.proof-link span {
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
 .proof-split {
   display: grid;
   grid-template-columns: minmax(20rem, 0.8fr) minmax(0, 1fr);
@@ -767,7 +844,8 @@ p {
     min-height: auto;
   }
 
-  .evidence-board {
+  .evidence-board,
+  .proof-map {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -800,6 +878,7 @@ p {
   }
 
   .evidence-board,
+  .proof-map,
   .operator-strip {
     grid-template-columns: 1fr;
   }
@@ -840,6 +919,7 @@ p {
   .proof-split,
   .artifact-section,
   .case-section,
+  .proof-map-section,
   .contact-panel {
     padding-top: 3.5rem;
   }
@@ -896,6 +976,7 @@ body::before {
 .evidence-board,
 .artifact-section,
 .case-section,
+.proof-map-section,
 .proof-split,
 .contact-panel,
 .operator-strip {
@@ -1039,6 +1120,7 @@ body::before {
 
 .artifact-section,
 .case-section,
+.proof-map-section,
 .proof-split {
   padding-top: clamp(3rem, 6vw, 4.5rem);
 }
@@ -1115,6 +1197,46 @@ body::before {
   border-color: var(--line);
   background: var(--paper-strong);
   font-size: 0.6rem;
+}
+
+.proof-map-section {
+  padding-top: clamp(3rem, 6vw, 4.5rem);
+}
+
+.proof-map {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.proof-lane {
+  border: 1px solid var(--line);
+  border-radius: 0.35rem;
+  background: rgba(255, 253, 248, 0.9);
+  box-shadow: 0 1rem 2.5rem rgba(35, 38, 43, 0.06);
+}
+
+.proof-lane-label {
+  color: var(--copper);
+  font-size: 0.66rem;
+}
+
+.proof-lane h3 {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 750;
+}
+
+.proof-lane p,
+.proof-link span {
+  font-size: 0.82rem;
+}
+
+.proof-link {
+  border-top: 1px solid var(--line);
+}
+
+.proof-link strong {
+  font-size: 0.9rem;
 }
 
 .operator-strip {
@@ -1195,6 +1317,7 @@ body::before {
   .evidence-board,
   .artifact-section,
   .case-section,
+  .proof-map-section,
   .proof-split,
   .contact-panel,
   .operator-strip {

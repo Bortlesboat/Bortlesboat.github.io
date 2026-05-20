@@ -1,0 +1,110 @@
+[
+  {
+    "lane": "Tech FP&A",
+    "title": "Finance workflow proof, not generic automation.",
+    "summary": "Public evidence ties senior analyst judgment to finance-platform patches, browser-side FP&A triage, and reusable finance data tooling while keeping private records out of public view.",
+    "proofs": [
+      {
+        "label": "OpenBB PR #7403",
+        "note": "Merged parser cleanup in a public finance platform.",
+        "url": "https://github.com/OpenBB-finance/OpenBB/pull/7403"
+      },
+      {
+        "label": "OpenBB PR #7422",
+        "note": "Merged CLI utility tests for finance tooling reliability.",
+        "url": "https://github.com/OpenBB-finance/OpenBB/pull/7422"
+      },
+      {
+        "label": "qlib-options",
+        "note": "Options snapshot and factor pipeline with an explicit limitation boundary.",
+        "url": "https://github.com/Bortlesboat/qlib-options"
+      },
+      {
+        "label": "Finance file triage",
+        "note": "Browser-side FP&A workflow demo with traceable commentary.",
+        "url": "/variance-memo/"
+      }
+    ]
+  },
+  {
+    "lane": "AI workflow automation",
+    "title": "Agent runs, Workspace automation, and maintainable AI tooling.",
+    "summary": "The strongest current artifact is AgentOps Ledger: a public agent flight recorder backed by a demo, case study, release, architecture notes, and Splunk HEC proof.",
+    "proofs": [
+      {
+        "label": "AgentOps Ledger launch",
+        "note": "Public hub for approvals, retries, errors, x402 payment events, and outcomes.",
+        "url": "https://bortlesboat.github.io/x402-insights/launch.html"
+      },
+      {
+        "label": "AgentOps Ledger case study",
+        "note": "Hosted write-up for enterprise-agent run evidence.",
+        "url": "https://bortlesboat.github.io/x402-insights/case-study.html"
+      },
+      {
+        "label": "Google Workspace CLI PRs",
+        "note": "Merged OAuth, diagnostics, and packaging fixes for workflow operators.",
+        "url": "https://github.com/googleworkspace/cli/pulls?q=author%3ABortlesboat+is%3Apr+is%3Amerged"
+      },
+      {
+        "label": "google_workspace_mcp PRs",
+        "note": "Merged Gmail reply metadata and Sheets-notes improvements.",
+        "url": "https://github.com/taylorwilsdon/google_workspace_mcp/pulls?q=author%3ABortlesboat+is%3Apr+is%3Amerged"
+      }
+    ]
+  },
+  {
+    "lane": "Bitcoin / x402",
+    "title": "Payment and protocol proof with live APIs and merged ecosystem PRs.",
+    "summary": "Precise Bitcoin ecosystem proof comes from live Satoshi API, bitcoin-mcp, x402 Foundation PRs, fee-provider integrations, rust-lightning, and rust-bitcoin.",
+    "proofs": [
+      {
+        "label": "Satoshi API",
+        "note": "Live Bitcoin fee-intelligence API and public repo with x402 support.",
+        "url": "https://github.com/Bortlesboat/bitcoin-api"
+      },
+      {
+        "label": "bitcoin-mcp",
+        "note": "Public MCP server that exposes Bitcoin context to agent workflows.",
+        "url": "https://github.com/Bortlesboat/bitcoin-mcp"
+      },
+      {
+        "label": "x402 Foundation PR #1733",
+        "note": "Merged sync MCP server edge-case tests.",
+        "url": "https://github.com/x402-foundation/x402/pull/1733"
+      },
+      {
+        "label": "rust-lightning PR #4470",
+        "note": "Merged Lightning wallet/channel visibility improvement.",
+        "url": "https://github.com/lightningdevkit/rust-lightning/pull/4470"
+      }
+    ]
+  },
+  {
+    "lane": "Developer infrastructure",
+    "title": "Recognizable merged fixes across setup, docs, tests, and reliability.",
+    "summary": "A curated set of merged PRs in CPython, context7, Mesh-LLM, OpenViking, OpenAI, Microsoft, and finance/data libraries is more credible than raw repo volume.",
+    "proofs": [
+      {
+        "label": "CPython PR #145538",
+        "note": "Merged docs contribution with maintainer review.",
+        "url": "https://github.com/python/cpython/pull/145538"
+      },
+      {
+        "label": "context7 PR #2564",
+        "note": "Merged CLI setup fix for Claude config environments.",
+        "url": "https://github.com/upstash/context7/pull/2564"
+      },
+      {
+        "label": "Mesh-LLM PRs",
+        "note": "Merged security, startup reliability, and operator-UX work.",
+        "url": "https://github.com/Mesh-LLM/mesh-llm/pulls?q=author%3ABortlesboat"
+      },
+      {
+        "label": "OpenViking PRs",
+        "note": "Merged Windows reliability fixes for agent context infrastructure.",
+        "url": "https://github.com/volcengine/OpenViking/pulls?q=author%3ABortlesboat"
+      }
+    ]
+  }
+]
