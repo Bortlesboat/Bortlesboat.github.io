@@ -1,7 +1,7 @@
 [
   {
     "name": "OpenAI / Microsoft / Google Workspace",
-    "problem": "AI research, speech-model, and Workspace tool maintainers need narrow fixes that make real workflows less brittle.",
+    "problem": "Maintainers needed narrow fixes for research tooling, speech demos, and Workspace CLI setup.",
     "proof": "Merged PRs in openai/privacy-filter, microsoft/VibeVoice, and googleworkspace/cli.",
     "url": "https://github.com/Bortlesboat/Bortlesboat/blob/main/github-contributions.md",
     "tags": [
@@ -12,8 +12,8 @@
   },
   {
     "name": "AgentOps Ledger",
-    "problem": "Enterprise AI teams need inspectable run evidence before agents can use real tools, approvals, retries, and paid API paths.",
-    "proof": "Public launch hub, hosted demo, release, architecture notes, and Splunk HEC proof.",
+    "problem": "Agent runs need readable evidence before real tools, approvals, retries, and paid API paths are safe to use.",
+    "proof": "Launch hub, hosted demo, release, architecture notes, and Splunk HEC evidence.",
     "url": "https://bortlesboat.github.io/x402-insights/case-study.html",
     "tags": [
       "AI Workflow",
@@ -24,7 +24,7 @@
   {
     "name": "Satoshi API",
     "problem": "Wallet builders, app developers, and agents need fee data translated into decisions.",
-    "proof": "Live API, x402 support, public repo, and test coverage.",
+    "proof": "Live API, x402 support, public repo, and tests.",
     "url": "https://github.com/Bortlesboat/Bortlesboat/blob/main/case-studies.md#1-satoshi-api-bitcoin-fee-intelligence",
     "tags": [
       "Bitcoin",
@@ -35,7 +35,7 @@
   {
     "name": "bitcoin-mcp",
     "problem": "AI workflow automators need Bitcoin context without scraping explorers or hand-wiring RPC.",
-    "proof": "49 MCP tools, 126 tests, PyPI distribution, and one-command setup.",
+    "proof": "49 MCP tools, 126 tests, PyPI distribution, and setup docs.",
     "url": "https://github.com/Bortlesboat/Bortlesboat/blob/main/case-studies.md#2-bitcoin-mcp-bitcoin-context-for-ai-agents",
     "tags": [
       "MCP",
@@ -44,30 +44,8 @@
     ]
   },
   {
-    "name": "x402 Operator Lab",
-    "problem": "Protocol operators and sellers need explicit facilitator, wallet, and discovery boundaries.",
-    "proof": "Self-hosted facilitator, SIWX reuse, discovery metadata, and payable MCP flow.",
-    "url": "https://github.com/Bortlesboat/Bortlesboat/blob/main/case-studies.md#3-x402-operator-lab-and-payable-mcp",
-    "tags": [
-      "Payments",
-      "SIWX",
-      "MCP"
-    ]
-  },
-  {
-    "name": "mesh-llm",
-    "problem": "Distributed inference operators need security, startup reliability, and readable signals.",
-    "proof": "Three merged PRs in a Rust LLM infrastructure project.",
-    "url": "https://github.com/Bortlesboat/Bortlesboat/blob/main/case-studies.md#5-mesh-llm-distributed-inference-reliability",
-    "tags": [
-      "Rust",
-      "LLM Infra",
-      "Reliability"
-    ]
-  },
-  {
     "name": "Finance Dashboard",
-    "problem": "FP&A managers and senior analysts need clean intake across portals, emails, PDFs, CSVs, and manual review.",
+    "problem": "FP&A managers need clean intake across portals, emails, PDFs, CSVs, and manual review.",
     "proof": "Streamlit and SQLite control plane with 126 local pytest cases; sanitized public write-up only.",
     "url": "https://github.com/Bortlesboat/Bortlesboat/blob/main/case-studies.md#8-finance-dashboard-private-fpa-automation",
     "tags": [
@@ -77,7 +55,7 @@
     ]
   },
   {
-    "name": "Selected Merged PRs",
+    "name": "Selected merged PRs",
     "problem": "Maintainers need small fixes with clear scope and tests.",
     "proof": "Merged PRs in rust-lightning, rust-bitcoin, CPython, OpenBB, statsmodels, x402, mesh-llm, and OpenViking.",
     "url": "https://github.com/Bortlesboat/Bortlesboat/blob/main/github-contributions.md",

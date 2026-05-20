@@ -1,8 +1,8 @@
 [
   {
     "lane": "Tech FP&A",
-    "title": "Finance workflow proof, not generic automation.",
-    "summary": "Public evidence ties senior analyst judgment to finance-platform patches, browser-side FP&A triage, and reusable finance data tooling while keeping private records out of public view.",
+    "title": "Finance work with public artifacts.",
+    "summary": "Public examples include OpenBB fixes, a browser-side FP&A triage demo, qlib-options, and sanitized finance-dashboard notes. Private records stay private.",
     "proofs": [
       {
         "label": "OpenBB PR #7403",
@@ -16,7 +16,7 @@
       },
       {
         "label": "qlib-options",
-        "note": "Options snapshot and factor pipeline with an explicit limitation boundary.",
+        "note": "Options snapshot and factor pipeline with a clear limitation boundary.",
         "url": "https://github.com/Bortlesboat/qlib-options"
       },
       {
@@ -28,12 +28,12 @@
   },
   {
     "lane": "AI workflow automation",
-    "title": "Agent runs, Workspace automation, and maintainable AI tooling.",
-    "summary": "The strongest current artifact is AgentOps Ledger: a public agent flight recorder backed by a demo, case study, release, architecture notes, and Splunk HEC proof.",
+    "title": "Agent run logs and practical automation.",
+    "summary": "AgentOps Ledger is the cleanest artifact here: a demo, case study, release, architecture notes, and Splunk HEC evidence.",
     "proofs": [
       {
         "label": "AgentOps Ledger launch",
-        "note": "Public hub for approvals, retries, errors, x402 payment events, and outcomes.",
+        "note": "Run evidence for approvals, retries, errors, payment events, and outcomes.",
         "url": "https://bortlesboat.github.io/x402-insights/launch.html"
       },
       {
@@ -43,7 +43,7 @@
       },
       {
         "label": "Google Workspace CLI PRs",
-        "note": "Merged OAuth, diagnostics, and packaging fixes for workflow operators.",
+        "note": "Merged OAuth, diagnostics, and packaging fixes.",
         "url": "https://github.com/googleworkspace/cli/pulls?q=author%3ABortlesboat+is%3Apr+is%3Amerged"
       },
       {
@@ -55,17 +55,17 @@
   },
   {
     "lane": "Bitcoin / x402",
-    "title": "Payment and protocol proof with live APIs and merged ecosystem PRs.",
-    "summary": "Precise Bitcoin ecosystem proof comes from live Satoshi API, bitcoin-mcp, x402 Foundation PRs, fee-provider integrations, rust-lightning, and rust-bitcoin.",
+    "title": "Bitcoin/x402 work with live APIs and merged PRs.",
+    "summary": "The public trail is Satoshi API, bitcoin-mcp, x402 Foundation tests, fee-provider work, rust-lightning, and rust-bitcoin.",
     "proofs": [
       {
         "label": "Satoshi API",
-        "note": "Live Bitcoin fee-intelligence API and public repo with x402 support.",
+        "note": "Live Bitcoin fee API and public repo with x402 support.",
         "url": "https://github.com/Bortlesboat/bitcoin-api"
       },
       {
         "label": "bitcoin-mcp",
-        "note": "Public MCP server that exposes Bitcoin context to agent workflows.",
+        "note": "MCP server that gives agents Bitcoin context.",
         "url": "https://github.com/Bortlesboat/bitcoin-mcp"
       },
       {
@@ -82,8 +82,8 @@
   },
   {
     "lane": "Developer infrastructure",
-    "title": "Recognizable merged fixes across setup, docs, tests, and reliability.",
-    "summary": "A curated set of merged PRs in CPython, context7, Mesh-LLM, OpenViking, OpenAI, Microsoft, and finance/data libraries is more credible than raw repo volume.",
+    "title": "Small fixes in places maintainers recognize.",
+    "summary": "A short set of merged PRs in CPython, context7, Mesh-LLM, OpenViking, OpenAI, Microsoft, and finance/data libraries says more than repo count.",
     "proofs": [
       {
         "label": "CPython PR #145538",

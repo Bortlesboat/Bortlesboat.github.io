@@ -1,7 +1,7 @@
 [
   {
     "name": "Satoshi API",
-    "description": "For wallet builders, app developers, and agents: Bitcoin fee-intelligence API with public repo proof and x402 pay-per-call support.",
+    "description": "Bitcoin fee API with a live site, public repo, tests, and x402 pay-per-call routes.",
     "url": "https://github.com/Bortlesboat/bitcoin-api",
     "tags": [
       "Python",
@@ -11,7 +11,7 @@
   },
   {
     "name": "AgentOps Ledger",
-    "description": "For AI workflow and agent-infrastructure teams: public flight recorder for tool-call evidence, approvals, retries, errors, x402 payment events, outcomes, and Splunk HEC proof.",
+    "description": "Agent run log for approvals, retries, errors, payment events, outcomes, and Splunk HEC.",
     "url": "https://bortlesboat.github.io/x402-insights/launch.html",
     "tags": [
       "AgentOps",
@@ -21,7 +21,7 @@
   },
   {
     "name": "bitcoin-mcp",
-    "description": "For AI workflow automators and agent-tool users: Bitcoin MCP tools, tests, PyPI distribution, and setup docs for common MCP clients.",
+    "description": "Bitcoin MCP tools with tests, PyPI packaging, and setup docs.",
     "url": "https://github.com/Bortlesboat/bitcoin-mcp",
     "tags": [
       "Python",
@@ -30,8 +30,18 @@
     ]
   },
   {
+    "name": "OpenBB",
+    "description": "Merged finance-platform parser cleanup and CLI utility tests.",
+    "url": "https://github.com/OpenBB-finance/OpenBB/pulls?q=author%3ABortlesboat+is%3Apr",
+    "tags": [
+      "Finance",
+      "Python",
+      "Open Source"
+    ]
+  },
+  {
     "name": "OpenAI privacy-filter",
-    "description": "For AI research tooling maintainers: merged OpenAI PR fixing a training runner syntax error.",
+    "description": "Merged OpenAI PR fixing a training runner syntax error.",
     "url": "https://github.com/openai/privacy-filter/pull/1",
     "tags": [
       "OpenAI",
@@ -41,7 +51,7 @@
   },
   {
     "name": "Microsoft VibeVoice",
-    "description": "For speech-model demo users and maintainers: merged Microsoft VibeVoice PR fixing a realtime demo NameError.",
+    "description": "Merged Microsoft VibeVoice PR fixing a realtime demo NameError.",
     "url": "https://github.com/microsoft/VibeVoice/pull/280",
     "tags": [
       "Microsoft",
@@ -51,7 +61,7 @@
   },
   {
     "name": "Google Workspace CLI",
-    "description": "For Workspace admins and AI workflow automators: merged CLI fixes across OAuth scope filtering, token-cache diagnostics, and Linux musl packaging.",
+    "description": "Merged OAuth, token-cache, and Linux musl packaging fixes in Google's Workspace CLI.",
     "url": "https://github.com/googleworkspace/cli/pulls?q=author%3ABortlesboat+is%3Apr+is%3Amerged",
     "tags": [
       "Google Workspace",
@@ -61,52 +71,12 @@
   },
   {
     "name": "Finance File Triage",
-    "description": "For finance operators and founders: private browser-side routing for messy FP&A, brokerage, transaction, and invoice exports with traceable Markdown commentary.",
+    "description": "Browser-side FP&A file triage with traceable Markdown commentary. Private data stays local.",
     "url": "/variance-memo/",
     "tags": [
       "Finance",
       "JavaScript",
       "FP&A"
-    ]
-  },
-  {
-    "name": "x402 Operator Lab",
-    "description": "For protocol operators and sellers: self-hosted facilitator, SIWX reuse, discovery metadata, wallet separation, and payable MCP flows.",
-    "url": "https://github.com/Bortlesboat/Bortlesboat/blob/main/case-studies.md#3-x402-operator-lab-and-payable-mcp",
-    "tags": [
-      "x402",
-      "MCP",
-      "Payments"
-    ]
-  },
-  {
-    "name": "mesh-llm Contributions",
-    "description": "For distributed inference operators: merged Rust PRs for owner keystore security, model-size health timeouts, and capacity reporting.",
-    "url": "https://github.com/Mesh-LLM/mesh-llm/pulls?q=author%3ABortlesboat",
-    "tags": [
-      "Rust",
-      "LLM Infra",
-      "Reliability"
-    ]
-  },
-  {
-    "name": "OpenViking Fixes",
-    "description": "For AI workflow automation users on Windows: merged fixes for PID locks, process liveness, and TUI console behavior.",
-    "url": "https://github.com/volcengine/OpenViking/pulls?q=author%3ABortlesboat",
-    "tags": [
-      "Python",
-      "Agents",
-      "Windows"
-    ]
-  },
-  {
-    "name": "qlib-options",
-    "description": "For quant, FP&A, and finance research workflows: options-chain snapshots, ATM IV, put/call ratios, calendar normalization, and qlib binary export.",
-    "url": "https://github.com/Bortlesboat/qlib-options",
-    "tags": [
-      "Python",
-      "Quant",
-      "Finance"
     ]
   }
 ]
