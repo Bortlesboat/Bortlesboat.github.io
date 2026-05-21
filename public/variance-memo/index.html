@@ -10,9 +10,9 @@
     <main class="app-shell">
       <header class="topbar">
         <div>
-          <p class="eyebrow">Private finance workbench</p>
+          <p class="eyebrow">Private finance-file diagnostic preflight</p>
           <h1>Finance File Triage</h1>
-          <p class="subhead">Messy CSV/XLSX intake for finance exports.</p>
+          <p class="subhead">Turn messy finance exports into safe, row-linked review agendas. Files stay in your browser; the output separates what the file supports from what it cannot prove.</p>
         </div>
         <div class="status-strip" aria-live="polite">
           <span id="statusLabel">Ready</span>
@@ -31,6 +31,12 @@
           </div>
 
           <p class="privacy-note">Local browser processing. No upload.</p>
+
+          <section class="offer-panel" aria-label="Advisory diagnostic package">
+            <p class="eyebrow">Advisory diagnostic package</p>
+            <h2>Free tool first. Paid help when the file matters.</h2>
+            <p>Use the tool on a sanitized finance export, then package the result into a diagnostic packet and automation roadmap for review calls.</p>
+          </section>
 
           <div class="control-row">
             <label for="dollarThreshold">Dollar threshold</label>
@@ -146,6 +152,18 @@
             </ul>
           </section>
 
+          <section class="panel diagnostic-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Advisory diagnostic</p>
+                <h2>Diagnostic Mode</h2>
+              </div>
+            </div>
+            <div id="diagnosticModeOutput" class="diagnostic-mode-output">
+              <p>No diagnostic loaded.</p>
+            </div>
+          </section>
+
           <section class="panel memo-panel">
             <div class="panel-head memo-head">
               <div>
@@ -155,6 +173,7 @@
               <div class="button-row compact">
                 <button id="copyButton" type="button" class="secondary">Copy Memo</button>
                 <button id="exportButton" type="button" class="secondary">Download Markdown</button>
+                <button id="packetButton" type="button">Download Diagnostic Packet</button>
               </div>
             </div>
             <pre id="memoOutput">Run an analysis to create a memo.</pre>
@@ -163,6 +182,6 @@
       </section>
     </main>
 
-    <script type="module" src="./src/app.js?v=financial-triage-v01-20260518"></script>
+    <script type="module" src="./src/app.js?v=financial-triage-v03-20260521"></script>
   </body>
 </html>

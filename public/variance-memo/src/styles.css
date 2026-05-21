@@ -235,6 +235,29 @@ h2 {
   padding: 9px 10px;
 }
 
+.offer-panel {
+  display: grid;
+  gap: 6px;
+  border: 1px solid color-mix(in srgb, var(--blueprint) 32%, var(--line));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--blueprint) 6%, #fffdf7);
+  padding: 12px;
+}
+
+.offer-panel h2 {
+  font-size: 0.95rem;
+}
+
+.offer-panel p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.offer-panel .eyebrow {
+  color: var(--blueprint);
+}
+
 dl {
   display: grid;
   gap: 8px;
@@ -278,13 +301,19 @@ dd {
   grid-row: 1;
 }
 
+.diagnostic-panel {
+  grid-column: 2;
+  grid-row: 2;
+}
+
 .variance-panel {
   grid-column: 1;
   grid-row: 1;
 }
 
 .preview-panel {
-  grid-column: 1 / -1;
+  grid-column: 1;
+  grid-row: 2;
 }
 
 .panel-head {
@@ -463,6 +492,43 @@ td {
   text-transform: uppercase;
 }
 
+.diagnostic-mode-output {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.diagnostic-mode-output p,
+.diagnostic-mode-output ul {
+  margin: 0;
+}
+
+.diagnostic-block {
+  display: grid;
+  gap: 6px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+}
+
+.diagnostic-block:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.diagnostic-block h3 {
+  margin: 0;
+  color: var(--blueprint);
+  font-size: 0.76rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.diagnostic-block ul {
+  display: grid;
+  gap: 6px;
+  padding-left: 18px;
+}
+
 pre {
   min-height: 330px;
   max-height: 520px;
@@ -489,6 +555,8 @@ pre {
 
   .variance-panel,
   .driver-panel,
+  .diagnostic-panel,
+  .preview-panel,
   .memo-panel {
     grid-column: 1;
     grid-row: auto;

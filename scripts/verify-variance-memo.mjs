@@ -22,7 +22,8 @@ const files = {
 
 const requiredTokens = [
   ["html", "Finance File Triage"],
-  ["html", "Private finance workbench"],
+  ["html", "Private finance-file diagnostic preflight"],
+  ["html", "Turn messy finance exports into safe, row-linked review agendas"],
   ["html", "Local browser processing"],
   ["html", "No upload"],
   ["html", "CSV or XLSX"],
@@ -32,15 +33,24 @@ const requiredTokens = [
   ["html", "chooseFileButton"],
   ["html", "Load demo sample"],
   ["html", "Download Markdown"],
+  ["html", "Download Diagnostic Packet"],
+  ["html", "Advisory diagnostic package"],
+  ["html", "sanitized finance export"],
+  ["html", "Diagnostic Mode"],
   ["html", "confidenceCheck"],
   ["html", "unmappedCheck"],
   ["html", "refusalCheck"],
-  ["html", "app.js?v=financial-triage-v01-20260518"],
+  ["html", "app.js?v=financial-triage-v03-20260521"],
   ["html", "analysisHead"],
   ["app", "synthetic-saas-pl.csv"],
   ["app", "analyzeFile"],
   ["app", "renderImportAudit"],
   ["app", "renderDiagnosticSummary"],
+  ["app", "renderRowsToUseNext"],
+  ["app", "diagnosticPacket"],
+  ["app", "Download Diagnostic Packet"],
+  ["app", "Rows to use next"],
+  ["app", "Safe advisory call agenda"],
   ["app", "confidenceLabel"],
   ["app", "unmappedColumns"],
   ["app", "refusedInferences"],
@@ -48,6 +58,7 @@ const requiredTokens = [
   ["app", "renderPortfolioRows"],
   ["app", "renderTransactionRows"],
   ["app", "renderInvoiceRows"],
+  ["app", "renderDiagnosticMode"],
   ["app", "Portfolio positions"],
   ["app", "Financial transactions"],
   ["app", "Invoice aging"],
@@ -55,8 +66,15 @@ const requiredTokens = [
   ["app", "chooseFileButton.addEventListener(\"click\""],
   ["app", "sourceMode = \"upload\""],
   ["app", "sourceMode = \"demo\""],
-  ["app", "variance.js?v=financial-triage-v01-20260518"],
+  ["app", "variance.js?v=financial-triage-v03-20260521"],
   ["variance", "What the file supports"],
+  ["variance", "Finance File Triage Diagnostic Packet"],
+  ["variance", "Private finance-file diagnostic preflight"],
+  ["variance", "Diagnostic Mode"],
+  ["variance", "What this file cannot prove"],
+  ["variance", "Safe advisory call agenda"],
+  ["variance", "Automation questions to ask"],
+  ["variance", "Caveated anonymized summary"],
   ["variance", "needs context"],
   ["variance", "Portfolio Snapshot"],
   ["variance", "portfolio_positions"],
@@ -66,6 +84,8 @@ const requiredTokens = [
   ["variance", "invoice_aging"],
   ["variance", "Unsupported File Structure"],
   ["variance", "unsupported_financial_file"],
+  ["variance", "Rows to use next"],
+  ["variance", "90-minute review agenda"],
   ["variance", "parseWorkbook"],
   ["variance", "analyzeWorkbook"],
   ["variance", "inspectRows"],
@@ -114,6 +134,14 @@ if (result.analysis.variances.length !== 2) {
 
 if (!result.memo.markdown.includes("## Analyst Draft") || !result.memo.markdown.includes("[row 2]")) {
   throw new Error("Generated memo is missing analyst draft or source row references");
+}
+assertDiagnosticMode(result, "FP&A variance");
+if (
+  !result.memo.markdown.includes("## Rows to use next") ||
+  !result.memo.markdown.includes("memo lead") ||
+  !result.memo.markdown.includes("90-minute review agenda")
+) {
+  throw new Error("Generated memo is missing row-linked reuse guidance for the first retention moment");
 }
 
 const preambleRows = [
@@ -204,11 +232,14 @@ if (
   portfolioResult.analysis.kind !== "portfolio" ||
   portfolioResult.analysis.summary.totalValue !== 1750 ||
   !portfolioResult.memo.markdown.includes("Portfolio Snapshot") ||
+  !portfolioResult.memo.markdown.includes("## Rows to use next") ||
+  !portfolioResult.memo.markdown.includes("review agenda") ||
   !portfolioResult.memo.markdown.includes("Needs context before acting") ||
   portfolioResult.memo.markdown.includes("actual-vs-budget")
 ) {
   throw new Error("Portfolio positions export did not produce a useful holdings summary");
 }
+assertDiagnosticMode(portfolioResult, "portfolio positions");
 
 const transactionCsv = `Date,Account,Description,Category,Debit,Credit,Balance
 2026-04-01,Checking,Payroll deposit,Income,,$5000.00,$5000.00
@@ -224,11 +255,14 @@ if (
   transactionResult.analysis.summary.totalInflows !== 5000 ||
   transactionResult.analysis.summary.totalOutflows !== 2474.5 ||
   !transactionResult.memo.markdown.includes("Cash Activity Snapshot") ||
+  !transactionResult.memo.markdown.includes("## Rows to use next") ||
+  !transactionResult.memo.markdown.includes("review agenda") ||
   !transactionResult.memo.markdown.includes("Needs context before acting") ||
   transactionResult.memo.markdown.includes("actual-vs-budget")
 ) {
   throw new Error("Transaction export did not produce a useful cash activity summary");
 }
+assertDiagnosticMode(transactionResult, "financial transactions");
 
 const invoiceCsv = `Vendor,Invoice Number,Invoice Date,Due Date,Open Amount,Days Past Due,Aging Bucket,Status
 Cloud Vendor,INV-1001,2026-03-01,2026-03-31,$1200.00,18,1-30,Open
@@ -243,11 +277,14 @@ if (
   invoiceResult.analysis.summary.openAmount !== 6000 ||
   invoiceResult.analysis.summary.overdueAmount !== 5200 ||
   !invoiceResult.memo.markdown.includes("Invoice Aging Snapshot") ||
+  !invoiceResult.memo.markdown.includes("## Rows to use next") ||
+  !invoiceResult.memo.markdown.includes("review agenda") ||
   !invoiceResult.memo.markdown.includes("Needs context before acting") ||
   invoiceResult.memo.markdown.includes("actual-vs-budget")
 ) {
   throw new Error("Invoice aging export did not produce a useful invoice summary");
 }
+assertDiagnosticMode(invoiceResult, "invoice aging");
 
 const unsupportedCsv = `Statement Section,Line Label,Value,Notes
 Summary,Opening balance,$1000.00,Statement-only rollforward
@@ -260,12 +297,66 @@ if (
   unsupportedResult.analysis.kind !== "unsupported" ||
   !unsupportedResult.memo.markdown.includes("Unsupported File Structure") ||
   !unsupportedResult.memo.markdown.includes("Supported modes") ||
+  !unsupportedResult.memo.markdown.includes("No reusable memo or call-agenda rows") ||
   unsupportedResult.memo.markdown.includes("actual-vs-budget variances were detected")
 ) {
   throw new Error("Unsupported financial file did not produce a clear unsupported-mode message");
 }
+assertDiagnosticMode(unsupportedResult, "unsupported financial file");
 
 console.log("finance-file-triage verifier ok: public files, sitemap, project card, deterministic analysis, and privacy guardrails passed");
+
+function assertDiagnosticMode(result, label) {
+  const diagnostic = result.diagnosticMode;
+  if (!diagnostic) {
+    throw new Error(`${label} result is missing diagnosticMode`);
+  }
+  const packet = result.diagnosticPacket;
+  if (!packet?.markdown) {
+    throw new Error(`${label} result is missing diagnosticPacket`);
+  }
+
+  const sections = [
+    diagnostic.supports,
+    diagnostic.cannotProve,
+    diagnostic.advisoryAgenda,
+    diagnostic.automationQuestions,
+  ];
+  if (!sections.every((section) => Array.isArray(section) && section.length > 0)) {
+    throw new Error(`${label} diagnosticMode is missing a populated section`);
+  }
+
+  if (!/anonymized/i.test(diagnostic.anonymizedSummary ?? "")) {
+    throw new Error(`${label} diagnosticMode is missing a caveated anonymized summary`);
+  }
+
+  for (const token of [
+    "## Diagnostic Mode",
+    "## What this file cannot prove",
+    "## Safe advisory call agenda",
+    "## Automation questions to ask",
+    "## Caveated anonymized summary",
+  ]) {
+    if (!result.memo.markdown.includes(token)) {
+      throw new Error(`${label} memo is missing diagnostic token: ${token}`);
+    }
+  }
+
+  for (const token of [
+    "# Finance File Triage Diagnostic Packet",
+    "Private finance-file diagnostic preflight",
+    "## File basis",
+    "## Rows to use next",
+    "## Safe advisory call agenda",
+    "## Automation questions to ask",
+    "## Caveated anonymized summary",
+    "## Sharing boundary",
+  ]) {
+    if (!packet.markdown.includes(token)) {
+      throw new Error(`${label} diagnostic packet is missing token: ${token}`);
+    }
+  }
+}
 
 async function read(path) {
   return readFile(new URL(path, root), "utf8");
