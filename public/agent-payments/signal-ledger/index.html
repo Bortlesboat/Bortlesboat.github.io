@@ -251,6 +251,26 @@
         line-height: 1.5;
       }
 
+      .brief-row-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .brief-row-link {
+        display: inline-flex;
+        align-items: center;
+        min-height: 32px;
+        padding: 5px 9px;
+        border: 1px solid var(--line);
+        background: #fffaf2;
+        color: var(--navy);
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
       .section-head {
         display: flex;
         align-items: end;
@@ -301,6 +321,10 @@
 
       tr:last-child td {
         border-bottom: 0;
+      }
+
+      tr {
+        scroll-margin-top: 16px;
       }
 
       td {
@@ -516,25 +540,29 @@
         </div>
       </section>
 
-      <section class="return-brief" aria-labelledby="return-brief-title">
+      <section id="return-brief" class="return-brief" aria-labelledby="return-brief-title">
         <p class="kicker">Return Brief</p>
         <div class="brief-grid">
           <article class="brief-card">
             <h3 id="return-brief-title">Check first</h3>
-            <p>Satoshi API discovery, SATLAB Experiment 001, and the x402 Ecosystem directory separate owned endpoints, paid-call evidence, and listings.</p>
+            <p id="return-brief-check">Loading the check-first row set from feed.json...</p>
           </article>
           <article class="brief-card">
             <h3>Why return</h3>
-            <p>The useful signal is the delta: new endpoint metadata, priced rows, platform docs, or captured payment proof over time.</p>
+            <p id="return-brief-why">The useful signal is the delta over time.</p>
           </article>
           <article class="brief-card">
             <h3>Next safe action</h3>
-            <p>Promote new research into rows only when public HTTPS sources support the exact claim and proof-status label.</p>
+            <p id="return-brief-action">Promote only source-backed rows.</p>
           </article>
           <article class="brief-card">
             <h3>Caveat</h3>
-            <p>This is a directory and proof map, not revenue, partnership, endorsement, prize, or grant proof.</p>
+            <p id="return-brief-caveat">This is a directory and proof map, not outcome proof.</p>
           </article>
+        </div>
+        <div>
+          <p class="kicker">Watch rows</p>
+          <div id="return-brief-rows" class="brief-row-list" aria-label="Return brief watch rows"></div>
         </div>
       </section>
 
@@ -613,11 +641,13 @@
       fetch("feed.json")
         .then((response) => response.json())
         .then((feed) => {
+          const rowsById = new Map(feed.rows.map((row) => [row.id, row]));
           document.getElementById("last-updated").textContent = feed.lastUpdated;
           document.getElementById("row-count").textContent = `${feed.rows.length} sourced rows`;
+          renderReturnBrief(feed.returnBrief, rowsById);
           document.getElementById("ledger-rows").innerHTML = feed.rows
             .map((row) => `
-              <tr>
+              <tr id="row-${slugId(row.id)}">
                 <td data-label="Project">
                   <strong>${escapeHtml(row.project)}</strong>
                   <span class="cell-note">${escapeHtml(row.status)}</span>
@@ -650,6 +680,21 @@
           `;
         });
 
+      function renderReturnBrief(brief, rowsById) {
+        if (!brief) return;
+        document.getElementById("return-brief-check").textContent = brief.checkFirst || "";
+        document.getElementById("return-brief-why").textContent = brief.whyReturn || "";
+        document.getElementById("return-brief-action").textContent = brief.nextSafeAction || "";
+        document.getElementById("return-brief-caveat").textContent = brief.caveat || "";
+        document.getElementById("return-brief-rows").innerHTML = (brief.rowIds || [])
+          .map((rowId) => {
+            const row = rowsById.get(rowId);
+            const label = row?.project || rowId;
+            return `<a class="brief-row-link" href="#row-${slugId(rowId)}">${escapeHtml(label)}</a>`;
+          })
+          .join("");
+      }
+
       function escapeHtml(value) {
         return String(value)
           .replaceAll("&", "&amp;")
@@ -661,6 +706,10 @@
 
       function escapeAttribute(value) {
         return escapeHtml(value).replaceAll("`", "&#096;");
+      }
+
+      function slugId(value) {
+        return String(value).replace(/[^a-zA-Z0-9_-]/g, "-");
       }
     </script>
   </body>

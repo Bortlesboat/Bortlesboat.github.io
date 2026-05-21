@@ -115,6 +115,10 @@ for (const token of [
   "Check first",
   "Why return",
   "Next safe action",
+  "Watch rows",
+  "id=\"return-brief\"",
+  "id=\"return-brief-rows\"",
+  "renderReturnBrief",
 ]) {
   if (!pageHtml.includes(token)) {
     failures.push(`${pagePath} is missing ${token}`);
