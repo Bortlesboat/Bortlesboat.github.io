@@ -5,20 +5,26 @@ const failures = [];
 
 const pagePath = "public/agent-payments/signal-ledger/index.html";
 const feedPath = "public/agent-payments/signal-ledger/feed.json";
+const previousFeedPath = "public/agent-payments/signal-ledger/feed.previous.json";
+const snapshotScriptPath = "scripts/snapshot-agent-payment-ledger-feed.mjs";
 
-const [pageHtml, feedJson, homeHtml, projectsJson, sitemapXml] = await Promise.all([
+const [pageHtml, feedJson, previousFeedJson, snapshotScript, homeHtml, projectsJson, sitemapXml] = await Promise.all([
   readOptional(pagePath),
   readOptional(feedPath),
+  readOptional(previousFeedPath),
+  readOptional(snapshotScriptPath),
   read("index.html"),
   read("src/data/projects.json"),
   read("public/sitemap.xml"),
 ]);
 
 const feed = parseJson(feedJson, feedPath) ?? {};
+const previousFeed = parseJson(previousFeedJson, previousFeedPath) ?? {};
 const projects = JSON.parse(projectsJson);
 
 const ledgerUrl = "https://bortlesboat.github.io/agent-payments/signal-ledger/";
 const feedUrl = `${ledgerUrl}feed.json`;
+const previousFeedUrl = `${ledgerUrl}feed.previous.json`;
 const allowedProofStatuses = new Set([
   "live-discovery",
   "paid-call-captured",
@@ -28,6 +34,7 @@ const allowedProofStatuses = new Set([
   "protocol-doc",
   "platform-doc",
 ]);
+const allowedChangeStatuses = new Set(["baseline", "changed", "unchanged", "reverify-first"]);
 
 if (feed.title !== "Agent Payment Signal Ledger") {
   failures.push("feed.title must be Agent Payment Signal Ledger");
@@ -41,6 +48,10 @@ if (feed.feedUrl !== feedUrl) {
   failures.push(`feed.feedUrl must be ${feedUrl}`);
 }
 
+if (feed.previousFeedUrl !== previousFeedUrl) {
+  failures.push(`feed.previousFeedUrl must be ${previousFeedUrl}`);
+}
+
 if (!/^\d{4}-\d{2}-\d{2}$/.test(feed.lastUpdated ?? "")) {
   failures.push("feed.lastUpdated must be YYYY-MM-DD");
 }
@@ -49,7 +60,50 @@ if (!Array.isArray(feed.rows) || feed.rows.length < 10) {
   failures.push("feed.rows must contain at least 10 rows");
 }
 
+if (!Array.isArray(previousFeed.rows) || previousFeed.rows.length < 10) {
+  failures.push("previous feed must contain at least 10 rows");
+}
+
+for (const token of [
+  "feed.json",
+  "feed.previous.json",
+  "--write",
+  "snapshot",
+  "readFile",
+  "writeFile",
+]) {
+  if (!snapshotScript.includes(token)) {
+    failures.push(`${snapshotScriptPath} is missing ${token}`);
+  }
+}
+
+const refreshDelta = feed.refreshDelta ?? {};
+for (const key of ["currentRefreshDate", "previousRefreshDate", "summary", "changedRowCount", "reverifyFirstRowCount"]) {
+  if (refreshDelta[key] === undefined || refreshDelta[key] === null || refreshDelta[key] === "") {
+    failures.push(`feed.refreshDelta is missing ${key}`);
+  }
+}
+
+if (!/^\d{4}-\d{2}-\d{2}$/.test(refreshDelta.currentRefreshDate ?? "")) {
+  failures.push("feed.refreshDelta.currentRefreshDate must be YYYY-MM-DD");
+}
+
+if (!/^\d{4}-\d{2}-\d{2}$/.test(refreshDelta.previousRefreshDate ?? "")) {
+  failures.push("feed.refreshDelta.previousRefreshDate must be YYYY-MM-DD");
+}
+
+if (!Array.isArray(refreshDelta.rowIds)) {
+  failures.push("feed.refreshDelta.rowIds must be an array");
+}
+
+if (previousFeed.lastUpdated && refreshDelta.previousRefreshDate !== previousFeed.lastUpdated) {
+  failures.push("feed.refreshDelta.previousRefreshDate must match previousFeed.lastUpdated");
+}
+
 const ids = new Set();
+const previousRows = new Map((previousFeed.rows ?? []).map((row) => [row.id, row]));
+const changedRows = [];
+const reverifyFirstRows = [];
 for (const [index, row] of (feed.rows ?? []).entries()) {
   const label = row.id || `row-${index}`;
   if (!row.id) failures.push(`${label} is missing id`);
@@ -67,6 +121,9 @@ for (const [index, row] of (feed.rows ?? []).entries()) {
     "note",
     "sourceUrl",
     "lastVerified",
+    "lastChanged",
+    "changeStatus",
+    "changeNote",
   ]) {
     if (!row[key]) failures.push(`${label} is missing ${key}`);
   }
@@ -79,8 +136,79 @@ for (const [index, row] of (feed.rows ?? []).entries()) {
     failures.push(`${label} has unknown proofStatus ${row.proofStatus}`);
   }
 
+  if (row.lastChanged && !/^\d{4}-\d{2}-\d{2}$/.test(row.lastChanged)) {
+    failures.push(`${label} lastChanged must be YYYY-MM-DD`);
+  }
+
+  if (typeof row.changedSincePreviousRefresh !== "boolean") {
+    failures.push(`${label} changedSincePreviousRefresh must be boolean`);
+  }
+
+  if (row.changeStatus && !allowedChangeStatuses.has(row.changeStatus)) {
+    failures.push(`${label} has unknown changeStatus ${row.changeStatus}`);
+  }
+
+  if (row.changeStatus === "reverify-first") {
+    reverifyFirstRows.push(row.id);
+  }
+
+  const previousRow = previousRows.get(row.id);
+  const mechanicallyChanged =
+    !previousRow ||
+    [
+      "project",
+      "protocol",
+      "chain",
+      "liveEndpoint",
+      "pricing",
+      "proofStatus",
+      "status",
+      "note",
+      "sourceTitle",
+      "sourceUrl",
+    ].some((key) => normalize(row[key]) !== normalize(previousRow[key]));
+
+  if (mechanicallyChanged) {
+    changedRows.push(row.id);
+  }
+
+  if (row.changedSincePreviousRefresh !== mechanicallyChanged) {
+    failures.push(`${label} changedSincePreviousRefresh must match previous feed comparison`);
+  }
+
+  if (mechanicallyChanged && row.changeStatus !== "changed") {
+    failures.push(`${label} changeStatus must be changed when row differs from previous feed`);
+  }
+
+  if (!mechanicallyChanged && row.changeStatus === "changed") {
+    failures.push(`${label} changeStatus cannot be changed when row matches previous feed`);
+  }
+
   if (row.note && /\b(finalist|winner|prize awarded|guaranteed|endorsed)\b/i.test(row.note)) {
     failures.push(`${label} note contains an overclaim`);
+  }
+}
+
+if (refreshDelta.changedRowCount !== changedRows.length) {
+  failures.push(`feed.refreshDelta.changedRowCount must be ${changedRows.length}`);
+}
+
+if (refreshDelta.reverifyFirstRowCount !== reverifyFirstRows.length) {
+  failures.push(`feed.refreshDelta.reverifyFirstRowCount must be ${reverifyFirstRows.length}`);
+}
+
+const expectedDeltaRowIds = new Set([...changedRows, ...reverifyFirstRows]);
+for (const rowId of expectedDeltaRowIds) {
+  if (!refreshDelta.rowIds?.includes(rowId)) {
+    failures.push(`feed.refreshDelta.rowIds is missing expected delta row: ${rowId}`);
+  }
+}
+
+for (const rowId of refreshDelta.rowIds ?? []) {
+  if (!ids.has(rowId)) {
+    failures.push(`feed.refreshDelta.rowIds references unknown row: ${rowId}`);
+  } else if (!expectedDeltaRowIds.has(rowId)) {
+    failures.push(`feed.refreshDelta.rowIds includes row without changed/reverify-first status: ${rowId}`);
   }
 }
 
@@ -115,6 +243,9 @@ for (const token of [
   "Check first",
   "Why return",
   "Next safe action",
+  "Delta since last refresh",
+  "id=\"return-brief-delta\"",
+  "id=\"return-brief-delta-rows\"",
   "Watch rows",
   "id=\"return-brief\"",
   "id=\"return-brief-rows\"",
@@ -157,6 +288,8 @@ if (!sitemapXml.includes(ledgerUrl)) {
 for (const [label, content] of [
   [pagePath, pageHtml],
   [feedPath, feedJson],
+  [previousFeedPath, previousFeedJson],
+  [snapshotScriptPath, snapshotScript],
   ["index.html", homeHtml],
   ["projects.json", projectsJson],
 ]) {
@@ -205,4 +338,8 @@ function parseJson(content, path) {
     failures.push(`${path} is not valid JSON: ${error.message}`);
     return null;
   }
+}
+
+function normalize(value) {
+  return String(value ?? "").trim().replace(/\s+/g, " ");
 }

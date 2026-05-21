@@ -2,42 +2,9 @@
   "title": "Agent Payment Signal Ledger",
   "url": "https://bortlesboat.github.io/agent-payments/signal-ledger/",
   "feedUrl": "https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json",
-  "previousFeedUrl": "https://bortlesboat.github.io/agent-payments/signal-ledger/feed.previous.json",
   "lastUpdated": "2026-05-21",
-  "summary": "Public, sourced x402/L402/agent-payments intelligence rows with proof-status labels. Ecosystem listings are discovery signals, not payment proof.",
+  "summary": "Previous live deploy baseline for mechanical refresh-delta comparison.",
   "schemaVersion": "2026-05-21",
-  "refreshCadence": "Weekly manual source review, with urgent corrections when a source breaks or a row is shown to be stale.",
-  "maintenanceUrl": "https://bortlesboat.github.io/agent-payments/signal-ledger/maintenance.md",
-  "rowPolicy": {
-    "sourceRequired": true,
-    "ecosystemListingsArePaymentProof": false,
-    "staleRowRule": "If a source cannot be re-verified, downgrade the row note/status before promoting any new claim.",
-    "productionBoundary": "Do not claim partnership, endorsement, prize, finalist status, or third-party revenue without a cited source for that exact claim."
-  },
-  "returnBrief": {
-    "title": "Return Brief",
-    "checkFirst": "Start with Satoshi API discovery, SATLAB Experiment 001, and the x402 Ecosystem directory to see the difference between live owned endpoints, paid-call evidence, and ecosystem listings.",
-    "whyReturn": "Rows should change as new paid endpoints, facilitator metadata, platform docs, or captured payment proofs appear. The value is the delta over time, not a one-time list.",
-    "nextSafeAction": "Use new research as row candidates, then promote only the rows backed by public HTTPS sources and conservative proof-status labels.",
-    "caveat": "Do not use the ledger as revenue proof, partnership proof, or endorsement proof unless a cited source supports that exact statement.",
-    "rowIds": [
-      "satoshi-api-discovery",
-      "satlab-experiment-001",
-      "x402-ecosystem"
-    ]
-  },
-  "refreshDelta": {
-    "previousRefreshDate": "2026-05-21",
-    "currentRefreshDate": "2026-05-21",
-    "summary": "No source rows changed since the live deploy baseline; delta tracking is now active, and three rows are marked reverify-first for the next refresh.",
-    "changedRowCount": 0,
-    "reverifyFirstRowCount": 3,
-    "rowIds": [
-      "satoshi-api-discovery",
-      "satlab-experiment-001",
-      "x402-ecosystem"
-    ]
-  },
   "rows": [
     {
       "id": "satoshi-api-discovery",
@@ -50,12 +17,7 @@
       "status": "live owned discovery",
       "note": "Owned surface; discovery/catalog proof only, not third-party revenue proof.",
       "sourceTitle": "Satoshi API .well-known x402 discovery",
-      "sourceUrl": "https://bitcoinsapi.com/.well-known/x402",
-      "lastVerified": "2026-05-21",
-      "lastChanged": "2026-05-21",
-      "changedSincePreviousRefresh": false,
-      "changeStatus": "reverify-first",
-      "changeNote": "No source-row change since the live baseline; reverify first because this owned discovery document drives the paid-endpoint rows."
+      "sourceUrl": "https://bitcoinsapi.com/.well-known/x402"
     },
     {
       "id": "satoshi-fees-now",
@@ -68,12 +30,7 @@
       "status": "advertised paid endpoint",
       "note": "Cheapest paid endpoint advertised in the inspected x402 discovery document.",
       "sourceTitle": "Satoshi API .well-known x402 discovery",
-      "sourceUrl": "https://bitcoinsapi.com/.well-known/x402",
-      "lastVerified": "2026-05-21",
-      "lastChanged": "2026-05-21",
-      "changedSincePreviousRefresh": false,
-      "changeStatus": "unchanged",
-      "changeNote": "No source-row change since the live baseline."
+      "sourceUrl": "https://bitcoinsapi.com/.well-known/x402"
     },
     {
       "id": "satlab-experiment-001",
@@ -86,12 +43,7 @@
       "status": "operator-controlled paid call captured",
       "note": "Public evidence packet captures an operator-controlled paid call and explicitly does not close a third-party revenue gate.",
       "sourceTitle": "Experiment 001 x402 paid-call evidence",
-      "sourceUrl": "https://treasury.bitcoinsapi.com/experiment-001/evidence.json",
-      "lastVerified": "2026-05-21",
-      "lastChanged": "2026-05-21",
-      "changedSincePreviousRefresh": false,
-      "changeStatus": "reverify-first",
-      "changeNote": "No source-row change since the live baseline; reverify first because this is the strongest paid-call evidence row."
+      "sourceUrl": "https://treasury.bitcoinsapi.com/experiment-001/evidence.json"
     },
     {
       "id": "satoshi-facilitator",
@@ -104,12 +56,7 @@
       "status": "live owned facilitator metadata",
       "note": "Owned llms.txt lists verify, settle, supported-network, discovery, settlement, observability, and health routes.",
       "sourceTitle": "Satoshi x402 Facilitator llms.txt",
-      "sourceUrl": "https://facilitator.bitcoinsapi.com/llms.txt",
-      "lastVerified": "2026-05-21",
-      "lastChanged": "2026-05-21",
-      "changedSincePreviousRefresh": false,
-      "changeStatus": "unchanged",
-      "changeNote": "No source-row change since the live baseline."
+      "sourceUrl": "https://facilitator.bitcoinsapi.com/llms.txt"
     },
     {
       "id": "agentops-ledger",
@@ -122,12 +69,7 @@
       "status": "public launch and judge packet",
       "note": "Public packet documents tool-call, approval, retry, error, x402-style payment, and outcome telemetry without claiming prizes or judging outcomes.",
       "sourceTitle": "AgentOps Ledger judge index",
-      "sourceUrl": "https://bortlesboat.github.io/x402-insights/hackathon/judge-index.json",
-      "lastVerified": "2026-05-21",
-      "lastChanged": "2026-05-21",
-      "changedSincePreviousRefresh": false,
-      "changeStatus": "unchanged",
-      "changeNote": "No source-row change since the live baseline."
+      "sourceUrl": "https://bortlesboat.github.io/x402-insights/hackathon/judge-index.json"
     },
     {
       "id": "x402scan",
@@ -140,12 +82,7 @@
       "status": "public observability surface",
       "note": "Landing metadata describes a public explorer for transactions, sellers, origins, and resources.",
       "sourceTitle": "x402scan",
-      "sourceUrl": "https://www.x402scan.com/",
-      "lastVerified": "2026-05-21",
-      "lastChanged": "2026-05-21",
-      "changedSincePreviousRefresh": false,
-      "changeStatus": "unchanged",
-      "changeNote": "No source-row change since the live baseline."
+      "sourceUrl": "https://www.x402scan.com/"
     },
     {
       "id": "lightning-l402",
@@ -158,12 +95,7 @@
       "status": "protocol reference",
       "note": "Docs describe L402 as a way for services to charge for digital resources and API endpoints that AI agents can participate in.",
       "sourceTitle": "Lightning Labs L402 documentation",
-      "sourceUrl": "https://docs.lightning.engineering/the-lightning-network/l402",
-      "lastVerified": "2026-05-21",
-      "lastChanged": "2026-05-21",
-      "changedSincePreviousRefresh": false,
-      "changeStatus": "unchanged",
-      "changeNote": "No source-row change since the live baseline."
+      "sourceUrl": "https://docs.lightning.engineering/the-lightning-network/l402"
     },
     {
       "id": "cloudflare-agents-x402",
@@ -176,12 +108,7 @@
       "status": "platform documentation",
       "note": "Docs cover accepting and making machine-to-machine x402 payments with Cloudflare Workers and the Agents SDK.",
       "sourceTitle": "Cloudflare Agents x402 documentation",
-      "sourceUrl": "https://developers.cloudflare.com/agents/agentic-payments/x402/",
-      "lastVerified": "2026-05-21",
-      "lastChanged": "2026-05-21",
-      "changedSincePreviousRefresh": false,
-      "changeStatus": "unchanged",
-      "changeNote": "No source-row change since the live baseline."
+      "sourceUrl": "https://developers.cloudflare.com/agents/agentic-payments/x402/"
     },
     {
       "id": "x402-ecosystem",
@@ -194,12 +121,7 @@
       "status": "public ecosystem directory",
       "note": "Official directory of projects, tools, and applications leveraging x402 technology. Do not treat ecosystem listings as payment proof.",
       "sourceTitle": "x402 Ecosystem",
-      "sourceUrl": "https://www.x402.org/ecosystem",
-      "lastVerified": "2026-05-21",
-      "lastChanged": "2026-05-21",
-      "changedSincePreviousRefresh": false,
-      "changeStatus": "reverify-first",
-      "changeNote": "No source-row change since the live baseline; reverify first because directory listings can drift and are not payment proof."
+      "sourceUrl": "https://www.x402.org/ecosystem"
     },
     {
       "id": "kevros-x402-governance",
@@ -212,12 +134,7 @@
       "status": "listed priced endpoints",
       "note": "Official ecosystem listing advertises priced governance endpoints; this ledger did not independently smoke-test those endpoints.",
       "sourceTitle": "x402 Ecosystem",
-      "sourceUrl": "https://www.x402.org/ecosystem",
-      "lastVerified": "2026-05-21",
-      "lastChanged": "2026-05-21",
-      "changedSincePreviousRefresh": false,
-      "changeStatus": "unchanged",
-      "changeNote": "No source-row change since the live baseline."
+      "sourceUrl": "https://www.x402.org/ecosystem"
     }
   ]
 }

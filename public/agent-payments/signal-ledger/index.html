@@ -271,6 +271,24 @@
         text-decoration: none;
       }
 
+      .brief-delta {
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        background: #fffaf2;
+        padding: 18px;
+      }
+
+      .brief-delta h3 {
+        margin: 0 0 8px;
+        font-size: 0.92rem;
+      }
+
+      .brief-delta p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
       .section-head {
         display: flex;
         align-items: end;
@@ -330,16 +348,19 @@
       td {
         color: #26384d;
         line-height: 1.42;
+        overflow-wrap: anywhere;
       }
 
       td strong {
         display: block;
         color: var(--ink);
+        overflow-wrap: anywhere;
       }
 
       .cell-note {
         color: var(--muted);
         font-size: 0.92rem;
+        overflow-wrap: anywhere;
       }
 
       .source-link {
@@ -564,6 +585,11 @@
           <p class="kicker">Watch rows</p>
           <div id="return-brief-rows" class="brief-row-list" aria-label="Return brief watch rows"></div>
         </div>
+        <article id="return-brief-delta" class="brief-delta">
+          <h3>Delta since last refresh</h3>
+          <p id="return-brief-delta-summary">Loading refresh delta from feed.json...</p>
+          <div id="return-brief-delta-rows" class="brief-row-list" aria-label="Refresh delta rows"></div>
+        </article>
       </section>
 
       <section id="ledger" class="ledger-section" aria-labelledby="rows-title">
@@ -644,7 +670,7 @@
           const rowsById = new Map(feed.rows.map((row) => [row.id, row]));
           document.getElementById("last-updated").textContent = feed.lastUpdated;
           document.getElementById("row-count").textContent = `${feed.rows.length} sourced rows`;
-          renderReturnBrief(feed.returnBrief, rowsById);
+          renderReturnBrief(feed.returnBrief, feed.refreshDelta, rowsById);
           document.getElementById("ledger-rows").innerHTML = feed.rows
             .map((row) => `
               <tr id="row-${slugId(row.id)}">
@@ -663,6 +689,7 @@
                 <td data-label="Proof status">
                   <span class="${statusClass(row.proofStatus)}" data-status="${escapeHtml(row.proofStatus)}">${escapeHtml(row.proofStatus)}</span>
                   <div class="cell-note">${escapeHtml(row.note)}</div>
+                  <div class="cell-note">Change: ${escapeHtml(row.changeStatus)} · ${escapeHtml(row.changeNote)}</div>
                 </td>
                 <td data-label="Source">
                   <a class="source-link" href="${escapeAttribute(row.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(row.sourceTitle || "Source")}</a>
@@ -680,7 +707,7 @@
           `;
         });
 
-      function renderReturnBrief(brief, rowsById) {
+      function renderReturnBrief(brief, refreshDelta, rowsById) {
         if (!brief) return;
         document.getElementById("return-brief-check").textContent = brief.checkFirst || "";
         document.getElementById("return-brief-why").textContent = brief.whyReturn || "";
@@ -690,6 +717,16 @@
           .map((rowId) => {
             const row = rowsById.get(rowId);
             const label = row?.project || rowId;
+            return `<a class="brief-row-link" href="#row-${slugId(rowId)}">${escapeHtml(label)}</a>`;
+          })
+          .join("");
+        if (!refreshDelta) return;
+        document.getElementById("return-brief-delta-summary").textContent =
+          `${refreshDelta.previousRefreshDate} to ${refreshDelta.currentRefreshDate}: ${refreshDelta.summary}`;
+        document.getElementById("return-brief-delta-rows").innerHTML = (refreshDelta.rowIds || [])
+          .map((rowId) => {
+            const row = rowsById.get(rowId);
+            const label = row ? `${row.project}: ${row.changeStatus}` : rowId;
             return `<a class="brief-row-link" href="#row-${slugId(rowId)}">${escapeHtml(label)}</a>`;
           })
           .join("");
