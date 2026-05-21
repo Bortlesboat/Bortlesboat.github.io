@@ -122,6 +122,10 @@ for (const token of [
   "Google Search Console",
   "sitemap.xml",
   "bb_debug_analytics",
+  "Canonical Source Rules",
+  "/proof/graph.json",
+  "/agent-payments/signal-ledger/feed.json",
+  "402 Payment Required",
 ]) {
   requireToken("analytics docs", files.docs, token);
 }

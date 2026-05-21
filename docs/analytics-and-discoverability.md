@@ -8,8 +8,18 @@ Last updated: 2026-05-21
 - Public tracking plan: `/analytics/tracking-plan.json`
 - Root crawler map: `/llms.txt`
 - Ledger crawler map: `/agent-payments/signal-ledger/llms.txt`
+- Proof graph page and JSON: `/proof/` and `/proof/graph.json`
+- Canonical signal feed: `/agent-payments/signal-ledger/feed.json`
 - Ledger structured data: `WebPage`, `Dataset`, `BreadcrumbList`, `FAQPage`, and `ItemList`
+- Proof graph structured data: `WebPage`, `Dataset`, `ItemList`, and `BreadcrumbList`
 - Robots policy allows normal search and AI crawlers and points to the XML sitemap.
+
+## Canonical Source Rules
+
+- `/agent-payments/signal-ledger/feed.json` is the canonical machine-readable Agent Payment Signal Ledger feed.
+- `/proof/agent-payments-signal-ledger/feed.json` remains a compatibility snapshot only and points back to the canonical feed.
+- `/proof/graph.json`, `/llms.txt`, `robots.txt`, and `sitemap.xml` should all advertise the canonical feed, not the proof-local compatibility snapshot.
+- HTTP `402 Payment Required` is a live response for x402-style paid endpoints; link checks treat it as reachable.
 
 ## Events
 
@@ -18,6 +28,7 @@ Last updated: 2026-05-21
 - `ledger_source_clicked`
 - `proof_link_clicked`
 - `outbound_link_clicked`
+- `internal_link_clicked`
 
 The event layer forwards to any installed `gtag`, `plausible`, `posthog`, or `umami` object and always pushes to `window.dataLayer`.
 
