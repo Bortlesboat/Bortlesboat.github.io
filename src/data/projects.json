@@ -20,6 +20,16 @@
     ]
   },
   {
+    "name": "Agent Payment Signal Ledger",
+    "description": "For x402, L402, and agent payments builders: a public sourced ledger of live endpoints, pricing hints, proof-status labels, and source URLs.",
+    "url": "/agent-payments/signal-ledger/",
+    "tags": [
+      "x402",
+      "L402",
+      "agent payments"
+    ]
+  },
+  {
     "name": "bitcoin-mcp",
     "description": "Bitcoin MCP tools with tests, PyPI packaging, and setup docs.",
     "url": "https://github.com/Bortlesboat/bitcoin-mcp",

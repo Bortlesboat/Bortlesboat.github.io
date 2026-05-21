@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent Payment Signal Ledger</title>
+    <meta name="description" content="Public, AI-readable x402, L402, and agent payments signal ledger with proof-status labels, live endpoints, pricing hints, and source URLs." />
+    <meta name="theme-color" content="#26384d" />
+    <link rel="canonical" href="https://bortlesboat.github.io/agent-payments/signal-ledger/" />
+    <link rel="alternate" type="application/json" href="https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json" title="Agent Payment Signal Ledger feed" />
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f8f3ea;
+        --panel: #fffaf1;
+        --ink: #182433;
+        --muted: #5f6b79;
+        --line: #d8c9ad;
+        --navy: #26384d;
+        --copper: #a15b2f;
+        --green: #476f51;
+        --blue: #486783;
+        --gold: #8a6a24;
+        font-family: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .shell {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 72px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .wordmark {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      .wordmark span:first-child {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        background: var(--navy);
+        color: var(--paper);
+        font-size: 0.86rem;
+      }
+
+      .topnav {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+
+      .topnav a {
+        text-decoration: none;
+      }
+
+      main {
+        padding: 54px 0 72px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 360px;
+        gap: 42px;
+        align-items: start;
+      }
+
+      .kicker {
+        margin: 0 0 14px;
+        color: var(--copper);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        max-width: 780px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2.55rem, 7vw, 5.8rem);
+        line-height: 0.95;
+        letter-spacing: 0;
+      }
+
+      .lede {
+        max-width: 760px;
+        margin: 24px 0 0;
+        color: #344559;
+        font-size: clamp(1.05rem, 2vw, 1.28rem);
+        line-height: 1.58;
+      }
+
+      .source-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 18px;
+        border: 1px solid var(--navy);
+        background: var(--navy);
+        color: #fffdf6;
+        text-decoration: none;
+        font-weight: 800;
+      }
+
+      .button.secondary {
+        background: transparent;
+        color: var(--navy);
+      }
+
+      .status-panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        padding: 22px;
+      }
+
+      .status-panel dl {
+        display: grid;
+        gap: 14px;
+        margin: 0;
+      }
+
+      .status-panel dt {
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .status-panel dd {
+        margin: 4px 0 0;
+        font-weight: 800;
+      }
+
+      .guardrail {
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+        color: #4b3d31;
+        line-height: 1.5;
+      }
+
+      .legend {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 42px;
+      }
+
+      .proof-status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        padding: 6px 9px;
+        border: 1px solid var(--line);
+        background: #fffaf2;
+        color: var(--navy);
+        font-family: "Azeret Mono", ui-monospace, monospace;
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-align: center;
+        overflow-wrap: anywhere;
+      }
+
+      .proof-status[data-status="paid-call-captured"] {
+        color: var(--green);
+        border-color: #9eb294;
+      }
+
+      .proof-status[data-status="ecosystem-listed"] {
+        color: var(--gold);
+        border-color: #c8b36b;
+      }
+
+      .proof-status[data-status="public-observatory"],
+      .proof-status[data-status="platform-doc"] {
+        color: var(--blue);
+        border-color: #9ab0c5;
+      }
+
+      .ledger-section {
+        margin-top: 48px;
+      }
+
+      .return-brief {
+        margin-top: 44px;
+        border-top: 1px solid var(--line);
+        padding-top: 28px;
+      }
+
+      .brief-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .brief-card {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        padding: 18px;
+      }
+
+      .brief-card h3 {
+        margin: 0 0 8px;
+        font-size: 0.86rem;
+      }
+
+      .brief-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 18px;
+      }
+
+      .section-head h2 {
+        margin: 0;
+        font-size: clamp(1.45rem, 2.8vw, 2.2rem);
+      }
+
+      .section-head p {
+        max-width: 540px;
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      table {
+        width: 100%;
+        min-width: 980px;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: #efe3cf;
+        color: #3a4b60;
+        font-size: 0.72rem;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      td {
+        color: #26384d;
+        line-height: 1.42;
+      }
+
+      td strong {
+        display: block;
+        color: var(--ink);
+      }
+
+      .cell-note {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .source-link {
+        color: var(--copper);
+        font-weight: 800;
+      }
+
+      .machine-block {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 24px;
+      }
+
+      .machine-card {
+        border: 1px solid var(--line);
+        background: #fffaf2;
+        padding: 20px;
+      }
+
+      .machine-card h3 {
+        margin: 0 0 8px;
+      }
+
+      .machine-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .machine-card ul {
+        margin: 10px 0 0;
+        padding-left: 20px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      code {
+        font-family: "Azeret Mono", ui-monospace, monospace;
+        font-size: 0.86em;
+      }
+
+      @media (max-width: 900px) {
+        .hero,
+        .machine-block {
+          grid-template-columns: 1fr;
+        }
+
+        .legend {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .brief-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar,
+        .section-head {
+          align-items: start;
+          flex-direction: column;
+        }
+
+        main {
+          padding-top: 34px;
+        }
+
+        .table-wrap {
+          overflow: visible;
+          border: 0;
+          background: transparent;
+        }
+
+        table,
+        tbody,
+        tr,
+        td {
+          display: block;
+          width: 100%;
+          min-width: 0;
+        }
+
+        table {
+          min-width: 0;
+        }
+
+        thead {
+          display: none;
+        }
+
+        tr {
+          margin-bottom: 14px;
+          border: 1px solid var(--line);
+          background: var(--panel);
+        }
+
+        td {
+          border-bottom: 1px solid var(--line);
+          padding: 12px 14px;
+        }
+
+        td:last-child {
+          border-bottom: 0;
+        }
+
+        td::before {
+          content: attr(data-label);
+          display: block;
+          margin-bottom: 6px;
+          color: var(--muted);
+          font-size: 0.68rem;
+          font-weight: 800;
+          letter-spacing: 0.07em;
+          text-transform: uppercase;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .shell {
+          width: min(100% - 22px, 1180px);
+        }
+
+        .topnav {
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+
+        .legend {
+          grid-template-columns: 1fr;
+        }
+
+        .button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="shell topbar" aria-label="Site navigation">
+      <a class="wordmark" href="/" aria-label="Bortlesboat home">
+        <span>BB</span>
+        <span>Bortlesboat</span>
+      </a>
+      <nav class="topnav" aria-label="Primary navigation">
+        <a href="/">Portfolio</a>
+        <a href="/x402-insights/launch.html">AgentOps Ledger</a>
+        <a href="feed.json">feed.json</a>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section class="hero" aria-labelledby="ledger-title">
+        <div>
+          <p class="kicker">x402 / L402 / agent payments</p>
+          <h1 id="ledger-title">Agent Payment Signal Ledger</h1>
+          <p class="lede">
+            A public, AI-readable intelligence surface for agent-payment builders:
+            live endpoints, pricing hints, source URLs, and proof-status labels for
+            x402, L402, and adjacent agent payments infrastructure.
+          </p>
+          <div class="source-actions">
+            <a class="button" href="feed.json">Open feed.json</a>
+            <a class="button secondary" href="#ledger">Browse rows</a>
+          </div>
+        </div>
+
+        <aside class="status-panel" aria-label="Ledger status">
+          <dl>
+            <div>
+              <dt>Last updated</dt>
+              <dd id="last-updated">2026-05-21</dd>
+            </div>
+            <div>
+              <dt>Rows</dt>
+              <dd id="row-count">10 sourced rows</dd>
+            </div>
+            <div>
+              <dt>Machine feed</dt>
+              <dd><code>feed.json</code></dd>
+            </div>
+          </dl>
+          <p class="guardrail">
+            Do not treat ecosystem listings as payment proof. A listed project is a
+            discovery signal until a live endpoint, paid-call capture, public proof
+            packet, or source document supports the stronger claim.
+          </p>
+        </aside>
+      </section>
+
+      <section aria-label="Proof-status legend">
+        <div class="legend">
+          <span class="proof-status" data-status="live-discovery">live-discovery</span>
+          <span class="proof-status" data-status="paid-call-captured">paid-call-captured</span>
+          <span class="proof-status" data-status="public-proof-packet">public-proof-packet</span>
+          <span class="proof-status" data-status="ecosystem-listed">ecosystem-listed</span>
+          <span class="proof-status" data-status="public-observatory">public-observatory</span>
+          <span class="proof-status" data-status="protocol-doc">protocol-doc</span>
+          <span class="proof-status" data-status="platform-doc">platform-doc</span>
+        </div>
+      </section>
+
+      <section class="return-brief" aria-labelledby="return-brief-title">
+        <p class="kicker">Return Brief</p>
+        <div class="brief-grid">
+          <article class="brief-card">
+            <h3 id="return-brief-title">Check first</h3>
+            <p>Satoshi API discovery, SATLAB Experiment 001, and the x402 Ecosystem directory separate owned endpoints, paid-call evidence, and listings.</p>
+          </article>
+          <article class="brief-card">
+            <h3>Why return</h3>
+            <p>The useful signal is the delta: new endpoint metadata, priced rows, platform docs, or captured payment proof over time.</p>
+          </article>
+          <article class="brief-card">
+            <h3>Next safe action</h3>
+            <p>Promote new research into rows only when public HTTPS sources support the exact claim and proof-status label.</p>
+          </article>
+          <article class="brief-card">
+            <h3>Caveat</h3>
+            <p>This is a directory and proof map, not revenue, partnership, endorsement, prize, or grant proof.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="ledger" class="ledger-section" aria-labelledby="rows-title">
+        <div class="section-head">
+          <div>
+            <p class="kicker">Sourced rows</p>
+            <h2 id="rows-title">Signals with proof-status labels.</h2>
+          </div>
+          <p>
+            Rows are intentionally conservative. Owned endpoints are labeled as owned,
+            public docs stay doc-level, and operator-controlled captures are not
+            third-party revenue claims.
+          </p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Project</th>
+                <th>Protocol / chain</th>
+                <th>Endpoint / pricing</th>
+                <th>Proof status</th>
+                <th>Source</th>
+              </tr>
+            </thead>
+            <tbody id="ledger-rows">
+              <tr>
+                <td colspan="5">Loading ledger rows from feed.json...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="machine-block" aria-label="Machine-readable notes">
+        <article class="machine-card">
+          <h3>For crawlers</h3>
+          <p>
+            Use <code>feed.json</code> as the canonical record. Each row includes
+            <code>sourceUrl</code>, <code>proofStatus</code>, <code>pricing</code>,
+            and <code>lastVerified</code>.
+          </p>
+        </article>
+        <article class="machine-card">
+          <h3>Evidence boundary</h3>
+          <p>
+            This ledger reports source-backed signals only. It avoids outcome,
+            partnership, prize, endorsement, and revenue claims unless a cited source
+            supports that exact statement.
+          </p>
+        </article>
+        <article class="machine-card">
+          <h3>Maintenance plan</h3>
+          <p>
+            Refresh weekly from cited sources, patch urgent corrections when a source
+            breaks, and downgrade stale rows before adding stronger claims.
+            <a href="maintenance.md">Read the maintenance note.</a>
+          </p>
+        </article>
+        <article class="machine-card">
+          <h3>Leverage loop</h3>
+          <ul>
+            <li>Be the clean directory for agent-payment builders and crawlers.</li>
+            <li>Route Satoshi, SATLAB, AgentOps, x402, and L402 proof into one surface.</li>
+            <li>Turn repeated source checks into stronger rows, not louder claims.</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+
+    <script>
+      const statusClass = (status) => `proof-status proof-status-${status}`;
+
+      fetch("feed.json")
+        .then((response) => response.json())
+        .then((feed) => {
+          document.getElementById("last-updated").textContent = feed.lastUpdated;
+          document.getElementById("row-count").textContent = `${feed.rows.length} sourced rows`;
+          document.getElementById("ledger-rows").innerHTML = feed.rows
+            .map((row) => `
+              <tr>
+                <td data-label="Project">
+                  <strong>${escapeHtml(row.project)}</strong>
+                  <span class="cell-note">${escapeHtml(row.status)}</span>
+                </td>
+                <td data-label="Protocol / chain">
+                  <strong>${escapeHtml(row.protocol)}</strong>
+                  <span class="cell-note">${escapeHtml(row.chain)}</span>
+                </td>
+                <td data-label="Endpoint / pricing">
+                  <strong>${escapeHtml(row.liveEndpoint)}</strong>
+                  <span class="cell-note">${escapeHtml(row.pricing)}</span>
+                </td>
+                <td data-label="Proof status">
+                  <span class="${statusClass(row.proofStatus)}" data-status="${escapeHtml(row.proofStatus)}">${escapeHtml(row.proofStatus)}</span>
+                  <div class="cell-note">${escapeHtml(row.note)}</div>
+                </td>
+                <td data-label="Source">
+                  <a class="source-link" href="${escapeAttribute(row.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(row.sourceTitle || "Source")}</a>
+                  <div class="cell-note">Verified ${escapeHtml(row.lastVerified)}</div>
+                </td>
+              </tr>
+            `)
+            .join("");
+        })
+        .catch(() => {
+          document.getElementById("ledger-rows").innerHTML = `
+            <tr>
+              <td colspan="5">Could not load feed.json. The feed link above remains the canonical source.</td>
+            </tr>
+          `;
+        });
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function escapeAttribute(value) {
+        return escapeHtml(value).replaceAll("`", "&#096;");
+      }
+    </script>
+  </body>
+</html>
