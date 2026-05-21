@@ -1,4 +1,4 @@
-import { analyzeCsvText, analyzeFile } from "./variance.js?v=financial-triage-v01-20260518";
+import { analyzeCsvText, analyzeFile } from "./variance.js?v=financial-triage-v03-20260521";
 
 const sampleCsv = `Account,Department,Category,Period,Actual,Budget,Forecast,Prior Year
 SaaS recurring revenue,Sales,Revenue,Jan 2026,"$120,000","$100,000","$245,000","$92,000"
@@ -25,6 +25,7 @@ const elements = {
   clearButton: document.querySelector("#clearButton"),
   copyButton: document.querySelector("#copyButton"),
   exportButton: document.querySelector("#exportButton"),
+  packetButton: document.querySelector("#packetButton"),
   statusLabel: document.querySelector("#statusLabel"),
   rowCount: document.querySelector("#rowCount"),
   varianceCount: document.querySelector("#varianceCount"),
@@ -35,6 +36,7 @@ const elements = {
   importAudit: document.querySelector("#importAudit"),
   previewRows: document.querySelector("#previewRows"),
   driverNotes: document.querySelector("#driverNotes"),
+  diagnosticModeOutput: document.querySelector("#diagnosticModeOutput"),
   memoOutput: document.querySelector("#memoOutput"),
   modeCheck: document.querySelector("#modeCheck"),
   confidenceCheck: document.querySelector("#confidenceCheck"),
@@ -110,6 +112,20 @@ elements.exportButton.addEventListener("click", () => {
   setStatus("Exported memo");
 });
 
+elements.packetButton.addEventListener("click", () => {
+  if (!state.result?.diagnosticPacket) {
+    return;
+  }
+  const blob = new Blob([state.result.diagnosticPacket.markdown], { type: "text/markdown" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${exportSlug(state.result)}-diagnostic-packet.md`;
+  link.click();
+  URL.revokeObjectURL(url);
+  setStatus("Download Diagnostic Packet complete");
+});
+
 elements.dropzone.addEventListener("dragover", (event) => {
   event.preventDefault();
   elements.dropzone.classList.add("dragging");
@@ -178,6 +194,7 @@ function render() {
     elements.importAudit.innerHTML = `<p>No file parsed yet.</p>`;
     elements.previewRows.innerHTML = `<tr class="empty-row"><td>No parsed rows yet.</td></tr>`;
     elements.driverNotes.innerHTML = `<li>No driver notes yet.</li>`;
+    elements.diagnosticModeOutput.innerHTML = `<p>No diagnostic loaded.</p>`;
     elements.memoOutput.textContent = "Run an analysis to create a memo.";
     elements.modeCheck.textContent = "Waiting";
     elements.confidenceCheck.textContent = "Waiting";
@@ -237,6 +254,7 @@ function render() {
         mode === "unsupported" ? "No checks generated until this file maps to a supported mode." :
         "No forecast driver notes generated."
       }</li>`;
+  elements.diagnosticModeOutput.innerHTML = renderDiagnosticMode(result.diagnosticMode);
   elements.memoOutput.textContent = result.memo.markdown;
   const diagnostics = renderDiagnosticSummary(result.importReport);
   elements.modeCheck.textContent = diagnostics.mode;
@@ -469,6 +487,64 @@ function renderDriverNote(note) {
     <span class="note-kind">${escapeHtml(note.kind.replaceAll("_", " "))}</span>
     <span>${escapeHtml(note.text)}</span>
   </li>`;
+}
+
+function renderDiagnosticMode(diagnostic) {
+  if (!diagnostic) {
+    return `<p>No diagnostic loaded.</p>`;
+  }
+
+  return `
+    ${renderDiagnosticBlock("Supports", diagnostic.supports)}
+    ${renderRowsToUseNext(diagnostic.rowsToUseNext)}
+    ${renderDiagnosticBlock("Cannot prove", diagnostic.cannotProve)}
+    ${renderDiagnosticBlock("Safe advisory call agenda", diagnostic.advisoryAgenda)}
+    ${renderDiagnosticBlock("Automation questions", diagnostic.automationQuestions)}
+    <section class="diagnostic-block">
+      <h3>Caveated anonymized summary</h3>
+      <p>${escapeHtml(diagnostic.anonymizedSummary)}</p>
+    </section>
+  `;
+}
+
+function renderRowsToUseNext(items = []) {
+  if (!items.length) {
+    return `
+      <section class="diagnostic-block">
+        <h3>Rows to use next</h3>
+        <p>No reusable memo or call-agenda rows identified.</p>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="diagnostic-block">
+      <h3>Rows to use next</h3>
+      <ul>
+        ${items.slice(0, 5).map((item) => `<li>${escapeHtml(item.text ?? item)}</li>`).join("")}
+      </ul>
+    </section>
+  `;
+}
+
+function renderDiagnosticBlock(title, items = []) {
+  if (!items.length) {
+    return `
+      <section class="diagnostic-block">
+        <h3>${escapeHtml(title)}</h3>
+        <p>No diagnostic items generated.</p>
+      </section>
+    `;
+  }
+
+  return `
+    <section class="diagnostic-block">
+      <h3>${escapeHtml(title)}</h3>
+      <ul>
+        ${items.slice(0, 5).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+      </ul>
+    </section>
+  `;
 }
 
 function renderAnalysisHeader(kind) {

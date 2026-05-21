@@ -394,6 +394,89 @@ export function buildBoardMemo(analysis) {
   };
 }
 
+export function buildDiagnosticMode(analysis, importReport = {}) {
+  const mode = importReport?.mode ?? modeFromAnalysis(analysis);
+  const supports = diagnosticSupports(analysis, importReport, mode);
+  const rowsToUseNext = diagnosticRowsToUseNext(analysis, mode);
+  const cannotProve = diagnosticCannotProve(mode);
+  const advisoryAgenda = diagnosticAdvisoryAgenda(analysis, importReport, mode, rowsToUseNext);
+  const automationQuestions = diagnosticAutomationQuestions(mode);
+  const anonymizedSummary = diagnosticAnonymizedSummary(analysis, importReport, mode);
+  const markdown = diagnosticMarkdown({
+    supports,
+    rowsToUseNext,
+    cannotProve,
+    advisoryAgenda,
+    automationQuestions,
+    anonymizedSummary,
+  });
+
+  return {
+    supports,
+    rowsToUseNext,
+    cannotProve,
+    advisoryAgenda,
+    automationQuestions,
+    anonymizedSummary,
+    markdown,
+  };
+}
+
+export function buildDiagnosticPacket(result) {
+  const importReport = result?.importReport ?? {};
+  const analysis = result?.analysis ?? {};
+  const diagnostic = result?.diagnosticMode ?? buildDiagnosticMode(analysis, importReport);
+  const lines = [
+    "# Finance File Triage Diagnostic Packet",
+    "",
+    "Private finance-file diagnostic preflight",
+    "",
+    "Use this packet to prepare for a finance review call without pretending the file proves more than it does. Run it on synthetic or sanitized finance exports before anything leaves the room.",
+    "",
+    "## File basis",
+  ];
+
+  appendBullets(lines, diagnosticFileBasis(importReport, analysis));
+  lines.push("", "## What the file supports");
+  appendBullets(lines, diagnostic.supports);
+  lines.push("", "## Rows to use next");
+  if ((diagnostic.rowsToUseNext ?? []).length > 0) {
+    appendBullets(lines, diagnostic.rowsToUseNext.slice(0, 5).map((item) => item.text));
+  } else {
+    lines.push("- No reusable memo or call-agenda rows were identified because this file did not map to row-linked evidence.");
+  }
+  lines.push("", "## What this file cannot prove");
+  appendBullets(lines, diagnostic.cannotProve);
+  lines.push("", "## Safe advisory call agenda");
+  appendBullets(lines, diagnostic.advisoryAgenda);
+  lines.push("", "## Automation questions to ask");
+  appendBullets(lines, diagnostic.automationQuestions);
+  lines.push("", "## Caveated anonymized summary", diagnostic.anonymizedSummary);
+  lines.push("", "## Sharing boundary");
+  appendBullets(lines, [
+    "Before sharing externally, remove company names, account identifiers, counterparties, transaction descriptions, security names, amounts, departments, and local file paths.",
+    "Treat this as a diagnostic packet, not a board-ready conclusion, investment recommendation, payment instruction, or accounting position.",
+  ]);
+
+  return {
+    markdown: lines.join("\n"),
+  };
+}
+
+function withDiagnosticMode(result) {
+  const diagnosticMode = buildDiagnosticMode(result.analysis, result.importReport);
+  const diagnosticPacket = buildDiagnosticPacket({ ...result, diagnosticMode });
+  return {
+    ...result,
+    diagnosticMode,
+    diagnosticPacket,
+    memo: {
+      ...result.memo,
+      markdown: `${result.memo.markdown}\n\n${diagnosticMode.markdown}`,
+    },
+  };
+}
+
 export async function analyzeFile(file, options = {}) {
   const name = file?.name?.toLowerCase() ?? "";
   if (name.endsWith(".xlsx")) {
@@ -431,7 +514,7 @@ export function analyzeRows(rows, options = {}, context = {}) {
   if (importReport.mode === "portfolio_positions") {
     const positions = normalizePortfolioPositions(records, importReport.mappedFields);
     const analysis = analyzePortfolioPositions(positions, options);
-    return {
+    return withDiagnosticMode({
       rows,
       records,
       normalizedRows: positions,
@@ -445,13 +528,13 @@ export function analyzeRows(rows, options = {}, context = {}) {
       },
       analysis,
       memo: buildPortfolioMemo(analysis),
-    };
+    });
   }
 
   if (importReport.mode === "financial_transactions") {
     const transactions = normalizeFinancialTransactions(records, importReport.mappedFields);
     const analysis = analyzeFinancialTransactions(transactions, options);
-    return {
+    return withDiagnosticMode({
       rows,
       records,
       normalizedRows: transactions,
@@ -465,13 +548,13 @@ export function analyzeRows(rows, options = {}, context = {}) {
       },
       analysis,
       memo: buildTransactionMemo(analysis),
-    };
+    });
   }
 
   if (importReport.mode === "invoice_aging") {
     const invoices = normalizeInvoices(records, importReport.mappedFields);
     const analysis = analyzeInvoices(invoices, options);
-    return {
+    return withDiagnosticMode({
       rows,
       records,
       normalizedRows: invoices,
@@ -485,12 +568,12 @@ export function analyzeRows(rows, options = {}, context = {}) {
       },
       analysis,
       memo: buildInvoiceMemo(analysis),
-    };
+    });
   }
 
   if (importReport.mode === "unsupported_financial_file") {
     const analysis = analyzeUnsupportedFile(records, importReport);
-    return {
+    return withDiagnosticMode({
       rows,
       records,
       normalizedRows: [],
@@ -502,12 +585,12 @@ export function analyzeRows(rows, options = {}, context = {}) {
       },
       analysis,
       memo: buildUnsupportedMemo(analysis, importReport),
-    };
+    });
   }
 
   const normalizedRows = normalizeFinancialRecords(records);
   const analysis = analyzeVariance(normalizedRows, options);
-  return {
+  return withDiagnosticMode({
     rows,
     records,
     normalizedRows,
@@ -519,7 +602,7 @@ export function analyzeRows(rows, options = {}, context = {}) {
     },
     analysis,
     memo: buildBoardMemo(analysis),
-  };
+  });
 }
 
 function normalizeVerticalRecords(records, fieldMap) {
@@ -966,6 +1049,339 @@ function buildUnsupportedMemo(analysis, importReport) {
     varianceTable: [],
     driverNotes: [],
   };
+}
+
+function modeFromAnalysis(analysis) {
+  if (analysis?.kind === "portfolio") {
+    return "portfolio_positions";
+  }
+  if (analysis?.kind === "transactions") {
+    return "financial_transactions";
+  }
+  if (analysis?.kind === "invoices") {
+    return "invoice_aging";
+  }
+  if (analysis?.kind === "unsupported") {
+    return "unsupported_financial_file";
+  }
+  return "fpna_variance";
+}
+
+function diagnosticSupports(analysis, importReport, mode) {
+  const mappedCount = Object.keys(importReport?.mappedFields ?? {}).length;
+  const normalizedCount = importReport?.normalizedRowCount ?? 0;
+
+  if (mode === "portfolio_positions") {
+    const rowRefs = rowRefsText((analysis?.topPositions ?? []).map((position) => position.sourceRow));
+    return [
+      `Supports a row-linked positions review for ${normalizedCount} parsed holding row${normalizedCount === 1 ? "" : "s"}${rowRefs ? `, led by ${rowRefs}` : ""}.`,
+      `Supports checking concentration, account/type mix, cash bucket treatment, and missing cost-basis fields from ${mappedCount} mapped field${mappedCount === 1 ? "" : "s"}.`,
+    ];
+  }
+
+  if (mode === "financial_transactions") {
+    const rowRefs = rowRefsText((analysis?.largestTransactions ?? []).map((transaction) => transaction.sourceRow));
+    return [
+      `Supports a row-linked cash activity review for ${analysis?.summary?.transactionCount ?? normalizedCount} parsed transaction${(analysis?.summary?.transactionCount ?? normalizedCount) === 1 ? "" : "s"}${rowRefs ? `, led by ${rowRefs}` : ""}.`,
+      `Supports checking inflow/outflow totals, large transaction anchors, account activity, transfer treatment, and category buckets from ${mappedCount} mapped field${mappedCount === 1 ? "" : "s"}.`,
+    ];
+  }
+
+  if (mode === "invoice_aging") {
+    const rowRefs = rowRefsText((analysis?.largestInvoices ?? []).map((invoice) => invoice.sourceRow));
+    return [
+      `Supports a row-linked invoice aging review for ${analysis?.summary?.invoiceCount ?? normalizedCount} parsed invoice row${(analysis?.summary?.invoiceCount ?? normalizedCount) === 1 ? "" : "s"}${rowRefs ? `, led by ${rowRefs}` : ""}.`,
+      `Supports checking open amount, overdue buckets, disputed/on-hold rows, and counterparty concentration from ${mappedCount} mapped field${mappedCount === 1 ? "" : "s"}.`,
+    ];
+  }
+
+  if (mode === "unsupported_financial_file") {
+    return [
+      `Supports only file-family triage: ${importReport?.headers?.length ?? 0} columns and ${analysis?.summary?.rowCount ?? 0} data row${(analysis?.summary?.rowCount ?? 0) === 1 ? "" : "s"} parsed without a supported adapter.`,
+      "Supports deciding whether a new synthetic fixture and adapter are worth adding before any analysis is trusted.",
+    ];
+  }
+
+  const variances = analysis?.variances ?? [];
+  const rowRefs = rowRefsText(variances.map((variance) => variance.rowRef));
+  const supports = [
+    variances.length > 0
+      ? `Supports row-linked review of ${variances.length} material actual-vs-budget variance${variances.length === 1 ? "" : "s"}${rowRefs ? `, led by ${rowRefs}` : ""}.`
+      : "Supports mapping quality and threshold review, but no material actual-vs-budget variance was found at the selected thresholds.",
+    `Supports checking ${normalizedCount} normalized row${normalizedCount === 1 ? "" : "s"}, ${mappedCount} mapped field${mappedCount === 1 ? "" : "s"}, and the detected header row before drafting commentary.`,
+  ];
+  if ((analysis?.driverNotes ?? []).length > 0) {
+    supports.push("Supports a forecast-risk/opportunity prompt from mapped forecast columns, but only as an investigation queue.");
+  }
+  return supports;
+}
+
+function diagnosticRowsToUseNext(analysis, mode) {
+  const items = [];
+  const seen = new Set();
+
+  if (mode === "portfolio_positions") {
+    const topPosition = analysis?.topPositions?.[0];
+    if (topPosition) {
+      addDiagnosticRow(items, seen, [topPosition.sourceRow], `review agenda: inspect largest parsed position ${portfolioPositionSentence(topPosition)} before using the summary.`);
+    }
+  } else if (mode === "financial_transactions") {
+    const largest = analysis?.largestTransactions?.[0];
+    if (largest) {
+      addDiagnosticRow(items, seen, [largest.sourceRow], `review agenda: inspect largest parsed transaction ${transactionSentence(largest)} before using totals.`);
+    }
+  } else if (mode === "invoice_aging") {
+    const largest = analysis?.largestInvoices?.[0];
+    if (largest) {
+      addDiagnosticRow(items, seen, [largest.sourceRow], `review agenda: inspect largest parsed invoice ${invoiceSentence(largest)} before using the aging summary.`);
+    }
+  } else if (mode === "fpna_variance") {
+    const variances = [...(analysis?.variances ?? [])].sort((a, b) => Math.abs(b.variance) - Math.abs(a.variance));
+    if (variances[0]) {
+      addDiagnosticRow(items, seen, [variances[0].rowRef], `memo lead: ${varianceSentence(variances[0])}`);
+    }
+    for (const variance of variances.slice(1, 4)) {
+      addDiagnosticRow(items, seen, [variance.rowRef], `review agenda: validate whether ${variance.account} is timing, volume/rate, mix, accrual, classification, or one-time activity (row ${variance.rowRef}).`);
+    }
+  }
+
+  for (const note of (analysis?.driverNotes ?? []).slice(0, 4)) {
+    addDiagnosticRow(items, seen, note.rowRefs, `review agenda: ${note.text}`);
+  }
+
+  return items;
+}
+
+function diagnosticCannotProve(mode) {
+  if (mode === "portfolio_positions") {
+    return [
+      "Cannot prove investment suitability, allocation quality, tax impact, outside holdings, liquidity needs, or whether a trade should be made.",
+      "Cannot prove prices, unsettled activity, duplicated account sections, account ownership, or risk tolerance without brokerage and client context.",
+    ];
+  }
+
+  if (mode === "financial_transactions") {
+    return [
+      "Cannot prove recurring intent, reimbursement status, tax treatment, personal/business classification, or whether a transaction is one-time.",
+      "Cannot prove pending/duplicate status, transfer exclusions, split categories, or account ownership without source-system context.",
+    ];
+  }
+
+  if (mode === "invoice_aging") {
+    return [
+      "Cannot prove collectability, payment authorization, vendor/customer relationship, duplicate invoice status, or whether a hold/dispute is valid.",
+      "Cannot prove AP versus AR treatment, cutoff completeness, contract terms, payment plans, or cash constraints without controller context.",
+    ];
+  }
+
+  if (mode === "unsupported_financial_file") {
+    return [
+      "Cannot prove any finance conclusion until the file maps to a supported mode or a new adapter is built from synthetic examples.",
+      "Cannot prove row meaning, source-system reliability, period coverage, or whether totals are complete from column names alone.",
+    ];
+  }
+
+  return [
+    "Cannot prove root cause: volume, pricing, timing, churn, mix, vendor behavior, headcount, accruals, or classification need owner context.",
+    "Cannot prove data completeness, source-system accuracy, period cutoff, management intent, or whether a variance should become external commentary.",
+  ];
+}
+
+function diagnosticAdvisoryAgenda(analysis, importReport, mode, rowsToUseNext = []) {
+  const rowRefs = rowsToUseNext.flatMap((item) => item.rowRefs ?? []);
+  const fallbackRowRefs = diagnosticRowRefs(analysis, mode);
+  const rowPhrase = rowRefs.length ? rowRefsText(rowRefs) : fallbackRowRefs.length ? rowRefsText(fallbackRowRefs) : "the mapped rows";
+  const modeName = diagnosticModeName(mode).toLowerCase();
+
+  return [
+    `90-minute review agenda: first 10 minutes confirm source, period, owner, privacy boundary, and whether only synthetic or sanitized rows may be discussed.`,
+    `Use ${rowPhrase} as the memo lead sequence, then separate what the ${modeName} file supports from what still needs corroborating evidence.`,
+    `Next 25 minutes walk ${rowPhrase} and separate what the ${modeName} file supports from what still needs corroborating evidence.`,
+    "Next 25 minutes list missing context, decision owners, and follow-up evidence needed before commentary or recommendations leave the room.",
+    "Next 20 minutes identify repeatable automation candidates, stable fields, thresholds, exception rules, and review handoffs.",
+    "Final 10 minutes agree on a caveated anonymized summary and the next safe artifact to share.",
+  ];
+}
+
+function diagnosticAutomationQuestions(mode) {
+  const shared = [
+    "What recurring export produces this file, who owns it, and how often does it refresh?",
+    "Which columns are stable identifiers versus presentation labels, and which mapped fields break across exports?",
+    "What thresholds, business rules, or review queues decide which rows deserve human attention?",
+  ];
+
+  if (mode === "portfolio_positions") {
+    return [
+      ...shared,
+      "Which checks should be automated for concentration, cash buckets, missing cost basis, duplicate positions, and stale prices?",
+    ];
+  }
+
+  if (mode === "financial_transactions") {
+    return [
+      ...shared,
+      "Which rules classify transfers, refunds, reimbursements, duplicate transactions, and recurring activity before totals are trusted?",
+    ];
+  }
+
+  if (mode === "invoice_aging") {
+    return [
+      ...shared,
+      "Which fields prove AP/AR direction, dispute status, payment holds, duplicate invoices, cutoff, and owner follow-up?",
+    ];
+  }
+
+  if (mode === "unsupported_financial_file") {
+    return [
+      ...shared,
+      "What synthetic fixture would represent this file family without exposing private account, counterparty, employer, or local-path data?",
+    ];
+  }
+
+  return [
+    ...shared,
+    "Which upstream systems hold the missing context for timing, volume/rate, mix, churn, vendor, headcount, accrual, and classification explanations?",
+  ];
+}
+
+function diagnosticAnonymizedSummary(analysis, importReport, mode) {
+  const modeName = diagnosticModeName(mode);
+  const normalizedCount = importReport?.normalizedRowCount ?? 0;
+  const anchorCount = diagnosticAnchorCount(analysis, mode);
+  return `An anonymized ${modeName} file was triaged locally in the browser. It mapped ${normalizedCount} row${normalizedCount === 1 ? "" : "s"} and produced ${anchorCount} row-linked review anchor${anchorCount === 1 ? "" : "s"}. Treat this as a diagnostic draft only; remove company, account, counterparty, transaction, security, department, amount, and local path details before sharing externally.`;
+}
+
+function diagnosticMarkdown({ supports, rowsToUseNext = [], cannotProve, advisoryAgenda, automationQuestions, anonymizedSummary }) {
+  const lines = ["## Diagnostic Mode", "", "### What the file supports"];
+  appendBullets(lines, supports);
+  lines.push("", "## Rows to use next");
+  if (rowsToUseNext.length > 0) {
+    appendBullets(lines, rowsToUseNext.slice(0, 5).map((item) => item.text));
+  } else {
+    lines.push("- No reusable memo or call-agenda rows were identified because this file did not map to row-linked evidence.");
+  }
+  lines.push("", "## What this file cannot prove");
+  appendBullets(lines, cannotProve);
+  lines.push("", "## Safe advisory call agenda");
+  appendBullets(lines, advisoryAgenda);
+  lines.push("", "## Automation questions to ask");
+  appendBullets(lines, automationQuestions);
+  lines.push("", "## Caveated anonymized summary", anonymizedSummary);
+  return lines.join("\n");
+}
+
+function diagnosticFileBasis(importReport, analysis) {
+  const mode = importReport?.mode ?? modeFromAnalysis(analysis);
+  const mappedFields = Object.entries(importReport?.mappedFields ?? {});
+  const normalizedCount = importReport?.normalizedRowCount ?? 0;
+  const source = importReport?.sourceSheet ? `${importReport.sourceSheet}, header row ${importReport.headerRowNumber ?? "not found"}` : `CSV, header row ${importReport?.headerRowNumber ?? "not found"}`;
+  const mappedText = mappedFields.length
+    ? mappedFields.map(([field, column]) => `${field}: ${column}`).join("; ")
+    : "no fields mapped";
+
+  return [
+    `Detected mode: ${diagnosticModeName(mode)}.`,
+    `Source basis: ${source}.`,
+    `Rows mapped: ${normalizedCount}.`,
+    `Mapped fields: ${mappedText}.`,
+    `Refused inference category: ${diagnosticRefusal(mode)}.`,
+  ];
+}
+
+function diagnosticRefusal(mode) {
+  if (mode === "portfolio_positions") {
+    return "allocation advice";
+  }
+  if (mode === "financial_transactions") {
+    return "recurring intent";
+  }
+  if (mode === "invoice_aging") {
+    return "payment decisions";
+  }
+  if (mode === "unsupported_financial_file") {
+    return "finance conclusions";
+  }
+  return "root causes";
+}
+
+function addDiagnosticRow(items, seen, rowRefs, text) {
+  const refs = [...new Set((rowRefs ?? []).filter((rowRef) => rowRef !== null && rowRef !== undefined))];
+  if (refs.length === 0) {
+    return;
+  }
+  const key = refs.join(",");
+  if (seen.has(key)) {
+    return;
+  }
+  seen.add(key);
+  items.push({ rowRefs: refs, text });
+}
+
+function appendBullets(lines, items) {
+  for (const item of items) {
+    lines.push(`- ${item}`);
+  }
+}
+
+function diagnosticRowRefs(analysis, mode) {
+  if (mode === "portfolio_positions") {
+    return (analysis?.topPositions ?? []).map((position) => position.sourceRow);
+  }
+  if (mode === "financial_transactions") {
+    return (analysis?.largestTransactions ?? []).map((transaction) => transaction.sourceRow);
+  }
+  if (mode === "invoice_aging") {
+    return (analysis?.largestInvoices ?? []).map((invoice) => invoice.sourceRow);
+  }
+  if (mode === "unsupported_financial_file") {
+    return [];
+  }
+  return (analysis?.variances ?? []).map((variance) => variance.rowRef);
+}
+
+function diagnosticAnchorCount(analysis, mode) {
+  if (mode === "portfolio_positions") {
+    return analysis?.topPositions?.length ?? 0;
+  }
+  if (mode === "financial_transactions") {
+    return analysis?.largestTransactions?.length ?? 0;
+  }
+  if (mode === "invoice_aging") {
+    return analysis?.largestInvoices?.length ?? 0;
+  }
+  if (mode === "unsupported_financial_file") {
+    return 0;
+  }
+  return analysis?.variances?.length ?? 0;
+}
+
+function diagnosticModeName(mode) {
+  if (mode === "portfolio_positions") {
+    return "portfolio positions";
+  }
+  if (mode === "financial_transactions") {
+    return "financial transactions";
+  }
+  if (mode === "invoice_aging") {
+    return "invoice aging";
+  }
+  if (mode === "unsupported_financial_file") {
+    return "unsupported financial file";
+  }
+  return "FP&A variance";
+}
+
+function rowRefsText(rowRefs) {
+  const refs = [...new Set(rowRefs.filter((rowRef) => rowRef !== null && rowRef !== undefined))]
+    .slice(0, 5)
+    .map((rowRef) => `row ${rowRef}`);
+  if (refs.length === 0) {
+    return "";
+  }
+  if (refs.length === 1) {
+    return refs[0];
+  }
+  return `${refs.slice(0, -1).join(", ")} and ${refs.at(-1)}`;
 }
 
 function inferHeaders(rows, headerRowIndex) {
