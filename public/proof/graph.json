@@ -4,6 +4,12 @@
   "canonicalUrl": "https://bortlesboat.github.io/proof/",
   "title": "Bortlesboat Proof Graph",
   "mission": "A public, AI-readable map of Andrew Barnes's strongest proof surfaces across agent payments, AgentOps, Bitcoin/x402, finance automation, advisory positioning, and open-source contributions.",
+  "discovery": {
+    "llmsUrl": "https://bortlesboat.github.io/llms.txt",
+    "graphUrl": "https://bortlesboat.github.io/proof/graph.json",
+    "canonicalSignalLedgerUrl": "https://bortlesboat.github.io/agent-payments/signal-ledger/",
+    "canonicalSignalFeedUrl": "https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json"
+  },
   "principles": [
     "Public links only",
     "No private local paths",
@@ -19,6 +25,11 @@
       "lastVerified": "2026-05-21",
       "summary": "The new compounding surface: a public feed for x402, agent payments, paid API endpoints, facilitator/discovery metadata, proof status, and buyer-path friction.",
       "proofLinks": [
+        {
+          "label": "Canonical signal ledger page",
+          "url": "https://bortlesboat.github.io/agent-payments/signal-ledger/",
+          "type": "public-page"
+        },
         {
           "label": "AgentOps AI discovery file",
           "url": "https://bortlesboat.github.io/x402-insights/llms.txt",
@@ -43,8 +54,13 @@
         },
         {
           "label": "Signal feed JSON",
-          "url": "https://bortlesboat.github.io/proof/agent-payments-signal-ledger/feed.json",
+          "url": "https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json",
           "type": "json"
+        },
+        {
+          "label": "Root LLM discovery file",
+          "url": "https://bortlesboat.github.io/llms.txt",
+          "type": "text"
         }
       ],
       "screenshots": [

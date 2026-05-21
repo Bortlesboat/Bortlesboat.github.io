@@ -8,6 +8,7 @@
     <meta name="keywords" content="x402, L402, agent payments, x402 paid API endpoints, Bitcoin API x402, AI agent payments, machine payments, agent payment directory" />
     <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
     <meta name="theme-color" content="#26384d" />
+    <meta name="author" content="Andrew Barnes" />
     <meta property="og:title" content="Agent Payment Signal Ledger" />
     <meta property="og:description" content="Source-backed x402, L402, and agent-payment rows with proof-status labels, live endpoints, pricing hints, and machine-readable JSON." />
     <meta property="og:type" content="website" />
@@ -18,10 +19,18 @@
     <link rel="canonical" href="https://bortlesboat.github.io/agent-payments/signal-ledger/" />
     <link rel="alternate" type="application/json" href="https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json" title="Agent Payment Signal Ledger feed" />
     <link rel="alternate" type="text/plain" href="https://bortlesboat.github.io/agent-payments/signal-ledger/llms.txt" title="Agent Payment Signal Ledger LLM crawler brief" />
+    <link rel="alternate" type="text/plain" href="https://bortlesboat.github.io/llms.txt" title="Bortlesboat LLM discovery file" />
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://bortlesboat.github.io/#andrew-barnes",
+          "name": "Andrew Barnes",
+          "url": "https://bortlesboat.github.io/",
+          "sameAs": ["https://github.com/Bortlesboat"]
+        },
         {
           "@type": "WebPage",
           "@id": "https://bortlesboat.github.io/agent-payments/signal-ledger/#webpage",
@@ -30,6 +39,7 @@
           "description": "A public, AI-readable x402, L402, and agent payments signal ledger with proof-status labels, live endpoints, pricing hints, and source URLs.",
           "datePublished": "2026-05-21",
           "dateModified": "2026-05-21",
+          "author": { "@id": "https://bortlesboat.github.io/#andrew-barnes" },
           "inLanguage": "en-US",
           "isPartOf": {
             "@type": "WebSite",
@@ -52,16 +62,19 @@
           "url": "https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json",
           "dateModified": "2026-05-21",
           "keywords": ["x402", "L402", "agent payments", "paid API endpoints", "Bitcoin API"],
-          "creator": {
-            "@type": "Person",
-            "name": "Andrew Barnes",
-            "url": "https://bortlesboat.github.io/"
-          },
+          "creator": { "@id": "https://bortlesboat.github.io/#andrew-barnes" },
           "distribution": [
             {
               "@type": "DataDownload",
+              "name": "Agent Payment Signal Ledger feed",
               "encodingFormat": "application/json",
               "contentUrl": "https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json"
+            },
+            {
+              "@type": "DataDownload",
+              "name": "Previous Agent Payment Signal Ledger feed",
+              "encodingFormat": "application/json",
+              "contentUrl": "https://bortlesboat.github.io/agent-payments/signal-ledger/feed.previous.json"
             }
           ]
         },

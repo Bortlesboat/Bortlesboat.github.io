@@ -2,8 +2,10 @@
   "schemaVersion": "agent-payment-signal-ledger-v0",
   "generatedAt": "2026-05-21",
   "canonicalUrl": "https://bortlesboat.github.io/proof/agent-payments-signal-ledger/feed.json",
+  "canonicalFeedUrl": "https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json",
+  "compatibilitySnapshot": true,
   "title": "Agent Payment Signal Ledger",
-  "description": "Seed feed for public, source-linked x402 and agent-payment proof rows. Rows are discovery signals, not endorsements or revenue claims.",
+  "description": "Compatibility snapshot for older proof-graph links. The canonical source-linked x402 and agent-payment feed is https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json. Rows are discovery signals, not endorsements or revenue claims.",
   "rows": [
     {
       "project": "Satoshi API x402 buyer path",

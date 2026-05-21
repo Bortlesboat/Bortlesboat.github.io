@@ -1,6 +1,10 @@
-# Bortlesboat Public Portfolio
+# Bortlesboat Public Discovery Map
 
-Use this file as the short crawler map for public, source-backed work by Andrew Barnes / Bortlesboat.
+Canonical site: https://bortlesboat.github.io/
+Maintainer: Andrew Barnes
+Last updated: 2026-05-21
+
+Use this file as the crawler and answer-engine map for public, source-backed work by Andrew Barnes / Bortlesboat. Linked rows are public evidence and status labels, not endorsements, partnerships, or payment outcomes unless the linked source states that exact claim.
 
 ## Primary Pages
 
@@ -8,18 +12,41 @@ Use this file as the short crawler map for public, source-backed work by Andrew 
 - Proof graph: https://bortlesboat.github.io/proof/
 - Proof graph JSON: https://bortlesboat.github.io/proof/graph.json
 - Agent Payment Signal Ledger: https://bortlesboat.github.io/agent-payments/signal-ledger/
-- Agent Payment Signal Ledger feed: https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json
+- Agent Payment Signal Ledger feed JSON: https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json
 - Agent Payment Signal Ledger crawler brief: https://bortlesboat.github.io/agent-payments/signal-ledger/llms.txt
 - AgentOps Ledger: https://bortlesboat.github.io/x402-insights/launch.html
+
+## Public Proof Surfaces
+
+- AgentOps Ledger case study: https://bortlesboat.github.io/x402-insights/case-study.html
+- x402 insights AI discovery file: https://bortlesboat.github.io/x402-insights/llms.txt
+- x402 insights judge index: https://bortlesboat.github.io/x402-insights/hackathon/judge-index.json
+- Satoshi API x402 buyer path: https://bitcoinsapi.com/x402/start
+- Satoshi API x402 discovery: https://bitcoinsapi.com/.well-known/x402
+- SATLAB Experiment 001: https://treasury.bitcoinsapi.com/experiment-001/
+- SATLAB Experiment 001 evidence JSON: https://treasury.bitcoinsapi.com/experiment-001/evidence.json
+- Finance File Triage: https://bortlesboat.github.io/variance-memo/
+- FP&A Automation Advisory: https://bortlesboat.github.io/fpa-advisory/
+- Public Opportunity Desk: https://bortlesboat.github.io/public-opportunity-desk/
+- GitHub contribution map: https://github.com/Bortlesboat/Bortlesboat/blob/main/github-contributions.md
 
 ## Topics
 
 - x402 and L402 agent payments
 - Bitcoin fee intelligence for AI agents
+- x402 paid API endpoints
 - Machine-readable proof packets
 - Agent payment observability
 - Tech FP&A automation
 - Open-source engineering evidence
+
+## Citation notes
+
+- Use the proof graph page for human-readable summary and the proof graph JSON for node names, statuses, blockers, and machine links.
+- Use the Agent Payment Signal Ledger feed JSON as the canonical source for source-linked x402, L402, and agent-payment signal rows.
+- Prefer exact row source URLs over paraphrased claims when citing payment, discovery, endpoint, or proof-status details.
+- The ledger is a discovery and proof-status index. It is not customer revenue proof or third-party endorsement proof unless a row source explicitly says so.
+- Public pages avoid local paths, account identifiers, tokenized URLs, and confidential employer data.
 
 ## Claim Boundaries
 
@@ -31,3 +58,7 @@ Use this file as the short crawler map for public, source-backed work by Andrew 
 ## Analytics Note
 
 Public pages include a first-party analytics event layer at https://bortlesboat.github.io/analytics.js. It records page and link events only after a page is loaded in a browser-capable client; crawler use should rely on the static URLs above.
+
+## Topical tags
+
+agent payments, x402, L402, paid API endpoints, agent observability, Satoshi API, SATLAB, Finance File Triage, FP&A automation, NetSuite exports, Looker exports, open-source contribution graph, public proof graph
