@@ -22,6 +22,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;600;700&family=Instrument+Sans:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,500;8..60,650;8..60,750&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href="https://bortlesboat.github.io/" />
+    <link rel="alternate" type="text/plain" href="https://bortlesboat.github.io/llms.txt" title="Bortlesboat LLM crawler map" />
 
     <script type="application/ld+json">
     {
@@ -45,8 +46,8 @@
         <span>Bortlesboat</span>
       </a>
       <nav class="top-nav" aria-label="Primary navigation">
-        <a href="#proof-map-section">Proof map</a>
-        <a href="/proof/">Proof graph</a>
+        <a href="#proof-map-section" data-analytics-location="top_nav">Proof map</a>
+        <a href="/proof/" data-analytics-event="proof_link_clicked" data-analytics-location="top_nav">Proof graph</a>
         <a href="#evidence-room">Work</a>
         <a href="#case-ledger">Case studies</a>
         <a href="https://github.com/Bortlesboat" target="_blank" rel="noopener me">GitHub</a>
@@ -66,7 +67,7 @@
           </p>
           <div class="hero-actions" aria-label="Primary links">
             <a class="button button-primary" href="#case-ledger">View case studies</a>
-            <a class="button button-secondary" href="/proof/">Open proof graph</a>
+            <a class="button button-secondary" href="/proof/" data-analytics-event="proof_link_clicked" data-analytics-location="hero">Open proof graph</a>
             <a class="button button-secondary" href="https://github.com/Bortlesboat/Bortlesboat/blob/main/github-contributions.md" target="_blank" rel="noopener">Contribution map</a>
           </div>
         </div>
@@ -123,7 +124,7 @@
           <strong>OpenBB</strong>
           <span>Parser cleanup in a finance platform used by analysts and developers.</span>
         </a>
-        <a class="evidence-ticket" href="/agent-payments/signal-ledger/">
+        <a class="evidence-ticket" href="/agent-payments/signal-ledger/" data-analytics-event="proof_link_clicked" data-analytics-location="evidence_board">
           <span class="ticket-label">Protocol operators</span>
           <strong>Agent Payment Signal Ledger</strong>
           <span>Sourced x402, L402, and agent-payment rows with proof-status labels and source URLs.</span>
@@ -239,6 +240,7 @@
       </section>
     </main>
 
+    <script defer src="/analytics.js"></script>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

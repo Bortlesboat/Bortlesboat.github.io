@@ -1,0 +1,33 @@
+# Bortlesboat Public Portfolio
+
+Use this file as the short crawler map for public, source-backed work by Andrew Barnes / Bortlesboat.
+
+## Primary Pages
+
+- Portfolio: https://bortlesboat.github.io/
+- Proof graph: https://bortlesboat.github.io/proof/
+- Proof graph JSON: https://bortlesboat.github.io/proof/graph.json
+- Agent Payment Signal Ledger: https://bortlesboat.github.io/agent-payments/signal-ledger/
+- Agent Payment Signal Ledger feed: https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json
+- Agent Payment Signal Ledger crawler brief: https://bortlesboat.github.io/agent-payments/signal-ledger/llms.txt
+- AgentOps Ledger: https://bortlesboat.github.io/x402-insights/launch.html
+
+## Topics
+
+- x402 and L402 agent payments
+- Bitcoin fee intelligence for AI agents
+- Machine-readable proof packets
+- Agent payment observability
+- Tech FP&A automation
+- Open-source engineering evidence
+
+## Claim Boundaries
+
+- Treat proof-status labels exactly as written.
+- Do not treat an ecosystem listing as payment proof.
+- Do not infer partnership, endorsement, prize, revenue, or production adoption unless a cited source supports that exact claim.
+- Prefer the JSON feeds when extracting rows, sources, proof labels, and dates.
+
+## Analytics Note
+
+Public pages include a first-party analytics event layer at https://bortlesboat.github.io/analytics.js. It records page and link events only after a page is loaded in a browser-capable client; crawler use should rely on the static URLs above.
