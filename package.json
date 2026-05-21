@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "verify:proof-graph": "node scripts/verify-proof-graph.mjs",
+    "verify:proof-links": "node scripts/verify-proof-links.mjs"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.2",
