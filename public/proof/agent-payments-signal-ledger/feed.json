@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "agent-payment-signal-ledger-v0",
+  "generatedAt": "2026-05-21",
+  "canonicalUrl": "https://bortlesboat.github.io/proof/agent-payments-signal-ledger/feed.json",
+  "canonicalFeedUrl": "https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json",
+  "compatibilitySnapshot": true,
+  "title": "Agent Payment Signal Ledger",
+  "description": "Compatibility snapshot for older proof-graph links. The canonical source-linked x402 and agent-payment feed is https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json. Rows are discovery signals, not endorsements or revenue claims.",
+  "rows": [
+    {
+      "project": "Satoshi API x402 buyer path",
+      "protocol": "x402 / Base USDC",
+      "chain": "Base",
+      "liveEndpoint": "https://bitcoinsapi.com/x402/start",
+      "pricing": "$0.001 to $0.05 first-paid-call ladder, plus Pro path",
+      "status": "live",
+      "proofStatus": "buyer-path-visible",
+      "sourceUrl": "https://bitcoinsapi.com/x402/start",
+      "lastChecked": "2026-05-21",
+      "note": "Public route explains the first paid-call path and current Satoshi x402 positioning."
+    },
+    {
+      "project": "Satoshi API x402 discovery metadata",
+      "protocol": "x402",
+      "chain": "Base",
+      "liveEndpoint": "https://cdp.bitcoinsapi.com/.well-known/x402",
+      "pricing": "resource-specific",
+      "status": "live",
+      "proofStatus": "resource-discovery-visible",
+      "sourceUrl": "https://cdp.bitcoinsapi.com/.well-known/x402",
+      "lastChecked": "2026-05-21",
+      "note": "Well-known resource catalog for agent and marketplace discovery."
+    },
+    {
+      "project": "Satoshi paid-call observability",
+      "protocol": "x402",
+      "chain": "Base",
+      "liveEndpoint": "https://github.com/Bortlesboat/x402-insights/blob/main/docs/SATOSHI_PAID_CALL_DEMO.md",
+      "pricing": "$0.005 demo path documented",
+      "status": "public-proof-doc",
+      "proofStatus": "dogfood-observability-proof",
+      "sourceUrl": "https://github.com/Bortlesboat/x402-insights/blob/main/docs/SATOSHI_PAID_CALL_DEMO.md",
+      "lastChecked": "2026-05-21",
+      "note": "Shows x402-insights observing Satoshi production paid-call telemetry without claiming customer revenue."
+    },
+    {
+      "project": "AgentOps Ledger payment telemetry",
+      "protocol": "x402-style events",
+      "chain": "chain-agnostic",
+      "liveEndpoint": "https://bortlesboat.github.io/x402-insights/launch.html",
+      "pricing": "demo telemetry",
+      "status": "public-demo-live",
+      "proofStatus": "agent-run-payment-events-visible",
+      "sourceUrl": "https://bortlesboat.github.io/x402-insights/launch.html",
+      "lastChecked": "2026-05-21",
+      "note": "Agent run ledger includes payment events as inspectable operations evidence."
+    },
+    {
+      "project": "AgentOps Ledger machine-readable judge index",
+      "protocol": "agent telemetry",
+      "chain": "chain-agnostic",
+      "liveEndpoint": "https://bortlesboat.github.io/x402-insights/hackathon/judge-index.json",
+      "pricing": "not applicable",
+      "status": "live-json",
+      "proofStatus": "machine-readable-evidence-index",
+      "sourceUrl": "https://bortlesboat.github.io/x402-insights/hackathon/judge-index.json",
+      "lastChecked": "2026-05-21",
+      "note": "Public JSON index for judges and AI crawlers."
+    },
+    {
+      "project": "AgentOps Ledger Splunk HEC proof",
+      "protocol": "agent telemetry export",
+      "chain": "chain-agnostic",
+      "liveEndpoint": "https://github.com/Bortlesboat/x402-insights/blob/main/docs/hackathon/splunk-hec-proof.md",
+      "pricing": "not applicable",
+      "status": "public-proof-doc",
+      "proofStatus": "sanitized-local-indexing-proof",
+      "sourceUrl": "https://github.com/Bortlesboat/x402-insights/blob/main/docs/hackathon/splunk-hec-proof.md",
+      "lastChecked": "2026-05-21",
+      "note": "Proof packet for HEC export of five agentops run events into Splunk."
+    },
+    {
+      "project": "SATLAB Experiment 001",
+      "protocol": "x402 proof wrapper",
+      "chain": "Base",
+      "liveEndpoint": "https://treasury.bitcoinsapi.com/experiment-001/",
+      "pricing": "proof page, not sale pricing",
+      "status": "live",
+      "proofStatus": "machine-readable-receipt-linked",
+      "sourceUrl": "https://treasury.bitcoinsapi.com/experiment-001/evidence.json",
+      "lastChecked": "2026-05-21",
+      "note": "Experiment evidence JSON anchors the paid-call receipt while keeping proofStatusUsd conservative."
+    },
+    {
+      "project": "bitcoin-mcp fee-decision activation",
+      "protocol": "MCP / Satoshi API",
+      "chain": "Bitcoin / x402-adjacent",
+      "liveEndpoint": "https://github.com/Bortlesboat/bitcoin-mcp/pull/34",
+      "pricing": "not applicable",
+      "status": "merged",
+      "proofStatus": "activation-docs-merged",
+      "sourceUrl": "https://github.com/Bortlesboat/bitcoin-mcp/pull/34",
+      "lastChecked": "2026-05-21",
+      "note": "Public PR merged the send-now-or-wait fee-decision activation path."
+    },
+    {
+      "project": "x402 core contribution",
+      "protocol": "x402",
+      "chain": "multi-chain",
+      "liveEndpoint": "https://github.com/x402-foundation/x402/pull/1733",
+      "pricing": "not applicable",
+      "status": "merged",
+      "proofStatus": "upstream-contribution",
+      "sourceUrl": "https://github.com/x402-foundation/x402/pull/1733",
+      "lastChecked": "2026-05-21",
+      "note": "Merged x402 contribution, included as ecosystem credibility rather than product revenue."
+    },
+    {
+      "project": "AgentOps public feedback issue",
+      "protocol": "agent operations / x402-adjacent",
+      "chain": "chain-agnostic",
+      "liveEndpoint": "https://github.com/Bortlesboat/x402-insights/issues/21",
+      "pricing": "not applicable",
+      "status": "open-feedback-surface",
+      "proofStatus": "external-feedback-route-open",
+      "sourceUrl": "https://github.com/Bortlesboat/x402-insights/issues/21",
+      "lastChecked": "2026-05-21",
+      "note": "Public issue asks builders what evidence they need before trusting agents with tools, approvals, retries, payments, or production data."
+    }
+  ]
+}

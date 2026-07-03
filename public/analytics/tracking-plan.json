@@ -1,0 +1,45 @@
+{
+  "site": "https://bortlesboat.github.io/",
+  "lastUpdated": "2026-05-21",
+  "purpose": "Measure whether x402, L402, agent-payment, proof-graph, and portfolio discovery pages attract qualified visitors and route them to source/proof surfaces.",
+  "providerStatus": {
+    "firstPartyEventLayer": "installed",
+    "cloudflareWebAnalytics": "token_required",
+    "googleSearchConsole": "verification_required",
+    "bingWebmasterTools": "verification_required",
+    "ga4": "optional_measurement_id_required"
+  },
+  "events": [
+    {
+      "name": "page_viewed",
+      "decision": "Which public surfaces attract visitors.",
+      "properties": ["page_type", "page_title", "page_location", "page_referrer", "utm_source", "utm_medium", "utm_campaign"]
+    },
+    {
+      "name": "ledger_feed_opened",
+      "decision": "Whether agents/builders inspect the machine-readable feed.",
+      "properties": ["link_url", "link_location", "utm_source", "utm_campaign"]
+    },
+    {
+      "name": "ledger_source_clicked",
+      "decision": "Which source rows create downstream interest.",
+      "properties": ["source_id", "proof_status", "link_url", "link_domain"]
+    },
+    {
+      "name": "proof_link_clicked",
+      "decision": "Whether visitors move from portfolio surfaces into proof graph and proof packets.",
+      "properties": ["link_url", "link_text", "link_location"]
+    },
+    {
+      "name": "outbound_link_clicked",
+      "decision": "Which external repos, docs, and proof sources attract qualified exits.",
+      "properties": ["link_url", "link_domain", "link_text", "link_location"]
+    }
+  ],
+  "utmConventions": {
+    "utm_source": "lowercase source, for example x, linkedin, github, newsletter",
+    "utm_medium": "channel type, for example social, referral, email, directory",
+    "utm_campaign": "campaign or artifact, for example agent_payment_ledger",
+    "utm_content": "placement, for example home_ticket, proof_graph, feed_link"
+  }
+}

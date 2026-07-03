@@ -2,8 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://bortlesboat.github.io/</loc>
-    <lastmod>2026-05-18</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://bortlesboat.github.io/proof/</loc>
+    <lastmod>2026-05-21</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://bortlesboat.github.io/proof/graph.json</loc>
+    <lastmod>2026-05-21</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://bortlesboat.github.io/fpa-advisory/</loc>
@@ -19,6 +29,21 @@
     <loc>https://bortlesboat.github.io/agent-payments/signal-ledger/</loc>
     <lastmod>2026-05-21</lastmod>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json</loc>
+    <lastmod>2026-05-21</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bortlesboat.github.io/agent-payments/signal-ledger/llms.txt</loc>
+    <lastmod>2026-05-21</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bortlesboat.github.io/llms.txt</loc>
+    <lastmod>2026-05-21</lastmod>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://bortlesboat.github.io/public-opportunity-desk/</loc>

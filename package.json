@@ -6,10 +6,16 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "verify:agent-payment-ledger": "node scripts/verify-agent-payment-ledger.mjs",
+    "verify:proof-graph": "node scripts/verify-proof-graph.mjs",
+    "verify:proof-links": "node scripts/verify-proof-links.mjs",
+    "verify:analytics-browser": "node scripts/verify-analytics-browser.mjs",
+    "verify:analytics-discovery": "node scripts/verify-analytics-discoverability.mjs"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.2",
+    "playwright": "^1.60.0",
     "tailwindcss": "^4.2.2",
     "vite": "^8.0.1"
   }

@@ -8,7 +8,7 @@ const feedPath = "public/agent-payments/signal-ledger/feed.json";
 const previousFeedPath = "public/agent-payments/signal-ledger/feed.previous.json";
 const snapshotScriptPath = "scripts/snapshot-agent-payment-ledger-feed.mjs";
 
-const [pageHtml, feedJson, previousFeedJson, snapshotScript, homeHtml, projectsJson, sitemapXml] = await Promise.all([
+const [pageHtml, feedJson, previousFeedJson, snapshotScript, homeHtml, projectsJson, sitemapXml, llmsTxt] = await Promise.all([
   readOptional(pagePath),
   readOptional(feedPath),
   readOptional(previousFeedPath),
@@ -16,6 +16,7 @@ const [pageHtml, feedJson, previousFeedJson, snapshotScript, homeHtml, projectsJ
   read("index.html"),
   read("src/data/projects.json"),
   read("public/sitemap.xml"),
+  read("public/llms.txt"),
 ]);
 
 const feed = parseJson(feedJson, feedPath) ?? {};
@@ -250,6 +251,8 @@ for (const token of [
   "id=\"return-brief\"",
   "id=\"return-brief-rows\"",
   "renderReturnBrief",
+  "application/ld+json",
+  "llms.txt",
 ]) {
   if (!pageHtml.includes(token)) {
     failures.push(`${pagePath} is missing ${token}`);
@@ -285,6 +288,16 @@ if (!sitemapXml.includes(ledgerUrl)) {
   failures.push("sitemap.xml is missing the ledger URL");
 }
 
+if (!sitemapXml.includes(feedUrl)) {
+  failures.push("sitemap.xml is missing the ledger feed URL");
+}
+
+for (const token of [ledgerUrl, feedUrl, "Agent Payment Signal Ledger feed JSON"]) {
+  if (!llmsTxt.includes(token)) {
+    failures.push(`public/llms.txt is missing ${token}`);
+  }
+}
+
 for (const [label, content] of [
   [pagePath, pageHtml],
   [feedPath, feedJson],
@@ -292,6 +305,7 @@ for (const [label, content] of [
   [snapshotScriptPath, snapshotScript],
   ["index.html", homeHtml],
   ["projects.json", projectsJson],
+  ["public/llms.txt", llmsTxt],
 ]) {
   for (const banned of ["C:\\\\Users\\\\andre", "private key", "seed phrase"]) {
     if (content.includes(banned)) {

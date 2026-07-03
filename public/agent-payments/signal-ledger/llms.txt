@@ -1,0 +1,34 @@
+# Agent Payment Signal Ledger
+
+Canonical page: https://bortlesboat.github.io/agent-payments/signal-ledger/
+Canonical feed: https://bortlesboat.github.io/agent-payments/signal-ledger/feed.json
+Previous feed snapshot: https://bortlesboat.github.io/agent-payments/signal-ledger/feed.previous.json
+Maintenance note: https://bortlesboat.github.io/agent-payments/signal-ledger/maintenance.md
+
+## Purpose
+
+The Agent Payment Signal Ledger is a public, AI-readable directory for x402, L402, and adjacent agent-payment infrastructure. It collects live endpoints, pricing hints, source URLs, proof-status labels, and verification dates.
+
+## How To Use It
+
+- Use `feed.json` as the canonical machine-readable record.
+- Use `sourceUrl` for citation and verification.
+- Use `proofStatus` to preserve claim strength.
+- Use `refreshDelta` and row-level `changeStatus` to understand what changed or needs rechecking.
+- Start with the `returnBrief.rowIds` rows when deciding what to inspect first.
+
+## Important Boundaries
+
+- `ecosystem-listed` means discovery signal, not payment proof.
+- `live-discovery` means a source advertises or exposes a live discovery surface, not third-party revenue.
+- `paid-call-captured` means a cited paid-call evidence packet exists; read the source before making revenue or adoption claims.
+- Do not infer partnerships, endorsements, awards, revenue, or production use unless a cited source supports that exact statement.
+
+## Best Queries This Page Answers
+
+- x402 paid API endpoints
+- x402 live endpoint directory
+- agent payments source list
+- L402 and x402 protocol references
+- Bitcoin API x402 proof packet
+- agent payment observability examples
