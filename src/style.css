@@ -157,6 +157,12 @@ p {
   background: var(--paper-strong);
 }
 
+.top-nav .nav-feature {
+  border-color: var(--line);
+  background: var(--paper-strong);
+  color: var(--ink);
+}
+
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(22rem, 0.75fr);
@@ -1050,6 +1056,58 @@ body::before {
   margin-top: 1.6rem;
 }
 
+.hero-feature-proof {
+  scroll-margin-top: 5rem;
+  display: grid;
+  gap: 0.45rem;
+  max-width: 43rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--line-strong);
+  border-left: 0.4rem solid var(--brick);
+  border-radius: 0.35rem;
+  background: var(--paper-strong);
+  color: var(--ink);
+  box-shadow: 0 1rem 2.2rem rgba(35, 38, 43, 0.08);
+  transition: transform 160ms ease-out, background-color 160ms ease-out;
+}
+
+.hero-feature-proof:hover {
+  transform: translateY(-1px);
+  background: var(--copper-wash);
+  color: var(--ink);
+}
+
+.feature-eyebrow {
+  color: var(--brick);
+  font-family: "Azeret Mono", ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.hero-feature-proof strong {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: clamp(1.28rem, 2.1vw, 1.75rem);
+  font-weight: 750;
+  line-height: 1.08;
+}
+
+.hero-feature-proof span:not(.feature-eyebrow) {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.38;
+}
+
+.hero-feature-proof small {
+  color: var(--muted);
+  font-family: "Azeret Mono", ui-monospace, monospace;
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
 .button {
   min-height: 2.55rem;
   border-radius: 0.25rem;
@@ -1331,6 +1389,10 @@ body::before {
   .hero h1 {
     max-width: 11ch;
     font-size: clamp(2.65rem, 14vw, 3.8rem);
+  }
+
+  .hero-feature-proof {
+    padding: 0.85rem;
   }
 
   .evidence-board,

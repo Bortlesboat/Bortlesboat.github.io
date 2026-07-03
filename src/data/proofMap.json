@@ -83,8 +83,13 @@
   {
     "lane": "Developer infrastructure",
     "title": "Small fixes in places maintainers recognize.",
-    "summary": "A short set of merged PRs in CPython, context7, Mesh-LLM, OpenViking, OpenAI, Microsoft, and finance/data libraries says more than repo count.",
+    "summary": "KarpathyTalk PR #1 plus a short set of merged PRs in CPython, context7, Mesh-LLM, OpenViking, OpenAI, Microsoft, and finance/data libraries says more than repo count.",
     "proofs": [
+      {
+        "label": "KarpathyTalk PR #1",
+        "note": "Go/SQLite social-toggle concurrency fix merged by Andrej Karpathy.",
+        "url": "https://github.com/Bortlesboat/KarpathyTalk/commit/bc1e4ff747b1ee36104c501645e29c13021e796e"
+      },
       {
         "label": "CPython PR #145538",
         "note": "Merged docs contribution with maintainer review.",

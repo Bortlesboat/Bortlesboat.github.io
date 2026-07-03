@@ -1,5 +1,16 @@
 [
   {
+    "name": "KarpathyTalk PR #1",
+    "problem": "Race-prone like, repost, and bookmark toggles could let concurrent requests drift aggregate social counts from row state.",
+    "proof": "Author commit bc1e4ff, merge evidence 4ba1e23, one Go file, +50/-24.",
+    "url": "https://github.com/Bortlesboat/Bortlesboat/blob/main/case-studies.md#featured-proof-karpathytalk-pr-1",
+    "tags": [
+      "Go",
+      "SQLite",
+      "Open Source"
+    ]
+  },
+  {
     "name": "OpenAI / Microsoft / Google Workspace",
     "problem": "Maintainers needed narrow fixes for research tooling, speech demos, and Workspace CLI setup.",
     "proof": "Merged PRs in openai/privacy-filter, microsoft/VibeVoice, and googleworkspace/cli.",

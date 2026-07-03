@@ -1,5 +1,15 @@
 [
   {
+    "name": "KarpathyTalk PR #1",
+    "description": "Go/SQLite concurrency fix for like, repost, and bookmark toggles, merged by Andrej Karpathy. Author commit bc1e4ff; merge evidence 4ba1e23.",
+    "url": "https://github.com/Bortlesboat/KarpathyTalk/commit/bc1e4ff747b1ee36104c501645e29c13021e796e",
+    "tags": [
+      "Go",
+      "SQLite",
+      "Merged PR #1"
+    ]
+  },
+  {
     "name": "Satoshi API",
     "description": "Bitcoin fee API with a live site, public repo, tests, and x402 pay-per-call routes.",
     "url": "https://github.com/Bortlesboat/bitcoin-api",
