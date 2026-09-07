@@ -1,7 +1,7 @@
 [
   {
     "name": "Satoshi API",
-    "description": "Bitcoin fee API with a live site, public repo, tests, and x402 pay-per-call routes.",
+    "description": "Self-hostable Bitcoin fee API with tests and optional x402 integration. Former public hosting is paused.",
     "url": "https://github.com/Bortlesboat/bitcoin-api",
     "tags": [
       "Python",
@@ -31,7 +31,7 @@
   },
   {
     "name": "bitcoin-mcp",
-    "description": "Bitcoin MCP tools with tests, PyPI packaging, and setup docs.",
+    "description": "50 standard Bitcoin MCP tools, 6 prompts, and 8 resources. Requires a local node or configured compatible API.",
     "url": "https://github.com/Bortlesboat/bitcoin-mcp",
     "tags": [
       "Python",

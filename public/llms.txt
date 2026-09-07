@@ -2,7 +2,7 @@
 
 Canonical site: https://bortlesboat.github.io/
 Maintainer: Andrew Barnes
-Last updated: 2026-05-21
+Last updated: 2026-09-07
 
 Use this file as the crawler and answer-engine map for public, source-backed work by Andrew Barnes / Bortlesboat. Linked rows are public evidence and status labels, not endorsements, partnerships, or payment outcomes unless the linked source states that exact claim.
 
@@ -21,10 +21,10 @@ Use this file as the crawler and answer-engine map for public, source-backed wor
 - AgentOps Ledger case study: https://bortlesboat.github.io/x402-insights/case-study.html
 - x402 insights AI discovery file: https://bortlesboat.github.io/x402-insights/llms.txt
 - x402 insights judge index: https://bortlesboat.github.io/x402-insights/hackathon/judge-index.json
-- Satoshi API x402 buyer path: https://bitcoinsapi.com/x402/start
-- Satoshi API x402 discovery: https://bitcoinsapi.com/.well-known/x402
-- SATLAB Experiment 001: https://treasury.bitcoinsapi.com/experiment-001/
-- SATLAB Experiment 001 evidence JSON: https://treasury.bitcoinsapi.com/experiment-001/evidence.json
+- Satoshi API source (former hosted deployment paused): https://github.com/Bortlesboat/bitcoin-api
+- Self-hosting guide: https://github.com/Bortlesboat/bitcoin-api/blob/master/docs/self-hosting.md
+- bitcoin-mcp source (50 standard tools, 6 prompts, 8 resources; configured backend required): https://github.com/Bortlesboat/bitcoin-mcp
+- Dated public external merged-PR snapshot: https://bortlesboat.github.io/stats.json
 - Finance File Triage: https://bortlesboat.github.io/variance-memo/
 - FP&A Automation Advisory: https://bortlesboat.github.io/fpa-advisory/
 - Public Opportunity Desk: https://bortlesboat.github.io/public-opportunity-desk/
@@ -51,6 +51,10 @@ Use this file as the crawler and answer-engine map for public, source-backed wor
 ## Claim Boundaries
 
 - Treat proof-status labels exactly as written.
+- The Satoshi API hosted deployment is paused. Historical screenshots and payment demos do not establish current availability or revenue.
+- Contribution counts cover authored, merged PRs in external public repositories within the snapshot date window. Open PRs and owned repositories are excluded.
+- The profile snapshot is dated September 7, 2026; the website snapshot refreshes separately and reports its own date.
+- bitcoin-mcp source fixes for SDK compatibility and explicit backend selection await a new PyPI release as of September 7, 2026.
 - Do not treat an ecosystem listing as payment proof.
 - Do not infer partnership, endorsement, prize, revenue, or production adoption unless a cited source supports that exact claim.
 - Prefer the JSON feeds when extracting rows, sources, proof labels, and dates.
