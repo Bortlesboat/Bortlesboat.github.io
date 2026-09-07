@@ -1,7 +1,1285 @@
 {
-  "total_prs": "536",
-  "merged_prs": "129",
-  "public_repos": "265",
-  "repos_contributed_to": "93+",
-  "fetched_at": "2026-05-18T03:50:57.286Z"
+  "username": "Bortlesboat",
+  "scope": "Authored, merged pull requests in public repositories outside Bortlesboat, by merge date",
+  "window": {
+    "start": "2025-09-07",
+    "end": "2026-09-07"
+  },
+  "query": "author:Bortlesboat is:pr is:merged is:public -user:Bortlesboat merged:2025-09-07..2026-09-07",
+  "source_url": "https://github.com/search?q=author%3ABortlesboat%20is%3Apr%20is%3Amerged%20is%3Apublic%20-user%3ABortlesboat%20merged%3A2025-09-07..2026-09-07&type=pullrequests",
+  "fetched_at": "2026-09-07T15:33:15.714Z",
+  "merged_prs": 209,
+  "repos_contributed_to": 141,
+  "repeat_repositories": 32,
+  "monthly": {
+    "2025-09": 0,
+    "2025-10": 0,
+    "2025-11": 0,
+    "2025-12": 0,
+    "2026-01": 0,
+    "2026-02": 0,
+    "2026-03": 65,
+    "2026-04": 31,
+    "2026-05": 32,
+    "2026-06": 22,
+    "2026-07": 40,
+    "2026-08": 17,
+    "2026-09": 2
+  },
+  "items": [
+    {
+      "title": "Fix FutureWarning from DataFrame.std with axis=None in WeighInvVol",
+      "url": "https://github.com/pmorissette/bt/pull/503",
+      "repo": "pmorissette/bt",
+      "merged_at": "2026-03-03T21:07:07Z"
+    },
+    {
+      "title": "fix: use target downside deviation in Sortino ratio",
+      "url": "https://github.com/pmorissette/ffn/pull/285",
+      "repo": "pmorissette/ffn",
+      "merged_at": "2026-03-04T00:09:37Z"
+    },
+    {
+      "title": "fix: filter alertcenter scopes from user OAuth login flow",
+      "url": "https://github.com/googleworkspace/cli/pull/108",
+      "repo": "googleworkspace/cli",
+      "merged_at": "2026-03-05T06:37:58Z"
+    },
+    {
+      "title": "fix: log token cache errors instead of silently swallowing them",
+      "url": "https://github.com/googleworkspace/cli/pull/193",
+      "repo": "googleworkspace/cli",
+      "merged_at": "2026-03-05T22:37:29Z"
+    },
+    {
+      "title": "fix: replace strip_suffix(\".readonly\").unwrap() with unwrap_or",
+      "url": "https://github.com/googleworkspace/cli/pull/192",
+      "repo": "googleworkspace/cli",
+      "merged_at": "2026-03-05T23:35:56Z"
+    },
+    {
+      "title": "fix: add x86_64-unknown-linux-musl build target",
+      "url": "https://github.com/googleworkspace/cli/pull/112",
+      "repo": "googleworkspace/cli",
+      "merged_at": "2026-03-06T00:33:39Z"
+    },
+    {
+      "title": "gh-69223: Document that add_argument() returns an Action object",
+      "url": "https://github.com/python/cpython/pull/145538",
+      "repo": "python/cpython",
+      "merged_at": "2026-03-06T16:10:12Z"
+    },
+    {
+      "title": "Fix confusing type mismatch error in bytes collect",
+      "url": "https://github.com/nushell/nushell/pull/17746",
+      "repo": "nushell/nushell",
+      "merged_at": "2026-03-07T23:34:23Z"
+    },
+    {
+      "title": "fix: use target downside deviation in Sortino ratio",
+      "url": "https://github.com/virattt/ai-hedge-fund/pull/502",
+      "repo": "virattt/ai-hedge-fund",
+      "merged_at": "2026-03-08T20:41:33Z"
+    },
+    {
+      "title": "fix: return bare Google URL in referer instead of search query",
+      "url": "https://github.com/D4Vinci/Scrapling/pull/179",
+      "repo": "D4Vinci/Scrapling",
+      "merged_at": "2026-03-08T21:20:43Z"
+    },
+    {
+      "title": "fix: use infer_nperiods instead of infer_freq for annualization",
+      "url": "https://github.com/pmorissette/ffn/pull/287",
+      "repo": "pmorissette/ffn",
+      "merged_at": "2026-03-09T03:34:31Z"
+    },
+    {
+      "title": "[`flake8-bugbear`] Implement `delattr-with-constant` (`B043`)",
+      "url": "https://github.com/astral-sh/ruff/pull/23737",
+      "repo": "astral-sh/ruff",
+      "merged_at": "2026-03-09T19:54:15Z"
+    },
+    {
+      "title": "fix: add __main__.py to support python -m notebooklm",
+      "url": "https://github.com/teng-lin/notebooklm-py/pull/164",
+      "repo": "teng-lin/notebooklm-py",
+      "merged_at": "2026-03-10T00:40:18Z"
+    },
+    {
+      "title": "fix: raise error on empty download instead of producing 0-byte file",
+      "url": "https://github.com/teng-lin/notebooklm-py/pull/165",
+      "repo": "teng-lin/notebooklm-py",
+      "merged_at": "2026-03-10T00:42:47Z"
+    },
+    {
+      "title": "Add Bitcoin MCP — 43 tools for Bitcoin Core AI agents",
+      "url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/158",
+      "repo": "TensorBlock/awesome-mcp-servers",
+      "merged_at": "2026-03-10T03:40:47Z"
+    },
+    {
+      "title": "Fix panic in calculator when pressing ± after AC",
+      "url": "https://github.com/DioxusLabs/dioxus/pull/5352",
+      "repo": "DioxusLabs/dioxus",
+      "merged_at": "2026-03-10T18:33:42Z"
+    },
+    {
+      "title": "Log explicit config file path in verbose output",
+      "url": "https://github.com/astral-sh/uv/pull/18353",
+      "repo": "astral-sh/uv",
+      "merged_at": "2026-03-11T13:53:27Z"
+    },
+    {
+      "title": "fix: remove incorrect await on synchronous get_llm()",
+      "url": "https://github.com/browser-use/browser-use/pull/4305",
+      "repo": "browser-use/browser-use",
+      "merged_at": "2026-03-11T16:30:00Z"
+    },
+    {
+      "title": "bwc: ignore indented comments in exclusion list parser",
+      "url": "https://github.com/duckdb/duckdb/pull/21327",
+      "repo": "duckdb/duckdb",
+      "merged_at": "2026-03-12T16:08:56Z"
+    },
+    {
+      "title": "Add bitcoin-mcp to Finance & Fintech",
+      "url": "https://github.com/punkpeye/awesome-mcp-servers/pull/2847",
+      "repo": "punkpeye/awesome-mcp-servers",
+      "merged_at": "2026-03-12T16:26:33Z"
+    },
+    {
+      "title": "[BugFix] Remove unnecessary eval() calls in script_parser.py",
+      "url": "https://github.com/OpenBB-finance/OpenBB/pull/7403",
+      "repo": "OpenBB-finance/OpenBB",
+      "merged_at": "2026-03-13T05:01:33Z"
+    },
+    {
+      "title": "test(ai): add _normalize_credentials edge case coverage",
+      "url": "https://github.com/D4Vinci/Scrapling/pull/192",
+      "repo": "D4Vinci/Scrapling",
+      "merged_at": "2026-03-15T14:25:58Z"
+    },
+    {
+      "title": "perf: auto-infer annualization factor from data frequency in PerformanceStats",
+      "url": "https://github.com/pmorissette/ffn/pull/289",
+      "repo": "pmorissette/ffn",
+      "merged_at": "2026-03-15T14:54:56Z"
+    },
+    {
+      "title": "fix: use time-span guards for three_month and six_month lookbacks",
+      "url": "https://github.com/pmorissette/ffn/pull/290",
+      "repo": "pmorissette/ffn",
+      "merged_at": "2026-03-15T14:55:22Z"
+    },
+    {
+      "title": "Fix round-trip problem with to_price_index and to_returns",
+      "url": "https://github.com/pmorissette/ffn/pull/292",
+      "repo": "pmorissette/ffn",
+      "merged_at": "2026-03-15T19:43:23Z"
+    },
+    {
+      "title": "fix: replace np.isnan with pd.isna for pd.NA compatibility",
+      "url": "https://github.com/pmorissette/ffn/pull/291",
+      "repo": "pmorissette/ffn",
+      "merged_at": "2026-03-15T19:43:34Z"
+    },
+    {
+      "title": "Fix progress_bar parameter not disabling progress bar",
+      "url": "https://github.com/pmorissette/bt/pull/507",
+      "repo": "pmorissette/bt",
+      "merged_at": "2026-03-15T20:25:33Z"
+    },
+    {
+      "title": "fix(auth): auto-refresh expired tokens in single-user stdio mode",
+      "url": "https://github.com/taylorwilsdon/google_workspace_mcp/pull/579",
+      "repo": "taylorwilsdon/google_workspace_mcp",
+      "merged_at": "2026-03-15T21:34:18Z"
+    },
+    {
+      "title": "feat(sheets): expose cell notes in read_sheet_values",
+      "url": "https://github.com/taylorwilsdon/google_workspace_mcp/pull/580",
+      "repo": "taylorwilsdon/google_workspace_mcp",
+      "merged_at": "2026-03-15T21:53:43Z"
+    },
+    {
+      "title": "feat: add ComfyUI agent harness",
+      "url": "https://github.com/HKUDS/CLI-Anything/pull/80",
+      "repo": "HKUDS/CLI-Anything",
+      "merged_at": "2026-03-16T07:55:46Z"
+    },
+    {
+      "title": "feat(gmail): support quoted reply content and signature positioning",
+      "url": "https://github.com/taylorwilsdon/google_workspace_mcp/pull/581",
+      "repo": "taylorwilsdon/google_workspace_mcp",
+      "merged_at": "2026-03-16T18:39:37Z"
+    },
+    {
+      "title": "fix: suppress platform string output to stdout on macOS",
+      "url": "https://github.com/taylorwilsdon/google_workspace_mcp/pull/577",
+      "repo": "taylorwilsdon/google_workspace_mcp",
+      "merged_at": "2026-03-17T15:35:09Z"
+    },
+    {
+      "title": "feat(gmail): auto-populate In-Reply-To/References for reply drafts",
+      "url": "https://github.com/taylorwilsdon/google_workspace_mcp/pull/578",
+      "repo": "taylorwilsdon/google_workspace_mcp",
+      "merged_at": "2026-03-17T19:32:33Z"
+    },
+    {
+      "title": "Fix custom LLM provider not forwarding endpoint to LiteLLM",
+      "url": "https://github.com/topoteretes/cognee/pull/2430",
+      "repo": "topoteretes/cognee",
+      "merged_at": "2026-03-18T10:38:50Z"
+    },
+    {
+      "title": "fix: wait for graceful subprocess shutdown before SIGTERM",
+      "url": "https://github.com/anthropics/claude-agent-sdk-python/pull/642",
+      "repo": "anthropics/claude-agent-sdk-python",
+      "merged_at": "2026-03-19T19:31:40Z"
+    },
+    {
+      "title": "test: fix FutureWarning in test_resample_returns",
+      "url": "https://github.com/pmorissette/ffn/pull/294",
+      "repo": "pmorissette/ffn",
+      "merged_at": "2026-03-20T00:02:51Z"
+    },
+    {
+      "title": "fix: prefer real block devices over tmpfs for storage display",
+      "url": "https://github.com/Crosstalk-Solutions/project-nomad/pull/374",
+      "repo": "Crosstalk-Solutions/project-nomad",
+      "merged_at": "2026-03-20T00:21:31Z"
+    },
+    {
+      "title": "fix(windows): handle stale PID locks and TUI console input",
+      "url": "https://github.com/volcengine/OpenViking/pull/790",
+      "repo": "volcengine/OpenViking",
+      "merged_at": "2026-03-20T08:51:45Z"
+    },
+    {
+      "title": "fix: correct typos and enforce American English conventions",
+      "url": "https://github.com/gofr-dev/gofr/pull/3151",
+      "repo": "gofr-dev/gofr",
+      "merged_at": "2026-03-20T14:11:38Z"
+    },
+    {
+      "title": "fix: graceful fallback for unsupported extension dtypes in to_arrow_ipc",
+      "url": "https://github.com/marimo-team/marimo/pull/8785",
+      "repo": "marimo-team/marimo",
+      "merged_at": "2026-03-21T00:58:49Z"
+    },
+    {
+      "title": "fix: allow claude-agent-sdk installation on Linux/Docker",
+      "url": "https://github.com/vectorize-io/hindsight/pull/644",
+      "repo": "vectorize-io/hindsight",
+      "merged_at": "2026-03-21T19:23:38Z"
+    },
+    {
+      "title": "fix(utils): handle WinError 11 in process_lock._is_pid_alive",
+      "url": "https://github.com/volcengine/OpenViking/pull/854",
+      "repo": "volcengine/OpenViking",
+      "merged_at": "2026-03-22T03:33:39Z"
+    },
+    {
+      "title": "fix: subprocess crash during map operation on Windows",
+      "url": "https://github.com/unslothai/unsloth/pull/4507",
+      "repo": "unslothai/unsloth",
+      "merged_at": "2026-03-22T12:21:09Z"
+    },
+    {
+      "title": "fix: parameterize market context in LLM prompts for international stocks",
+      "url": "https://github.com/ZhuLinsen/daily_stock_analysis/pull/802",
+      "repo": "ZhuLinsen/daily_stock_analysis",
+      "merged_at": "2026-03-22T12:53:57Z"
+    },
+    {
+      "title": "Add Satoshi API and ChainPulse",
+      "url": "https://github.com/georgezouq/awesome-ai-in-finance/pull/73",
+      "repo": "georgezouq/awesome-ai-in-finance",
+      "merged_at": "2026-03-23T01:47:08Z"
+    },
+    {
+      "title": "fix: benchmark UI displaying 0.0% for CPU and Disk Write scores",
+      "url": "https://github.com/Crosstalk-Solutions/project-nomad/pull/443",
+      "repo": "Crosstalk-Solutions/project-nomad",
+      "merged_at": "2026-03-24T06:23:13Z"
+    },
+    {
+      "title": "test: add coverage for CLI utility functions",
+      "url": "https://github.com/OpenBB-finance/OpenBB/pull/7422",
+      "repo": "OpenBB-finance/OpenBB",
+      "merged_at": "2026-03-24T16:49:27Z"
+    },
+    {
+      "title": "test: add unit tests for skills parser",
+      "url": "https://github.com/bytedance/deer-flow/pull/1308",
+      "repo": "bytedance/deer-flow",
+      "merged_at": "2026-03-25T02:17:41Z"
+    },
+    {
+      "title": "test: add unit tests for SubagentLimitMiddleware",
+      "url": "https://github.com/bytedance/deer-flow/pull/1306",
+      "repo": "bytedance/deer-flow",
+      "merged_at": "2026-03-25T02:20:16Z"
+    },
+    {
+      "title": "fix: clear stale modelId/providerId after server provider sync",
+      "url": "https://github.com/THU-MAIC/OpenMAIC/pull/232",
+      "repo": "THU-MAIC/OpenMAIC",
+      "merged_at": "2026-03-25T03:26:59Z"
+    },
+    {
+      "title": "fix: display app version in More menu",
+      "url": "https://github.com/webadderallorg/Recordly/pull/97",
+      "repo": "webadderallorg/Recordly",
+      "merged_at": "2026-03-25T08:07:59Z"
+    },
+    {
+      "title": "test: add unit tests for DanglingToolCallMiddleware",
+      "url": "https://github.com/bytedance/deer-flow/pull/1305",
+      "repo": "bytedance/deer-flow",
+      "merged_at": "2026-03-25T16:20:08Z"
+    },
+    {
+      "title": "test: add unit tests for TodoMiddleware",
+      "url": "https://github.com/bytedance/deer-flow/pull/1307",
+      "repo": "bytedance/deer-flow",
+      "merged_at": "2026-03-25T16:20:50Z"
+    },
+    {
+      "title": "Implement From<Infallible> for all public error types",
+      "url": "https://github.com/rust-bitcoin/rust-bitcoin/pull/5781",
+      "repo": "rust-bitcoin/rust-bitcoin",
+      "merged_at": "2026-03-26T12:31:45Z"
+    },
+    {
+      "title": "fix: handle -32601/-32602 in session/load fallback",
+      "url": "https://github.com/openclaw/acpx/pull/174",
+      "repo": "openclaw/acpx",
+      "merged_at": "2026-03-26T20:36:33Z"
+    },
+    {
+      "title": "test: add unit tests for perf-metrics module",
+      "url": "https://github.com/openclaw/acpx/pull/175",
+      "repo": "openclaw/acpx",
+      "merged_at": "2026-03-27T12:09:15Z"
+    },
+    {
+      "title": "test: add unit tests for skill frontmatter validation",
+      "url": "https://github.com/bytedance/deer-flow/pull/1309",
+      "repo": "bytedance/deer-flow",
+      "merged_at": "2026-03-27T12:20:31Z"
+    },
+    {
+      "title": "fix: enable shell for terminal spawn on Windows",
+      "url": "https://github.com/openclaw/acpx/pull/173",
+      "repo": "openclaw/acpx",
+      "merged_at": "2026-03-28T10:22:47Z"
+    },
+    {
+      "title": "fix: v1 /map endpoint time_taken always ~0",
+      "url": "https://github.com/firecrawl/firecrawl/pull/3243",
+      "repo": "firecrawl/firecrawl",
+      "merged_at": "2026-03-29T23:12:29Z"
+    },
+    {
+      "title": "fix: support 40+ international exchanges in TradingView symbol mapping",
+      "url": "https://github.com/Open-Dev-Society/OpenStock/pull/65",
+      "repo": "Open-Dev-Society/OpenStock",
+      "merged_at": "2026-03-30T06:11:57Z"
+    },
+    {
+      "title": "Replace httpx.Client with AsyncClient",
+      "url": "https://github.com/teamssUTXO/bitcoin_mcp/pull/15",
+      "repo": "teamssUTXO/bitcoin_mcp",
+      "merged_at": "2026-03-30T11:04:56Z"
+    },
+    {
+      "title": "test(python): add test coverage for MCP server_sync module",
+      "url": "https://github.com/x402-foundation/x402/pull/1733",
+      "repo": "x402-foundation/x402",
+      "merged_at": "2026-03-30T11:54:21Z"
+    },
+    {
+      "title": "fix: swapped error message args, dead code after check=True, missing dotnet v9",
+      "url": "https://github.com/oraios/serena/pull/1250",
+      "repo": "oraios/serena",
+      "merged_at": "2026-03-30T23:31:21Z"
+    },
+    {
+      "title": "fix: eliminate flaky TestHedgeMarket_startAndHedge race condition",
+      "url": "https://github.com/c9s/bbgo/pull/2441",
+      "repo": "c9s/bbgo",
+      "merged_at": "2026-03-31T04:38:21Z"
+    },
+    {
+      "title": "BUG: Treat empty docstrings as None in Docstring class",
+      "url": "https://github.com/statsmodels/statsmodels/pull/9773",
+      "repo": "statsmodels/statsmodels",
+      "merged_at": "2026-03-31T07:57:49Z"
+    },
+    {
+      "title": "feat(python): add unit tests for client wrapper",
+      "url": "https://github.com/pmxt-dev/pmxt/pull/68",
+      "repo": "pmxt-dev/pmxt",
+      "merged_at": "2026-04-04T05:37:44Z"
+    },
+    {
+      "title": "crypto: owner keystore and signed+encrypted message primitives",
+      "url": "https://github.com/Mesh-LLM/mesh-llm/pull/156",
+      "repo": "Mesh-LLM/mesh-llm",
+      "merged_at": "2026-04-04T23:15:42Z"
+    },
+    {
+      "title": "Add bitcoin-mcp to Integration & Automation",
+      "url": "https://github.com/heilcheng/awesome-agent-skills/pull/122",
+      "repo": "heilcheng/awesome-agent-skills",
+      "merged_at": "2026-04-05T09:04:37Z"
+    },
+    {
+      "title": "fix(evm): preserve caller context in erc7710 verify",
+      "url": "https://github.com/rockorama/x402/pull/1",
+      "repo": "rockorama/x402",
+      "merged_at": "2026-04-06T04:51:04Z"
+    },
+    {
+      "title": "[ROCm] Remove unused IS_FNUZ parameter from reshape_and_cache_shuffle_kernel",
+      "url": "https://github.com/vllm-project/vllm/pull/39123",
+      "repo": "vllm-project/vllm",
+      "merged_at": "2026-04-07T07:18:00Z"
+    },
+    {
+      "title": "launch: scale health timeout by model size",
+      "url": "https://github.com/Mesh-LLM/mesh-llm/pull/210",
+      "repo": "Mesh-LLM/mesh-llm",
+      "merged_at": "2026-04-07T21:19:41Z"
+    },
+    {
+      "title": "display: rename misleading VRAM labels to capacity",
+      "url": "https://github.com/Mesh-LLM/mesh-llm/pull/222",
+      "repo": "Mesh-LLM/mesh-llm",
+      "merged_at": "2026-04-09T02:40:17Z"
+    },
+    {
+      "title": "[ROCm] Remove unnecessary fp8 roundtrip in gather cache NHD dequant",
+      "url": "https://github.com/vllm-project/vllm/pull/39122",
+      "repo": "vllm-project/vllm",
+      "merged_at": "2026-04-09T07:12:22Z"
+    },
+    {
+      "title": "doc: fix broken Transifex URLs across release notes and config",
+      "url": "https://github.com/bitcoin-core/bitcoincore.org/pull/1231",
+      "repo": "bitcoin-core/bitcoincore.org",
+      "merged_at": "2026-04-09T22:14:26Z"
+    },
+    {
+      "title": "fix: NameError when no speech output in realtime demo",
+      "url": "https://github.com/microsoft/VibeVoice/pull/280",
+      "repo": "microsoft/VibeVoice",
+      "merged_at": "2026-04-10T13:10:27Z"
+    },
+    {
+      "title": "fix: normalize timeframe input casing (1d/1w/1m)",
+      "url": "https://github.com/atilaahmettaner/tradingview-mcp/pull/17",
+      "repo": "atilaahmettaner/tradingview-mcp",
+      "merged_at": "2026-04-10T17:42:33Z"
+    },
+    {
+      "title": "docs(examples): clarify facilitator key separation",
+      "url": "https://github.com/x402-foundation/x402/pull/1937",
+      "repo": "x402-foundation/x402",
+      "merged_at": "2026-04-11T10:16:09Z"
+    },
+    {
+      "title": "fix(gh): show \"No Pull Requests\" / \"No Issues\" for empty lists",
+      "url": "https://github.com/rtk-ai/rtk/pull/935",
+      "repo": "rtk-ai/rtk",
+      "merged_at": "2026-04-13T07:25:32Z"
+    },
+    {
+      "title": "feat(analysis): add polymarket calibration analysis",
+      "url": "https://github.com/Jon-Becker/prediction-market-analysis/pull/26",
+      "repo": "Jon-Becker/prediction-market-analysis",
+      "merged_at": "2026-04-14T14:21:30Z"
+    },
+    {
+      "title": "[ROCm] Align AiterFlashAttentionImpl attn_type check with backend",
+      "url": "https://github.com/vllm-project/vllm/pull/39119",
+      "repo": "vllm-project/vllm",
+      "merged_at": "2026-04-14T17:36:26Z"
+    },
+    {
+      "title": "fix(providers): support separate input/output token cost overrides",
+      "url": "https://github.com/promptfoo/promptfoo/pull/8254",
+      "repo": "promptfoo/promptfoo",
+      "merged_at": "2026-04-16T23:33:59Z"
+    },
+    {
+      "title": "Fix generation cancellation flow",
+      "url": "https://github.com/jamiepine/voicebox/pull/444",
+      "repo": "jamiepine/voicebox",
+      "merged_at": "2026-04-18T09:51:40Z"
+    },
+    {
+      "title": "[ROCm] Fix cu_seqlens_q off-by-one in AITER FA speculative decode path",
+      "url": "https://github.com/vllm-project/vllm/pull/39120",
+      "repo": "vllm-project/vllm",
+      "merged_at": "2026-04-19T18:34:33Z"
+    },
+    {
+      "title": "Fix sourcehunt path normalization on Windows",
+      "url": "https://github.com/Lazarus-AI/clearwing/pull/18",
+      "repo": "Lazarus-AI/clearwing",
+      "merged_at": "2026-04-20T04:54:31Z"
+    },
+    {
+      "title": "docs: include --skip-git in README command list",
+      "url": "https://github.com/abhigyanpatwari/GitNexus/pull/750",
+      "repo": "abhigyanpatwari/GitNexus",
+      "merged_at": "2026-04-20T08:26:26Z"
+    },
+    {
+      "title": "Fix Windows hook command handling",
+      "url": "https://github.com/vincentkoc/tokenjuice/pull/13",
+      "repo": "vincentkoc/tokenjuice",
+      "merged_at": "2026-04-21T17:41:53Z"
+    },
+    {
+      "title": "Add Satoshi API",
+      "url": "https://github.com/xpaysh/awesome-x402/pull/264",
+      "repo": "xpaysh/awesome-x402",
+      "merged_at": "2026-04-22T03:19:55Z"
+    },
+    {
+      "title": "Add Satoshi Facilitator",
+      "url": "https://github.com/xpaysh/awesome-x402/pull/265",
+      "repo": "xpaysh/awesome-x402",
+      "merged_at": "2026-04-22T03:20:01Z"
+    },
+    {
+      "title": "[codex] Fix train runner syntax error",
+      "url": "https://github.com/openai/privacy-filter/pull/1",
+      "repo": "openai/privacy-filter",
+      "merged_at": "2026-04-22T19:55:02Z"
+    },
+    {
+      "title": "docs: fix proxy port in free models guide",
+      "url": "https://github.com/BlockRunAI/ClawRouter/pull/160",
+      "repo": "BlockRunAI/ClawRouter",
+      "merged_at": "2026-04-23T04:37:48Z"
+    },
+    {
+      "title": "fix: retry model deletion on Windows when files are locked",
+      "url": "https://github.com/lightningpixel/modly/pull/53",
+      "repo": "lightningpixel/modly",
+      "merged_at": "2026-04-27T13:03:50Z"
+    },
+    {
+      "title": "fix: use LRU eviction for cron schedule cache instead of FIFO",
+      "url": "https://github.com/openclaw/openclaw/pull/39703",
+      "repo": "openclaw/openclaw",
+      "merged_at": "2026-04-29T01:56:19Z"
+    },
+    {
+      "title": "[ROCm] Use quant_dtype in per_token_quant instead of hardcoded FP8",
+      "url": "https://github.com/vllm-project/vllm/pull/39121",
+      "repo": "vllm-project/vllm",
+      "merged_at": "2026-04-29T20:46:02Z"
+    },
+    {
+      "title": "fix(relay): health check reads pool state fields from /health",
+      "url": "https://github.com/aibtcdev/aibtc-mcp-server/pull/431",
+      "repo": "aibtcdev/aibtc-mcp-server",
+      "merged_at": "2026-04-30T07:36:48Z"
+    },
+    {
+      "title": "Allow overriding mempool blocks URL",
+      "url": "https://github.com/alexbosworth/ln-telegram/pull/19",
+      "repo": "alexbosworth/ln-telegram",
+      "merged_at": "2026-04-30T18:00:30Z"
+    },
+    {
+      "title": "Add Satoshi API fee provider",
+      "url": "https://github.com/sectore/fees/pull/25",
+      "repo": "sectore/fees",
+      "merged_at": "2026-04-30T18:31:06Z"
+    },
+    {
+      "title": "Add Satoshi API fee provider",
+      "url": "https://github.com/theborakompanioni/bitcoin-fee/pull/10",
+      "repo": "theborakompanioni/bitcoin-fee",
+      "merged_at": "2026-05-01T19:06:41Z"
+    },
+    {
+      "title": "Add Satoshi API A2A server",
+      "url": "https://github.com/pab1it0/awesome-a2a/pull/53",
+      "repo": "pab1it0/awesome-a2a",
+      "merged_at": "2026-05-01T19:55:38Z"
+    },
+    {
+      "title": "Expose current dust exposure in ChannelDetails",
+      "url": "https://github.com/lightningdevkit/rust-lightning/pull/4470",
+      "repo": "lightningdevkit/rust-lightning",
+      "merged_at": "2026-05-01T21:28:31Z"
+    },
+    {
+      "title": "Add precise fee recommendations helper",
+      "url": "https://github.com/kenedii/Mempool.space-API/pull/4",
+      "repo": "kenedii/Mempool.space-API",
+      "merged_at": "2026-05-05T00:30:24Z"
+    },
+    {
+      "title": "Fix French R resource author name",
+      "url": "https://github.com/EbookFoundation/free-programming-books/pull/13242",
+      "repo": "EbookFoundation/free-programming-books",
+      "merged_at": "2026-05-05T13:27:47Z"
+    },
+    {
+      "title": "docs: document desktop build prerequisites",
+      "url": "https://github.com/thunderbird/thunderbolt/pull/722",
+      "repo": "thunderbird/thunderbolt",
+      "merged_at": "2026-05-05T14:14:38Z"
+    },
+    {
+      "title": "Update GitHub topics docs link",
+      "url": "https://github.com/sindresorhus/awesome/pull/4146",
+      "repo": "sindresorhus/awesome",
+      "merged_at": "2026-05-05T14:47:45Z"
+    },
+    {
+      "title": "feat: add 3-minute K-line timeframe",
+      "url": "https://github.com/OpenByteInc/QuantDinger/pull/87",
+      "repo": "OpenByteInc/QuantDinger",
+      "merged_at": "2026-05-06T05:28:41Z"
+    },
+    {
+      "title": "fix(cli): respect CLAUDE_CONFIG_DIR for Claude setup",
+      "url": "https://github.com/upstash/context7/pull/2564",
+      "repo": "upstash/context7",
+      "merged_at": "2026-05-06T08:22:24Z"
+    },
+    {
+      "title": "Fix Redis HyperLogLog resources typo",
+      "url": "https://github.com/nilbuild/developer-roadmap/pull/9905",
+      "repo": "nilbuild/developer-roadmap",
+      "merged_at": "2026-05-06T14:34:35Z"
+    },
+    {
+      "title": "[codex] add Tushare fundamental provider contract",
+      "url": "https://github.com/HKUDS/Vibe-Trading/pull/74",
+      "repo": "HKUDS/Vibe-Trading",
+      "merged_at": "2026-05-07T05:27:50Z"
+    },
+    {
+      "title": "Use HTTPS for JSON Schema link",
+      "url": "https://github.com/vinta/awesome-python/pull/3110",
+      "repo": "vinta/awesome-python",
+      "merged_at": "2026-05-07T09:27:17Z"
+    },
+    {
+      "title": "Fix Tax Data CORS typo",
+      "url": "https://github.com/public-apis/public-apis/pull/6016",
+      "repo": "public-apis/public-apis",
+      "merged_at": "2026-05-07T21:36:56Z"
+    },
+    {
+      "title": "Add Agent Payment Safety Audit Desk",
+      "url": "https://github.com/xpaysh/awesome-x402/pull/336",
+      "repo": "xpaysh/awesome-x402",
+      "merged_at": "2026-05-08T17:21:45Z"
+    },
+    {
+      "title": "fix: add TutorBot NVIDIA NIM provider support",
+      "url": "https://github.com/HKUDS/DeepTutor/pull/455",
+      "repo": "HKUDS/DeepTutor",
+      "merged_at": "2026-05-08T17:57:26Z"
+    },
+    {
+      "title": "test: add session-start JSON regression coverage",
+      "url": "https://github.com/addyosmani/agent-skills/pull/132",
+      "repo": "addyosmani/agent-skills",
+      "merged_at": "2026-05-09T00:30:05Z"
+    },
+    {
+      "title": "Fix View Journals details route",
+      "url": "https://github.com/LearningCircuit/local-deep-research/pull/3830",
+      "repo": "LearningCircuit/local-deep-research",
+      "merged_at": "2026-05-09T15:22:41Z"
+    },
+    {
+      "title": "docs: fix GPU fingerprinting RIP link",
+      "url": "https://github.com/Scottcjn/Rustchain/pull/3971",
+      "repo": "Scottcjn/Rustchain",
+      "merged_at": "2026-05-10T03:27:52Z"
+    },
+    {
+      "title": "Add Bortlesboat Bitcoin MCP listing",
+      "url": "https://github.com/toolsdk-ai/toolsdk-mcp-registry/pull/299",
+      "repo": "toolsdk-ai/toolsdk-mcp-registry",
+      "merged_at": "2026-05-11T07:20:48Z"
+    },
+    {
+      "title": "Add Satoshi API and facilitator",
+      "url": "https://github.com/Merit-Systems/awesome-agentic-commerce/pull/166",
+      "repo": "Merit-Systems/awesome-agentic-commerce",
+      "merged_at": "2026-05-11T22:25:39Z"
+    },
+    {
+      "title": "Forward STT language to mlx-audio",
+      "url": "https://github.com/jundot/omlx/pull/1184",
+      "repo": "jundot/omlx",
+      "merged_at": "2026-05-12T13:29:38Z"
+    },
+    {
+      "title": "Fix memory leak of StaticOMPArg array in vecenv",
+      "url": "https://github.com/PufferAI/PufferLib/pull/521",
+      "repo": "PufferAI/PufferLib",
+      "merged_at": "2026-05-13T21:36:19Z"
+    },
+    {
+      "title": "fix: improve homepage dark mode contrast",
+      "url": "https://github.com/datawhalechina/easy-vibe/pull/91",
+      "repo": "datawhalechina/easy-vibe",
+      "merged_at": "2026-05-14T01:07:36Z"
+    },
+    {
+      "title": "Add bitcoin-mcp to Finance & Crypto",
+      "url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/463",
+      "repo": "TensorBlock/awesome-mcp-servers",
+      "merged_at": "2026-05-14T17:46:35Z"
+    },
+    {
+      "title": "fix: isolate local problem request logs",
+      "url": "https://github.com/ORO-AI/oro/pull/148",
+      "repo": "ORO-AI/oro",
+      "merged_at": "2026-05-15T21:34:46Z"
+    },
+    {
+      "title": "fix: prefer sandboxed Safari cookie path",
+      "url": "https://github.com/mvanhorn/last30days-skill/pull/343",
+      "repo": "mvanhorn/last30days-skill",
+      "merged_at": "2026-05-17T07:47:32Z"
+    },
+    {
+      "title": "Add Satoshi API as a fee estimate fallback",
+      "url": "https://github.com/jamespepper81/Wallet/pull/567",
+      "repo": "jamespepper81/Wallet",
+      "merged_at": "2026-05-20T09:48:07Z"
+    },
+    {
+      "title": "fix: explain reset-data Windows file locks",
+      "url": "https://github.com/tinyhumansai/openhuman/pull/2395",
+      "repo": "tinyhumansai/openhuman",
+      "merged_at": "2026-05-22T11:31:16Z"
+    },
+    {
+      "title": "docs(readme): link support badges to sections",
+      "url": "https://github.com/colbymchenry/codegraph/pull/326",
+      "repo": "colbymchenry/codegraph",
+      "merged_at": "2026-05-22T19:49:49Z"
+    },
+    {
+      "title": "Fix contributor install and test suite",
+      "url": "https://github.com/neej4/ScholarScout/pull/1",
+      "repo": "neej4/ScholarScout",
+      "merged_at": "2026-05-25T01:19:28Z"
+    },
+    {
+      "title": "fix(projection): snap near-360° rotations to 0 in canonical_rotation",
+      "url": "https://github.com/run-llama/liteparse/pull/254",
+      "repo": "run-llama/liteparse",
+      "merged_at": "2026-05-30T05:55:42Z"
+    },
+    {
+      "title": "Fix description YAML for Objection iOS skill",
+      "url": "https://github.com/mukul975/Anthropic-Cybersecurity-Skills/pull/58",
+      "repo": "mukul975/Anthropic-Cybersecurity-Skills",
+      "merged_at": "2026-05-30T09:32:01Z"
+    },
+    {
+      "title": "Make payment scripts configurable",
+      "url": "https://github.com/wgopar/bedrock-agentcore-x402/pull/3",
+      "repo": "wgopar/bedrock-agentcore-x402",
+      "merged_at": "2026-06-01T14:17:51Z"
+    },
+    {
+      "title": "docs: fix editable install command",
+      "url": "https://github.com/macrocosm-os/data-universe/pull/833",
+      "repo": "macrocosm-os/data-universe",
+      "merged_at": "2026-06-01T16:45:44Z"
+    },
+    {
+      "title": "fix: allow Tailwind v4 digit-leading token names",
+      "url": "https://github.com/google-labs-code/design.md/pull/72",
+      "repo": "google-labs-code/design.md",
+      "merged_at": "2026-06-02T03:12:07Z"
+    },
+    {
+      "title": "fix: keep last subtitle when SRT has no trailing blank line",
+      "url": "https://github.com/harry0703/MoneyPrinterTurbo/pull/987",
+      "repo": "harry0703/MoneyPrinterTurbo",
+      "merged_at": "2026-06-04T02:25:27Z"
+    },
+    {
+      "title": "fix(codex): update bundled defaults to GPT 5.5",
+      "url": "https://github.com/affaan-m/ECC/pull/2132",
+      "repo": "affaan-m/ECC",
+      "merged_at": "2026-06-07T05:37:46Z"
+    },
+    {
+      "title": "Fix broken docs link in CONTRIBUTING",
+      "url": "https://github.com/D4Vinci/Scrapling/pull/320",
+      "repo": "D4Vinci/Scrapling",
+      "merged_at": "2026-06-07T13:25:01Z"
+    },
+    {
+      "title": "fix: parse quoted charset values in content-type headers",
+      "url": "https://github.com/D4Vinci/Scrapling/pull/323",
+      "repo": "D4Vinci/Scrapling",
+      "merged_at": "2026-06-07T14:58:45Z"
+    },
+    {
+      "title": "fix: sort YOLO class names by numeric keys",
+      "url": "https://github.com/roboflow/supervision/pull/2296",
+      "repo": "roboflow/supervision",
+      "merged_at": "2026-06-07T16:54:43Z"
+    },
+    {
+      "title": "fix: support grayscale letterbox images",
+      "url": "https://github.com/roboflow/supervision/pull/2297",
+      "repo": "roboflow/supervision",
+      "merged_at": "2026-06-07T17:06:21Z"
+    },
+    {
+      "title": "fix: normalize file extension filters",
+      "url": "https://github.com/roboflow/supervision/pull/2298",
+      "repo": "roboflow/supervision",
+      "merged_at": "2026-06-08T11:41:26Z"
+    },
+    {
+      "title": "fix(reddit): install rdt-cli from the live source",
+      "url": "https://github.com/Panniantong/Agent-Reach/pull/326",
+      "repo": "Panniantong/Agent-Reach",
+      "merged_at": "2026-06-10T06:59:17Z"
+    },
+    {
+      "title": "docs: align MCP proxy docs with implemented API",
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/614",
+      "repo": "headroomlabs-ai/headroom",
+      "merged_at": "2026-06-11T02:14:24Z"
+    },
+    {
+      "title": "fix(mcp): honor CLAUDE_CONFIG_DIR for Claude registrar",
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/886",
+      "repo": "headroomlabs-ai/headroom",
+      "merged_at": "2026-06-16T03:07:31Z"
+    },
+    {
+      "title": "Register parsed config classes before tokenizer init",
+      "url": "https://github.com/vllm-project/vllm/pull/40299",
+      "repo": "vllm-project/vllm",
+      "merged_at": "2026-06-16T05:33:09Z"
+    },
+    {
+      "title": "fix: AL05 false positive on whole-row alias references (postgres)",
+      "url": "https://github.com/sqlfluff/sqlfluff/pull/7906",
+      "repo": "sqlfluff/sqlfluff",
+      "merged_at": "2026-06-16T06:22:32Z"
+    },
+    {
+      "title": "docs: fix stale configuration cross-reference",
+      "url": "https://github.com/mvanhorn/last30days-skill/pull/491",
+      "repo": "mvanhorn/last30days-skill",
+      "merged_at": "2026-06-17T19:34:54Z"
+    },
+    {
+      "title": "docs: document the webperf command in README",
+      "url": "https://github.com/addyosmani/agent-skills/pull/247",
+      "repo": "addyosmani/agent-skills",
+      "merged_at": "2026-06-20T22:22:42Z"
+    },
+    {
+      "title": "Respect custom Cargo target directories",
+      "url": "https://github.com/tw93/Pake/pull/1235",
+      "repo": "tw93/Pake",
+      "merged_at": "2026-06-21T06:42:08Z"
+    },
+    {
+      "title": "fix: validate trusted source hosts for SC2",
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/118",
+      "repo": "NVIDIA/SkillSpector",
+      "merged_at": "2026-06-22T13:38:29Z"
+    },
+    {
+      "title": "Docs: clarify required .NET SDK version",
+      "url": "https://github.com/dotnet/skills/pull/682",
+      "repo": "dotnet/skills",
+      "merged_at": "2026-06-24T07:02:06Z"
+    },
+    {
+      "title": "Make mempool fee API URL configurable",
+      "url": "https://github.com/wtfutil/wtf/pull/2069",
+      "repo": "wtfutil/wtf",
+      "merged_at": "2026-06-27T05:32:44Z"
+    },
+    {
+      "title": ":books: Fix Angular plugin usage doc link",
+      "url": "https://github.com/penpot/penpot/pull/10349",
+      "repo": "penpot/penpot",
+      "merged_at": "2026-06-30T12:35:55Z"
+    },
+    {
+      "title": "docs: clarify public source build path",
+      "url": "https://github.com/altic-dev/FluidVoice/pull/482",
+      "repo": "altic-dev/FluidVoice",
+      "merged_at": "2026-07-04T00:44:10Z"
+    },
+    {
+      "title": "Make mempool fee API URL configurable",
+      "url": "https://github.com/caesrcd/NodeWatch/pull/1",
+      "repo": "caesrcd/NodeWatch",
+      "merged_at": "2026-07-04T04:17:46Z"
+    },
+    {
+      "title": "docs(config): add a reference page for existing config files",
+      "url": "https://github.com/DeusData/codebase-memory-mcp/pull/484",
+      "repo": "DeusData/codebase-memory-mcp",
+      "merged_at": "2026-07-04T22:38:22Z"
+    },
+    {
+      "title": "Make mempool fee URL configurable",
+      "url": "https://github.com/matryer/xbar-plugins/pull/2169",
+      "repo": "matryer/xbar-plugins",
+      "merged_at": "2026-07-09T13:57:47Z"
+    },
+    {
+      "title": "feat(msg): add JSON inbox and history output",
+      "url": "https://github.com/h5i-dev/h5i/pull/327",
+      "repo": "h5i-dev/h5i",
+      "merged_at": "2026-07-12T22:01:26Z"
+    },
+    {
+      "title": "feat(msg): warn about unknown recipients",
+      "url": "https://github.com/h5i-dev/h5i/pull/328",
+      "repo": "h5i-dev/h5i",
+      "merged_at": "2026-07-12T22:02:48Z"
+    },
+    {
+      "title": "test(util): cover String helpers",
+      "url": "https://github.com/neomjs/neo/pull/15119",
+      "repo": "neomjs/neo",
+      "merged_at": "2026-07-13T01:20:15Z"
+    },
+    {
+      "title": "test(util): cover Json extraction",
+      "url": "https://github.com/neomjs/neo/pull/15120",
+      "repo": "neomjs/neo",
+      "merged_at": "2026-07-13T01:25:56Z"
+    },
+    {
+      "title": "Update Rust getting started version and storage features",
+      "url": "https://github.com/gluesql/gluesql/pull/1940",
+      "repo": "gluesql/gluesql",
+      "merged_at": "2026-07-13T02:48:26Z"
+    },
+    {
+      "title": "fix(tui): indicate clipped join tokens",
+      "url": "https://github.com/Mesh-LLM/mesh-llm/pull/970",
+      "repo": "Mesh-LLM/mesh-llm",
+      "merged_at": "2026-07-13T02:49:24Z"
+    },
+    {
+      "title": "fix(providers): replace stale OpenAI base URL",
+      "url": "https://github.com/HKUDS/Vibe-Trading/pull/484",
+      "repo": "HKUDS/Vibe-Trading",
+      "merged_at": "2026-07-13T04:06:15Z"
+    },
+    {
+      "title": "feat(env): add limit to event log",
+      "url": "https://github.com/h5i-dev/h5i/pull/331",
+      "repo": "h5i-dev/h5i",
+      "merged_at": "2026-07-13T04:31:40Z"
+    },
+    {
+      "title": "feat(log): add JSON output",
+      "url": "https://github.com/h5i-dev/h5i/pull/332",
+      "repo": "h5i-dev/h5i",
+      "merged_at": "2026-07-13T04:32:07Z"
+    },
+    {
+      "title": "Add OpenRouter as a built-in provider",
+      "url": "https://github.com/404-PF/commit-echo/pull/223",
+      "repo": "404-PF/commit-echo",
+      "merged_at": "2026-07-13T04:52:34Z"
+    },
+    {
+      "title": "fix(ui): keep chat streaming in hidden tabs",
+      "url": "https://github.com/Mesh-LLM/mesh-llm/pull/977",
+      "repo": "Mesh-LLM/mesh-llm",
+      "merged_at": "2026-07-13T06:21:16Z"
+    },
+    {
+      "title": "Test invalid max diff size values",
+      "url": "https://github.com/404-PF/commit-echo/pull/225",
+      "repo": "404-PF/commit-echo",
+      "merged_at": "2026-07-13T07:59:13Z"
+    },
+    {
+      "title": "feat(wrap): allow project RTK instruction opt-out",
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2078",
+      "repo": "headroomlabs-ai/headroom",
+      "merged_at": "2026-07-13T13:37:18Z"
+    },
+    {
+      "title": "feat(proxy): expose retry delay configuration",
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2077",
+      "repo": "headroomlabs-ai/headroom",
+      "merged_at": "2026-07-13T13:37:23Z"
+    },
+    {
+      "title": "docs: add missing research grants references",
+      "url": "https://github.com/K-Dense-AI/scientific-agent-skills/pull/155",
+      "repo": "K-Dense-AI/scientific-agent-skills",
+      "merged_at": "2026-07-13T16:47:50Z"
+    },
+    {
+      "title": "Add PySide6 Flatpak Kerberos module example",
+      "url": "https://github.com/beeware/briefcase/pull/2932",
+      "repo": "beeware/briefcase",
+      "merged_at": "2026-07-13T23:58:43Z"
+    },
+    {
+      "title": "Refresh diagnostic items date check",
+      "url": "https://github.com/rust-lang/rustc-dev-guide/pull/2925",
+      "repo": "rust-lang/rustc-dev-guide",
+      "merged_at": "2026-07-14T14:06:22Z"
+    },
+    {
+      "title": "fix: use GGUF file stems as display names for synthetic local-gguf refs",
+      "url": "https://github.com/Mesh-LLM/mesh-llm/pull/969",
+      "repo": "Mesh-LLM/mesh-llm",
+      "merged_at": "2026-07-14T22:46:48Z"
+    },
+    {
+      "title": "fix(client): close profile navigation on mobile",
+      "url": "https://github.com/Bike4Mind/bike4mind/pull/473",
+      "repo": "Bike4Mind/bike4mind",
+      "merged_at": "2026-07-15T06:41:34Z"
+    },
+    {
+      "title": "fix: validate scorer instance names in config",
+      "url": "https://github.com/p-e-w/heretic/pull/407",
+      "repo": "p-e-w/heretic",
+      "merged_at": "2026-07-15T14:58:11Z"
+    },
+    {
+      "title": "Link queued crates to exact versions",
+      "url": "https://github.com/rust-lang/docs.rs/pull/3408",
+      "repo": "rust-lang/docs.rs",
+      "merged_at": "2026-07-17T14:44:32Z"
+    },
+    {
+      "title": "docs(sdks): align prefunded escrow comments",
+      "url": "https://github.com/pmxt-dev/pmxt/pull/1656",
+      "repo": "pmxt-dev/pmxt",
+      "merged_at": "2026-07-18T00:47:25Z"
+    },
+    {
+      "title": "feat(python): add SuiBets wallet options",
+      "url": "https://github.com/pmxt-dev/pmxt/pull/1657",
+      "repo": "pmxt-dev/pmxt",
+      "merged_at": "2026-07-18T00:47:28Z"
+    },
+    {
+      "title": "Fix volatility input for array-model option valuation",
+      "url": "https://github.com/rgaveiga/optionlab/pull/56",
+      "repo": "rgaveiga/optionlab",
+      "merged_at": "2026-07-18T11:04:33Z"
+    },
+    {
+      "title": "fix(web): handle sidebar shortcut before editors",
+      "url": "https://github.com/pingdotgg/t3code/pull/3921",
+      "repo": "pingdotgg/t3code",
+      "merged_at": "2026-07-20T08:33:43Z"
+    },
+    {
+      "title": "fix(cli): support force removing projects",
+      "url": "https://github.com/pingdotgg/t3code/pull/3922",
+      "repo": "pingdotgg/t3code",
+      "merged_at": "2026-07-20T08:53:02Z"
+    },
+    {
+      "title": "docs: clarify rf price-vs-return series expectations",
+      "url": "https://github.com/pmorissette/ffn/pull/300",
+      "repo": "pmorissette/ffn",
+      "merged_at": "2026-07-20T14:13:41Z"
+    },
+    {
+      "title": "fix: back off ECS sink when custom sink exists",
+      "url": "https://github.com/zalando/logbook/pull/2343",
+      "repo": "zalando/logbook",
+      "merged_at": "2026-07-20T15:19:42Z"
+    },
+    {
+      "title": "fix(chat): make conversation layout responsive",
+      "url": "https://github.com/Crosstalk-Solutions/project-nomad/pull/1090",
+      "repo": "Crosstalk-Solutions/project-nomad",
+      "merged_at": "2026-07-20T22:46:58Z"
+    },
+    {
+      "title": "Fix CUDA downloads on unsupported platforms",
+      "url": "https://github.com/jamiepine/voicebox/pull/770",
+      "repo": "jamiepine/voicebox",
+      "merged_at": "2026-07-21T02:22:18Z"
+    },
+    {
+      "title": "fix(replay): preserve cwd scope for opened sessions",
+      "url": "https://github.com/callstack/agent-device/pull/1401",
+      "repo": "callstack/agent-device",
+      "merged_at": "2026-07-25T10:17:55Z"
+    },
+    {
+      "title": "fix(hooks): accept raw control characters in payloads",
+      "url": "https://github.com/oraios/serena/pull/1759",
+      "repo": "oraios/serena",
+      "merged_at": "2026-07-26T16:47:18Z"
+    },
+    {
+      "title": "fix(cli): reject excess positionals",
+      "url": "https://github.com/callstack/agent-device/pull/1433",
+      "repo": "callstack/agent-device",
+      "merged_at": "2026-07-27T15:23:30Z"
+    },
+    {
+      "title": "docs: clarify confcutdir plugin discovery cutoff",
+      "url": "https://github.com/pytest-dev/pytest/pull/14598",
+      "repo": "pytest-dev/pytest",
+      "merged_at": "2026-07-27T21:28:13Z"
+    },
+    {
+      "title": "Fix sink state when instances are reopened",
+      "url": "https://github.com/roboflow/supervision/pull/2459",
+      "repo": "roboflow/supervision",
+      "merged_at": "2026-07-28T08:11:07Z"
+    },
+    {
+      "title": "Fix per-series stats distortion from NaNs in other columns",
+      "url": "https://github.com/pmorissette/ffn/pull/299",
+      "repo": "pmorissette/ffn",
+      "merged_at": "2026-07-28T17:13:01Z"
+    },
+    {
+      "title": "Fix launcher save-slot panel overlap",
+      "url": "https://github.com/bryanthaboi/gen1recomp/pull/757",
+      "repo": "bryanthaboi/gen1recomp",
+      "merged_at": "2026-08-03T20:21:48Z"
+    },
+    {
+      "title": "Preserve page-prefixed Markdown content",
+      "url": "https://github.com/firecrawl/pdf-inspector/pull/284",
+      "repo": "firecrawl/pdf-inspector",
+      "merged_at": "2026-08-06T19:14:28Z"
+    },
+    {
+      "title": "Document inline legend label editing",
+      "url": "https://github.com/qgis/QGIS-Documentation/pull/11102",
+      "repo": "qgis/QGIS-Documentation",
+      "merged_at": "2026-08-07T08:09:17Z"
+    },
+    {
+      "title": "Remove redundant CF_API_KEY_FILE handling",
+      "url": "https://github.com/itzg/docker-minecraft-server/pull/4220",
+      "repo": "itzg/docker-minecraft-server",
+      "merged_at": "2026-08-07T12:26:35Z"
+    },
+    {
+      "title": "docs: add good smoke guide",
+      "url": "https://github.com/huangruiteng/loopx/pull/2828",
+      "repo": "huangruiteng/loopx",
+      "merged_at": "2026-08-07T16:43:00Z"
+    },
+    {
+      "title": "Add a reusable multiplayer session layer",
+      "url": "https://github.com/bryanthaboi/gen1recomp/pull/925",
+      "repo": "bryanthaboi/gen1recomp",
+      "merged_at": "2026-08-08T09:42:23Z"
+    },
+    {
+      "title": "Warn when exporting addresses without address index",
+      "url": "https://github.com/ordinals/ord/pull/4558",
+      "repo": "ordinals/ord",
+      "merged_at": "2026-08-09T02:52:26Z"
+    },
+    {
+      "title": "Fix Tecshow fixture links",
+      "url": "https://github.com/OpenLightingProject/open-fixture-library/pull/5934",
+      "repo": "OpenLightingProject/open-fixture-library",
+      "merged_at": "2026-08-10T08:25:06Z"
+    },
+    {
+      "title": "Remove dead Laserworld product links",
+      "url": "https://github.com/OpenLightingProject/open-fixture-library/pull/5935",
+      "repo": "OpenLightingProject/open-fixture-library",
+      "merged_at": "2026-08-10T08:37:09Z"
+    },
+    {
+      "title": "fix(lume): tolerate missing terminal capabilities",
+      "url": "https://github.com/trycua/cua/pull/2186",
+      "repo": "trycua/cua",
+      "merged_at": "2026-08-10T12:35:37Z"
+    },
+    {
+      "title": "fix: accept camelCase tool arguments (calendarId, timeMin, ...) via normalization middleware",
+      "url": "https://github.com/taylorwilsdon/google_workspace_mcp/pull/921",
+      "repo": "taylorwilsdon/google_workspace_mcp",
+      "merged_at": "2026-08-18T14:01:34Z"
+    },
+    {
+      "title": "fix(llm): preserve provider events on restart",
+      "url": "https://github.com/livekit/agents/pull/6568",
+      "repo": "livekit/agents",
+      "merged_at": "2026-08-18T14:23:12Z"
+    },
+    {
+      "title": "fix(cli): render Unicode output with legacy encodings",
+      "url": "https://github.com/tirth8205/code-review-graph/pull/826",
+      "repo": "tirth8205/code-review-graph",
+      "merged_at": "2026-08-19T00:05:23Z"
+    },
+    {
+      "title": "Improve pytester outcome parsing error",
+      "url": "https://github.com/pytest-dev/pytest/pull/14838",
+      "repo": "pytest-dev/pytest",
+      "merged_at": "2026-08-23T13:33:25Z"
+    },
+    {
+      "title": "refactor(network): replace ordered-map with indexmap",
+      "url": "https://github.com/ZcashFoundation/zebra/pull/11321",
+      "repo": "ZcashFoundation/zebra",
+      "merged_at": "2026-08-25T08:14:17Z"
+    },
+    {
+      "title": "fix(windows): make install.ps1 PowerShell 5.1 friendly",
+      "url": "https://github.com/Egonex-AI/Understand-Anything/pull/185",
+      "repo": "Egonex-AI/Understand-Anything",
+      "merged_at": "2026-08-26T06:37:11Z"
+    },
+    {
+      "title": "daemon/logger/awslogs: test user agent at the HTTP client boundary",
+      "url": "https://github.com/moby/moby/pull/53322",
+      "repo": "moby/moby",
+      "merged_at": "2026-08-28T09:49:38Z"
+    },
+    {
+      "title": "Sort and deduplicate exported packages",
+      "url": "https://github.com/microsoft/winget-cli/pull/6438",
+      "repo": "microsoft/winget-cli",
+      "merged_at": "2026-09-01T23:25:31Z"
+    },
+    {
+      "title": "docs: correct backpropagation gradient explanation",
+      "url": "https://github.com/microsoft/AI-For-Beginners/pull/731",
+      "repo": "microsoft/AI-For-Beginners",
+      "merged_at": "2026-09-04T13:35:56Z"
+    }
+  ]
 }

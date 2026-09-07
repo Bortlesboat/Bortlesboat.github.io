@@ -2,6 +2,7 @@ import './style.css'
 import projects from './data/projects.json'
 import caseStudies from './data/caseStudies.json'
 import proofMap from './data/proofMap.json'
+import stats from '../public/stats.json'
 
 const externalUrl = (url) => /^https?:\/\//.test(url)
 const linkAttrs = (url) => externalUrl(url) ? 'target="_blank" rel="noopener"' : ''
@@ -11,6 +12,11 @@ const escapeHtml = (value) => String(value)
   .replaceAll('>', '&gt;')
   .replaceAll('\"', '&quot;')
   .replaceAll("'", '&#39;')
+
+const snapshotEl = document.getElementById('oss-snapshot')
+if (snapshotEl) {
+  snapshotEl.textContent = `${stats.merged_prs} authored, merged PRs across ${stats.repos_contributed_to} external public repositories, with repeat contributions to ${stats.repeat_repositories} repositories. Window: ${stats.window.start} to ${stats.window.end}. Verified ${stats.fetched_at.slice(0, 10)}.`
+}
 
 const projectsEl = document.getElementById('projects')
 if (projectsEl) {

@@ -55,12 +55,12 @@
   },
   {
     "lane": "Bitcoin / x402",
-    "title": "Bitcoin/x402 work with live APIs and merged PRs.",
+    "title": "Bitcoin tools, self-hostable APIs, and merged PRs.",
     "summary": "The public trail is Satoshi API, bitcoin-mcp, x402 Foundation tests, fee-provider work, rust-lightning, and rust-bitcoin.",
     "proofs": [
       {
         "label": "Satoshi API",
-        "note": "Live Bitcoin fee API and public repo with x402 support.",
+        "note": "Self-hostable Bitcoin fee API with optional x402 integration; hosted service paused.",
         "url": "https://github.com/Bortlesboat/bitcoin-api"
       },
       {

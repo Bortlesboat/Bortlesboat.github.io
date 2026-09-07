@@ -24,7 +24,7 @@
   {
     "name": "Satoshi API",
     "problem": "Wallet builders, app developers, and agents need fee data translated into decisions.",
-    "proof": "Live API, x402 support, public repo, and tests.",
+    "proof": "Self-hostable source, optional x402 integration, and tests. Former public hosting is paused.",
     "url": "https://github.com/Bortlesboat/Bortlesboat/blob/main/case-studies.md#1-satoshi-api-bitcoin-fee-intelligence",
     "tags": [
       "Bitcoin",
@@ -35,7 +35,7 @@
   {
     "name": "bitcoin-mcp",
     "problem": "AI workflow automators need Bitcoin context without scraping explorers or hand-wiring RPC.",
-    "proof": "49 MCP tools, 126 tests, PyPI distribution, and setup docs.",
+    "proof": "50 standard tools; 180 tests passed on Python 3.12 on September 7, 2026. Current source-install instructions are in the README.",
     "url": "https://github.com/Bortlesboat/Bortlesboat/blob/main/case-studies.md#2-bitcoin-mcp-bitcoin-context-for-ai-agents",
     "tags": [
       "MCP",

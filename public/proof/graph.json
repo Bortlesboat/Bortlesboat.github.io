@@ -79,8 +79,17 @@
         "No private wallets, account IDs, tokenized URLs, or local file paths.",
         "Revenue/proof statuses stay conservative and source-linked."
       ],
-      "tags": ["agent-payments", "x402", "ledger", "ai-readable"],
-      "relations": ["agentops-ledger", "satoshi-satlab", "oss-contributions"]
+      "tags": [
+        "agent-payments",
+        "x402",
+        "ledger",
+        "ai-readable"
+      ],
+      "relations": [
+        "agentops-ledger",
+        "satoshi-satlab",
+        "oss-contributions"
+      ]
     },
     {
       "id": "agentops-ledger",
@@ -144,73 +153,72 @@
         "Splunk HEC proof is sanitized local indexing evidence.",
         "NandaHack submission can be stated; outcomes cannot."
       ],
-      "tags": ["agentops", "splunk", "x402", "observability"],
-      "relations": ["agent-payment-signal-ledger", "oss-contributions"]
+      "tags": [
+        "agentops",
+        "splunk",
+        "x402",
+        "observability"
+      ],
+      "relations": [
+        "agent-payment-signal-ledger",
+        "oss-contributions"
+      ]
     },
     {
       "id": "satoshi-satlab",
-      "name": "Satoshi API / SATLAB Proof Ramp",
-      "status": "live-with-open-proof-gates",
-      "statusLabel": "Live surfaces, proof gates open",
-      "lastVerified": "2026-05-21",
-      "summary": "Bitcoin fee intelligence and x402 paid-call surfaces, plus SATLAB public proof wrappers for the agentic Bitcoin API story.",
+      "name": "Satoshi API / bitcoin-mcp",
+      "status": "hosted-paused",
+      "statusLabel": "Self-hostable source; hosted API paused",
+      "lastVerified": "2026-09-07",
+      "summary": "Bitcoin fee intelligence API and MCP tools with source, tests, and self-hosting instructions. The former public API is paused.",
       "proofLinks": [
         {
-          "label": "Satoshi x402 buyer path",
-          "url": "https://bitcoinsapi.com/x402/start",
-          "type": "live-route"
+          "label": "Satoshi API source",
+          "url": "https://github.com/Bortlesboat/bitcoin-api",
+          "type": "repository"
         },
         {
-          "label": "x402 resource discovery",
-          "url": "https://cdp.bitcoinsapi.com/.well-known/x402",
-          "type": "json"
+          "label": "Self-hosting guide",
+          "url": "https://github.com/Bortlesboat/bitcoin-api/blob/master/docs/self-hosting.md",
+          "type": "documentation"
         },
         {
-          "label": "SATLAB Experiment 001",
-          "url": "https://treasury.bitcoinsapi.com/experiment-001/",
-          "type": "public-page"
+          "label": "bitcoin-mcp source and tests",
+          "url": "https://github.com/Bortlesboat/bitcoin-mcp",
+          "type": "repository"
         },
         {
-          "label": "Experiment evidence JSON",
-          "url": "https://treasury.bitcoinsapi.com/experiment-001/evidence.json",
-          "type": "json"
-        },
-        {
-          "label": "Satoshi paid-call demo",
+          "label": "Historical paid-call demo (not current availability)",
           "url": "https://github.com/Bortlesboat/x402-insights/blob/main/docs/SATOSHI_PAID_CALL_DEMO.md",
           "type": "proof-doc"
         }
       ],
-      "machineLinks": [
-        {
-          "label": "SATLAB grant packet JSON",
-          "url": "https://treasury.bitcoinsapi.com/grant/packet.json",
-          "type": "json"
-        },
-        {
-          "label": "Experiment evidence JSON",
-          "url": "https://treasury.bitcoinsapi.com/experiment-001/evidence.json",
-          "type": "json"
-        }
-      ],
+      "machineLinks": [],
       "screenshots": [
         {
-          "label": "Satoshi API homepage screenshot",
+          "label": "Historical Satoshi API homepage screenshot",
           "url": "https://bortlesboat.github.io/evidence/satoshi-api-home.png",
           "type": "image"
         }
       ],
       "openBlockers": [
-        "$100+ third-party proof gate is not met.",
-        "SATLAB Bankr/Doppler launch path still needs simulation/output and final broadcast approval.",
-        "Circle Questbook/grant submission is prepared but not submitted unless separately recorded."
+        "Former hosted API is paused; a local node or compatible configured deployment is required.",
+        "Current bitcoin-mcp SDK and backend fixes await a new PyPI release."
       ],
       "publicBoundary": [
-        "SATLAB is a proof wrapper, not a Satoshi API dependency.",
-        "Do not imply token yield, equity, passive cashflow promises, or guaranteed launch access."
+        "Repository maintenance is separate from hosted-service availability.",
+        "Historical payment demos do not establish current paid usage or revenue."
       ],
-      "tags": ["bitcoin", "x402", "satlab", "paid-api"],
-      "relations": ["agent-payment-signal-ledger", "agentops-ledger"]
+      "tags": [
+        "bitcoin",
+        "mcp",
+        "open-source",
+        "self-hosting"
+      ],
+      "relations": [
+        "agent-payment-signal-ledger",
+        "agentops-ledger"
+      ]
     },
     {
       "id": "finance-file-triage",
@@ -248,8 +256,15 @@
         "Runs locally in the browser; no uploaded private finance files.",
         "Public examples must remain synthetic or sanitized."
       ],
-      "tags": ["finance", "fpa", "browser-tool", "triage"],
-      "relations": ["fpa-advisory"]
+      "tags": [
+        "finance",
+        "fpa",
+        "browser-tool",
+        "triage"
+      ],
+      "relations": [
+        "fpa-advisory"
+      ]
     },
     {
       "id": "fpa-advisory",
@@ -281,16 +296,23 @@
         "No current-employer confidential information.",
         "Safe topics are general SaaS FP&A workflow patterns and automation tradeoffs."
       ],
-      "tags": ["fpa", "advisory", "netsuite", "automation"],
-      "relations": ["finance-file-triage"]
+      "tags": [
+        "fpa",
+        "advisory",
+        "netsuite",
+        "automation"
+      ],
+      "relations": [
+        "finance-file-triage"
+      ]
     },
     {
       "id": "oss-contributions",
       "name": "OSS Contribution Graph",
       "status": "active-public-record",
-      "statusLabel": "Public merged/open contribution record",
-      "lastVerified": "2026-05-21",
-      "summary": "A compact proof node for merged and reviewed work across AI tooling, finance tooling, Bitcoin/x402, MCP, Rust infrastructure, and Python projects.",
+      "statusLabel": "Dated public merged-PR evidence",
+      "lastVerified": "2026-09-07",
+      "summary": "209 authored, merged PRs across 141 external public repositories in the September 7, 2025 to September 7, 2026 window; repeat contributions to 32 repositories.",
       "proofLinks": [
         {
           "label": "GitHub contribution map",
@@ -318,19 +340,36 @@
           "type": "merged-pr"
         }
       ],
-      "machineLinks": [],
+      "machineLinks": [
+        {
+          "label": "Dated profile snapshot (September 7, 2026)",
+          "url": "https://raw.githubusercontent.com/Bortlesboat/Bortlesboat/main/oss-contributions.json",
+          "type": "json"
+        },
+        {
+          "label": "Refreshing portfolio snapshot (check its date)",
+          "url": "https://bortlesboat.github.io/stats.json",
+          "type": "json"
+        }
+      ],
       "screenshots": [],
       "openBlockers": [
-        "High-scrutiny repos require slower pacing and evidence-backed comments.",
-        "Open PR count is not itself proof; merged, tested, and reviewed outcomes matter more.",
-        "Bitcoin Core activity remains under strict cooldown/safety rules."
+        "Dated profile evidence requires a reviewed refresh; use the separate website snapshot date for newer totals."
       ],
       "publicBoundary": [
-        "Do not claim maintainer status unless a repo grants it.",
-        "Avoid AI-looking mass activity language; show specific merged work."
+        "Counts exclude owned repositories and open or unmerged PRs.",
+        "Each claim links to specific public work; contributions do not imply an upstream maintainer role or endorsement."
       ],
-      "tags": ["open-source", "merged-prs", "ai-tools", "bitcoin"],
-      "relations": ["agentops-ledger", "satoshi-satlab"]
+      "tags": [
+        "open-source",
+        "merged-prs",
+        "ai-tools",
+        "bitcoin"
+      ],
+      "relations": [
+        "agentops-ledger",
+        "satoshi-satlab"
+      ]
     }
   ]
 }
