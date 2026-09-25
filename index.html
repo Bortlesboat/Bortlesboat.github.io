@@ -3,26 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Andrew Barnes - Tech FP&A and AI Workflow Automation</title>
-    <meta name="description" content="Public portfolio for Andrew Barnes: senior finance analyst building tech FP&A automation, AI workflow tooling, Bitcoin/x402 systems, and selected merged work for OpenAI, Microsoft, Google Workspace, OpenBB, and other public codebases." />
-    <meta name="theme-color" content="#26384d" />
-    <meta name="portfolio-build" content="2026-09-07-oss-maintenance" />
+    <title>Andrew Barnes — Finance judgment, shipped as software</title>
+    <meta name="description" content="Andrew Barnes: senior FP&A analyst who builds Python tools for finance teams, AI agents, and Bitcoin, with merged pull requests at OpenAI, Microsoft, Google, CPython, vLLM, and more." />
+    <meta name="theme-color" content="#0a0b0e" />
+    <meta name="portfolio-build" content="2026-09-25-redesign" />
 
-    <meta property="og:title" content="Andrew Barnes - Tech FP&A and AI Workflow Automation" />
-    <meta property="og:description" content="Selected public work across tech FP&A automation, AI workflow tooling, Bitcoin/x402 systems, and merged open-source pull requests." />
+    <meta property="og:title" content="Andrew Barnes — Finance judgment, shipped as software" />
+    <meta property="og:description" content="Senior FP&A analyst who builds the tools. Finance automation, AI agent tooling, Bitcoin infrastructure, and merged open-source work." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://bortlesboat.github.io" />
-    <meta property="og:image" content="https://bortlesboat.github.io/og-image.svg" />
+    <meta property="og:url" content="https://bortlesboat.github.io/" />
+    <meta property="og:image" content="https://bortlesboat.github.io/og-home.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Andrew Barnes - Tech FP&A and AI Workflow Automation" />
-    <meta name="twitter:image" content="https://bortlesboat.github.io/og-image.svg" />
+    <meta name="twitter:title" content="Andrew Barnes — Finance judgment, shipped as software" />
+    <meta name="twitter:image" content="https://bortlesboat.github.io/og-home.jpg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;600;700&family=Instrument+Sans:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,500;8..60,650;8..60,750&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href="https://bortlesboat.github.io/" />
     <link rel="alternate" type="text/plain" href="https://bortlesboat.github.io/llms.txt" title="Bortlesboat LLM crawler map" />
+    <script>document.documentElement.classList.add('js')</script>
 
     <script type="application/ld+json">
     {
@@ -40,240 +41,200 @@
     </script>
   </head>
   <body>
-    <header class="site-top" aria-label="Site navigation">
-      <a class="wordmark" href="/" aria-label="Andrew Barnes home">
-        <span class="wordmark-mark">BB</span>
-        <span>Bortlesboat</span>
-      </a>
-      <nav class="top-nav" aria-label="Primary navigation">
-        <a href="#proof-map-section" data-analytics-location="top_nav">Proof map</a>
-        <a href="/proof/" data-analytics-event="proof_link_clicked" data-analytics-location="top_nav">Proof graph</a>
-        <a href="#evidence-room">Work</a>
-        <a href="#case-ledger">Case studies</a>
-        <a href="https://github.com/Bortlesboat" target="_blank" rel="noopener me">GitHub</a>
-        <a href="mailto:bortlesboat@gmail.com">Contact</a>
-      </nav>
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="/" aria-label="Andrew Barnes, home">
+          <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h12v12H4zM4 8l4-4h12l-4 4M16 20l4-4V4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          Andrew Barnes
+        </a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="#work">Work</a>
+          <a href="#open-source">Open source</a>
+          <a href="#contact">Contact</a>
+          <a class="nav-gh" href="https://github.com/Bortlesboat" target="_blank" rel="noopener me">GitHub <span aria-hidden="true">↗</span></a>
+        </nav>
+      </div>
     </header>
 
     <main>
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-copy">
-          <p class="kicker">Andrew Barnes / public portfolio</p>
-          <h1 id="hero-title">Tech FP&A systems and AI workflow automation.</h1>
-          <p class="hero-lede">
-            Senior finance analyst who builds small Python and web tools for FP&A,
-            AI operators, and Bitcoin/x402 workflows. The work below links to live repos,
-            merged PRs, and a few short case studies.
+      <!-- 1 · Who -->
+      <section class="hero">
+        <div class="wrap">
+          <p class="eyebrow reveal">Senior FP&A analyst · Python builder</p>
+          <h1 class="reveal">Finance judgment,<br /><em>shipped as software.</em></h1>
+          <p class="lede reveal">
+            Seven years in FP&A taught me where finance work breaks. I build the tools that fix it,
+            and I contribute to the open-source projects those tools depend on:
+            <strong><span data-stat="merged_prs">231</span> merged pull requests</strong> across
+            <span data-stat="repos_contributed_to">152</span> public repositories, including OpenAI,
+            Microsoft, Google, CPython, and vLLM.
           </p>
-          <div class="hero-actions" aria-label="Primary links">
-            <a class="button button-primary" href="#case-ledger">View case studies</a>
-            <a class="button button-secondary" href="/proof/" data-analytics-event="proof_link_clicked" data-analytics-location="hero">Open proof graph</a>
-            <a class="button button-secondary" href="https://github.com/Bortlesboat/Bortlesboat/blob/main/github-contributions.md" target="_blank" rel="noopener">Contribution map</a>
+          <div class="actions reveal">
+            <a class="btn btn-primary" href="#work">See the work</a>
+            <a class="btn" href="mailto:bortlesboat@gmail.com">Email me</a>
           </div>
-        </div>
 
-        <aside class="reputation-rail" aria-label="Selected work by audience">
-          <p class="rail-kicker">Who it was for</p>
-          <div class="reputation-list">
-            <a class="reputation-item reputation-item-live" href="https://github.com/openai/privacy-filter/pull/1" target="_blank" rel="noopener">
-              <span>AI research tooling</span>
-              <strong>OpenAI privacy-filter</strong>
-              <small>Training runner syntax fix for maintainers of research tooling.</small>
-            </a>
-            <a class="reputation-item" href="https://github.com/microsoft/VibeVoice/pull/280" target="_blank" rel="noopener">
-              <span>AI product demos</span>
-              <strong>Microsoft VibeVoice</strong>
-              <small>Realtime demo fix for speech-model users and maintainers.</small>
-            </a>
-            <a class="reputation-item" href="https://github.com/googleworkspace/cli/pull/193" target="_blank" rel="noopener">
-              <span>Workspace operators</span>
-              <strong>Google Workspace CLI</strong>
-              <small>Auth diagnostics and setup fixes for admin/developer workflows.</small>
-            </a>
-            <a class="reputation-item" href="https://github.com/OpenBB-finance/OpenBB/pull/7403" target="_blank" rel="noopener">
-              <span>Finance platform users</span>
-              <strong>OpenBB</strong>
-              <small>Parser cleanup for analysts and developers using finance tooling.</small>
-            </a>
-            <a class="reputation-item" href="https://github.com/Mesh-LLM/mesh-llm/pull/156" target="_blank" rel="noopener">
-              <span>AI infrastructure operators</span>
-              <strong>mesh-llm</strong>
-              <small>Security primitives for distributed inference operators.</small>
-            </a>
-          </div>
-          <div class="reputation-note">
-            Named items link to merged PRs or public artifacts. The point is shipped work,
-            not activity volume.
-          </div>
-        </aside>
-      </section>
-
-      <section class="evidence-board" aria-label="Evidence highlights">
-        <a class="evidence-ticket evidence-ticket-live" href="https://github.com/Bortlesboat/Bortlesboat/blob/main/github-contributions.md" target="_blank" rel="noopener">
-          <span class="ticket-label">AI teams</span>
-          <strong>OpenAI / Microsoft / Google Workspace</strong>
-          <span>Merged fixes for research, speech-model, and Workspace tooling.</span>
-        </a>
-        <a class="evidence-ticket" href="https://bortlesboat.github.io/x402-insights/launch.html" target="_blank" rel="noopener">
-          <span class="ticket-label">AgentOps proof</span>
-          <strong>AgentOps Ledger</strong>
-          <span>Run log for approvals, retries, errors, payment events, and Splunk HEC evidence.</span>
-        </a>
-        <a class="evidence-ticket" href="https://github.com/OpenBB-finance/OpenBB/pull/7403" target="_blank" rel="noopener">
-          <span class="ticket-label">Tech FP&A teams</span>
-          <strong>OpenBB</strong>
-          <span>Parser cleanup in a finance platform used by analysts and developers.</span>
-        </a>
-        <a class="evidence-ticket" href="/agent-payments/signal-ledger/" data-analytics-event="proof_link_clicked" data-analytics-location="evidence_board">
-          <span class="ticket-label">Protocol operators</span>
-          <strong>Agent Payment Signal Ledger</strong>
-          <span>Sourced x402, L402, and agent-payment rows with proof-status labels and source URLs.</span>
-        </a>
-      </section>
-
-      <section id="proof-map-section" class="proof-map-section" aria-labelledby="proof-map-title">
-        <div class="section-intro section-intro-split">
-          <div>
-            <p class="kicker">Proof map</p>
-            <h2 id="proof-map-title">Four lanes, public evidence.</h2>
-          </div>
-          <p>
-            A short map from each positioning claim to live public work. Private client,
-            employer, and personal finance material stays out of it.
-          </p>
-        </div>
-        <div id="proof-map" class="proof-map" aria-label="Public proof map">
-          <!-- Populated by main.js -->
-        </div>
-      </section>
-
-      <section id="evidence-room" class="artifact-section" aria-labelledby="artifact-title">
-        <div class="section-intro">
-          <p class="kicker">Selected work</p>
-          <h2 id="artifact-title">Selected public artifacts.</h2>
-          <p>
-            A smaller set of public artifacts. Each note links to the underlying work.
-          </p>
-        </div>
-
-        <div class="artifact-layout">
-          <figure class="artifact-shot">
-            <img src="/evidence/satoshi-api-home.png" alt="Historical Satoshi API homepage showing Bitcoin fee intelligence for agents" />
+          <figure id="motion-study" class="reel reveal">
+            <div class="reel-bezel">
+              <video id="motion-video" src="/reel/reel-720.mp4" poster="/reel/poster.jpg" muted loop playsinline preload="metadata" aria-label="Proof of Work motion study: genesis block, mempool to block, options whale flow, FP&A waterfall, git merge graph, and signature."></video>
+            </div>
             <figcaption>
-              <span>Historical screenshot · hosted service paused</span>
-              <strong>Satoshi API: fee recommendations, mempool context, and x402-payable API routes.</strong>
+              <span><strong>Proof of Work</strong> is a 15-second motion study rendered frame by frame in canvas code. Figures in it are illustrative.</span>
+              <span class="reel-links">
+                <button id="motion-sound" type="button" aria-pressed="false">Sound on</button>
+                <a href="/reel/" data-analytics-event="proof_link_clicked" data-analytics-location="hero_reel">Watch it render live <span aria-hidden="true">↗</span></a>
+              </span>
             </figcaption>
           </figure>
-
-          <div id="projects" class="artifact-list" aria-label="Project artifacts">
-            <!-- Populated by main.js -->
-          </div>
         </div>
       </section>
 
-      <section class="operator-strip" aria-label="Focus areas">
-        <div class="operator-cell">
-          <span>Tech FP&A</span>
-          <strong>Senior analyst judgment, FP&A workflows, finance-platform fixes</strong>
-        </div>
-        <div class="operator-cell">
-          <span>AI workflow automation</span>
-          <strong>Workspace CLI, MCP routes, agent context, inference reliability</strong>
-        </div>
-        <div class="operator-cell">
-          <span>Protocol teams</span>
-          <strong>Bitcoin/x402 APIs, MCP routes, tested backend surfaces</strong>
-        </div>
-      </section>
-
-      <section id="motion-study" class="artifact-section motion-section" aria-labelledby="motion-title">
-        <div class="section-intro section-intro-split">
-          <div>
-            <p class="kicker">Motion study</p>
-            <h2 id="motion-title">Proof of work, rendered in code.</h2>
-          </div>
-          <p>
-            A 15-second reel covering Bitcoin, options flow, FP&A, and open source. Every frame
-            is drawn with canvas 2D, and the soundtrack is synthesized from the same timing math.
-            There are no templates or stock footage.
+      <!-- 2 · Proof in numbers -->
+      <section class="stats" aria-label="At a glance">
+        <div class="wrap">
+          <dl class="stat-grid reveal">
+            <div><dt>Years in FP&A</dt><dd>7+</dd></div>
+            <div><dt>Merged pull requests</dt><dd data-stat="merged_prs" data-count>231</dd></div>
+            <div><dt>Public repositories</dt><dd data-stat="repos_contributed_to" data-count>152</dd></div>
+            <div><dt>Repos with repeat merges</dt><dd data-stat="repeat_repositories" data-count>35</dd></div>
+          </dl>
+          <p class="stat-note reveal">
+            Authored PRs merged into repositories outside my account over the last 12 months.
+            Verified <span data-stat="fetched_at">daily</span> from the GitHub API ·
+            <a href="https://github.com/Bortlesboat/Bortlesboat/blob/main/github-contributions.md" target="_blank" rel="noopener">method</a>
           </p>
         </div>
+      </section>
 
-        <figure class="artifact-shot motion-shot">
-          <div class="motion-frame">
-            <video id="motion-video" src="/reel/reel-720.mp4" poster="/reel/poster.jpg" muted loop playsinline preload="metadata" aria-label="Proof of Work motion study: genesis block, mempool to block, options whale flow, FP&A waterfall, git merge graph, and signature."></video>
+      <!-- 3 · What I've built -->
+      <section id="work" class="section">
+        <div class="wrap">
+          <header class="section-head reveal">
+            <p class="eyebrow">Selected work</p>
+            <h2>Tools I've <em>built.</em></h2>
+            <p>Finance first. Then AI agents and Bitcoin, where money moves through code.</p>
+          </header>
+
+          <div class="bento">
+            <a class="card card-lg reveal" href="/variance-memo/">
+              <div class="card-shot"><img src="/evidence/finance-file-triage.jpg" alt="Finance File Triage with a demo P&amp;L loaded: mapped fields, material variances, and driver notes" loading="lazy" /></div>
+              <div class="card-body">
+                <span class="tag tag-fpa">FP&A</span>
+                <h3>Finance File Triage</h3>
+                <p>Turns a messy budget-vs-actual export into a row-linked review agenda: material variances, driver notes, and what the file can't prove. It runs in the browser, so nothing is uploaded.</p>
+              </div>
+              <span class="card-arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a class="card card-lg reveal" href="https://github.com/Bortlesboat/bitcoin-api" target="_blank" rel="noopener">
+              <div class="card-shot"><img src="/evidence/satoshi-api-home.png" alt="Satoshi API homepage showing fee recommendation, mempool pressure and next-block forecast" loading="lazy" /></div>
+              <div class="card-body">
+                <span class="tag tag-btc">Bitcoin</span>
+                <h3>Satoshi API</h3>
+                <p>Self-hostable Bitcoin fee intelligence: fee recommendations, mempool context, and x402-payable routes. The hosted service is paused; the source and tests are public.</p>
+              </div>
+              <span class="card-arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a class="card reveal" href="https://github.com/Bortlesboat/Bortlesboat/blob/main/case-studies.md#8-finance-dashboard-private-fpa-automation" target="_blank" rel="noopener">
+              <span class="tag tag-fpa">FP&A</span>
+              <h3>Finance Dashboard</h3>
+              <p>One intake point for portals, emails, PDFs, and CSVs, with manual review built in.</p>
+              <span class="facts">Streamlit · SQLite · 126 tests</span>
+              <span class="card-arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a class="card reveal" href="https://github.com/Bortlesboat/bitcoin-mcp" target="_blank" rel="noopener">
+              <span class="tag tag-ai">AI agents</span>
+              <h3>bitcoin-mcp</h3>
+              <p>Gives AI agents Bitcoin context without scraping explorers or hand-wiring RPC.</p>
+              <span class="facts">50 tools · 6 prompts · 180 tests</span>
+              <span class="card-arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a class="card reveal" href="https://bortlesboat.github.io/x402-insights/launch.html" target="_blank" rel="noopener">
+              <span class="tag tag-ai">AI agents</span>
+              <h3>AgentOps Ledger</h3>
+              <p>A readable run log for agent approvals, retries, errors, and payment events.</p>
+              <span class="facts">Demo · case study · Splunk HEC proof</span>
+              <span class="card-arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a class="card reveal" href="/agent-payments/signal-ledger/" data-analytics-event="proof_link_clicked" data-analytics-location="work_grid">
+              <span class="tag tag-pay">Payments</span>
+              <h3>Agent Payment Ledger</h3>
+              <p>A sourced ledger of live x402 and L402 endpoints, with pricing hints and proof status.</p>
+              <span class="facts">x402 · L402 · sourced</span>
+              <span class="card-arrow" aria-hidden="true">↗</span>
+            </a>
           </div>
-          <figcaption>
-            <span>Craft</span>
-            <strong>Canvas renderer, deterministic Playwright frame capture, numpy soundtrack, ffmpeg. Figures in the reel are illustrative.</strong>
-            <button id="motion-sound" class="motion-sound" type="button" aria-pressed="false">Play with sound</button>
-          </figcaption>
-        </figure>
-
-        <div class="hero-actions motion-actions">
-          <a class="button button-primary" href="/reel/" data-analytics-event="proof_link_clicked" data-analytics-location="motion_study">Watch it render live</a>
-          <a class="button button-secondary" href="/reel/reel-1080.mp4">1080p60 with sound</a>
-          <a class="button button-secondary" href="https://github.com/Bortlesboat/Bortlesboat.github.io/blob/main/public/reel/index.html" target="_blank" rel="noopener">View source</a>
         </div>
       </section>
 
-      <section id="case-ledger" class="case-section" aria-labelledby="case-title">
-        <div class="section-intro section-intro-split">
-          <div>
-            <p class="kicker">Case studies</p>
-            <h2 id="case-title">Audience, problem, tests, result.</h2>
-          </div>
-          <p>
-            Concise notes for hiring managers, finance leaders, AI teams, protocol teams,
-            and open-source maintainers. Each row links to the fuller write-up or source.
-          </p>
-        </div>
-        <div id="case-study-list" class="case-ledger" aria-label="Case studies">
-          <!-- Populated by main.js -->
-        </div>
-      </section>
+      <!-- 4 · Open source -->
+      <section id="open-source" class="section">
+        <div class="wrap">
+          <header class="section-head reveal">
+            <p class="eyebrow">Open source</p>
+            <h2>Code maintainers <em>merge.</em></h2>
+            <p>Small, well-scoped fixes with tests, in codebases where review is strict.</p>
+          </header>
 
-      <section class="proof-split" aria-label="Finance automation and open source work">
-        <figure class="artifact-shot artifact-shot-small">
-          <img src="/evidence/variance-memo-workbench.png" alt="Variance Memo FP&A workbench with upload controls and board commentary output" />
-          <figcaption>
-            <span>Finance artifact</span>
-            <strong>Variance Memo: upload workflow, trace checks, and board commentary output.</strong>
-          </figcaption>
-        </figure>
+          <ul class="logos reveal" aria-label="Organizations that have merged my pull requests">
+            <li>OpenAI</li><li>Microsoft</li><li>Google</li><li>Python</li><li>Docker</li><li>vLLM</li>
+            <li>pytest</li><li>LiveKit</li><li>rust-lightning</li><li>rust-bitcoin</li><li>OpenBB</li><li>statsmodels</li>
+          </ul>
 
-        <div class="merged-wall">
-          <p class="kicker">Merged upstream work</p>
-          <h2>Merged pull requests.</h2>
-          <p id="oss-snapshot">See the <a href="https://github.com/Bortlesboat/Bortlesboat/blob/main/github-contributions.md">dated contribution record</a> for verified merge counts and the monthly pattern.</p>
-          <p><a href="/stats.json">Complete public evidence snapshot</a> · <a href="https://github.com/Bortlesboat/Bortlesboat/blob/main/github-contributions.md#verified-contribution-pattern">Monthly record and method</a></p>
-          <div class="merge-list" aria-label="Selected merged pull requests">
-            <a href="https://github.com/moby/moby/pull/53322" target="_blank" rel="noopener"><span>Moby · Aug 2026</span><strong>Unit-test the AWS client boundary</strong></a>
-            <a href="https://github.com/livekit/agents/pull/6568" target="_blank" rel="noopener"><span>LiveKit · Aug 2026</span><strong>Provider-event handling across restarts</strong></a>
-            <a href="https://github.com/lightningdevkit/rust-lightning/pull/4470" target="_blank" rel="noopener"><span>rust-lightning</span><strong>Expose current dust exposure in ChannelDetails</strong></a>
-            <a href="https://github.com/python/cpython/pull/145538" target="_blank" rel="noopener"><span>CPython</span><strong>Document that add_argument() returns an Action object</strong></a>
-            <a href="https://github.com/Mesh-LLM/mesh-llm/pull/156" target="_blank" rel="noopener"><span>mesh-llm</span><strong>Owner keystore and signed encrypted primitives</strong></a>
-            <a href="https://github.com/volcengine/OpenViking/pull/790" target="_blank" rel="noopener"><span>OpenViking</span><strong>Windows PID locks and TUI console input</strong></a>
-            <a href="https://github.com/OpenBB-finance/OpenBB/pull/7403" target="_blank" rel="noopener"><span>OpenBB</span><strong>Remove unnecessary eval() calls</strong></a>
+          <div class="oss-grid">
+            <figure class="panel chart-panel reveal">
+              <figcaption>
+                <span>Merged PRs per month</span>
+                <strong><span data-stat="merged_prs">231</span> total</strong>
+              </figcaption>
+              <div id="merge-chart" class="chart" role="img" aria-label="Bar chart of merged pull requests per month"></div>
+            </figure>
+
+            <div class="panel pr-panel reveal">
+              <a class="pr" href="https://github.com/openai/privacy-filter/pull/1" target="_blank" rel="noopener"><span>OpenAI</span><strong>Fix the training runner in privacy-filter</strong></a>
+              <a class="pr" href="https://github.com/vllm-project/vllm/pulls?q=is%3Apr+author%3ABortlesboat+is%3Amerged" target="_blank" rel="noopener"><span>vLLM</span><strong><span data-repo-count="vllm-project/vllm">7</span> merged ROCm kernel and config fixes</strong></a>
+              <a class="pr" href="https://github.com/python/cpython/pull/145538" target="_blank" rel="noopener"><span>CPython</span><strong>Document that add_argument() returns an Action</strong></a>
+              <a class="pr" href="https://github.com/lightningdevkit/rust-lightning/pull/4470" target="_blank" rel="noopener"><span>rust-lightning</span><strong>Expose current dust exposure in ChannelDetails</strong></a>
+              <a class="pr" href="https://github.com/moby/moby/pull/53322" target="_blank" rel="noopener"><span>Docker</span><strong>Test awslogs at the HTTP client boundary</strong></a>
+              <a class="pr" href="https://github.com/googleworkspace/cli/pulls?q=is%3Apr+author%3ABortlesboat+is%3Amerged" target="_blank" rel="noopener"><span>Google</span><strong>OAuth scope, token-cache, and musl build fixes</strong></a>
+              <a class="pr-all" href="https://github.com/Bortlesboat/Bortlesboat/blob/main/github-contributions.md" target="_blank" rel="noopener">All <span data-stat="merged_prs">231</span> merged PRs <span aria-hidden="true">→</span></a>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="contact-panel" aria-label="Contact">
-        <p class="kicker">Contact</p>
-        <h2>Tech FP&A and AI workflow automation.</h2>
-        <p>
-          Best-fit areas: FP&A manager-track work, finance automation, Python and SQL
-          dashboards, AI workflow tooling, Bitcoin/x402 protocol surfaces, and backend
-          systems where finance context matters.
-        </p>
-        <div class="hero-actions">
-          <a class="button button-primary" href="mailto:bortlesboat@gmail.com">Email Andrew</a>
-          <a class="button button-secondary" href="/fpa-advisory/">FP&A advisory</a>
-          <a class="button button-secondary" href="https://github.com/Bortlesboat" target="_blank" rel="noopener me">GitHub profile</a>
+      <!-- 5 · Contact -->
+      <section id="contact" class="section contact">
+        <div class="wrap">
+          <div class="contact-card reveal">
+            <p class="eyebrow">Contact</p>
+            <h2>Finance context.<br /><em>Working code.</em></h2>
+            <p>Best fit: FP&A manager-track roles, finance automation, and teams where finance meets engineering.</p>
+            <div class="actions">
+              <a class="btn btn-primary" href="mailto:bortlesboat@gmail.com">bortlesboat@gmail.com</a>
+              <a class="btn" href="https://github.com/Bortlesboat" target="_blank" rel="noopener me">GitHub</a>
+              <a class="btn" href="/fpa-advisory/">FP&A advisory</a>
+            </div>
+          </div>
         </div>
       </section>
     </main>
+
+    <footer class="footer">
+      <div class="wrap footer-inner">
+        <span>© <span id="year">2026</span> Andrew Barnes</span>
+        <nav aria-label="More">
+          <a href="/proof/" data-analytics-event="proof_link_clicked" data-analytics-location="footer">Proof graph</a>
+          <a href="/reel/">Motion reel</a>
+          <a href="/llms.txt">llms.txt</a>
+          <a href="https://github.com/Bortlesboat/Bortlesboat.github.io" target="_blank" rel="noopener">Site source</a>
+        </nav>
+      </div>
+    </footer>
 
     <script defer src="/analytics.js"></script>
     <script type="module" src="/src/main.js"></script>
