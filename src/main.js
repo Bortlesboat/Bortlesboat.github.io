@@ -1,5 +1,6 @@
 import './style.css'
 import stats from '../public/stats.json'
+import oss from './data/ossHighlights.json'
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 const fmt = (n) => Number(n).toLocaleString('en-US')
@@ -16,6 +17,30 @@ for (const el of document.querySelectorAll('[data-repo-count]')) {
 }
 const yearEl = document.getElementById('year')
 if (yearEl) yearEl.textContent = new Date().getFullYear()
+
+// ── verified open-source highlights (dated snapshot: src/data/ossHighlights.json) ──
+const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+const kStars = (n) => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k` : String(n))
+for (const el of document.querySelectorAll('[data-oss]')) el.textContent = fmt(oss.substantive20k[el.dataset.oss])
+const namesEl = document.getElementById('oss-names')
+if (namesEl) {
+  namesEl.innerHTML = oss.names
+    .map((n) => `<li><a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.name)}</a></li>`)
+    .join('')
+}
+const featuredEl = document.getElementById('oss-featured')
+if (featuredEl) {
+  featuredEl.innerHTML = oss.featured
+    .map((f) => `
+      <a class="pr" href="${esc(f.url)}" target="_blank" rel="noopener">
+        <span class="pr-project">${esc(f.project)}<small>★ ${kStars(f.stars)}</small></span>
+        <strong>${esc(f.title)}</strong>
+        <span class="pr-by">${f.mergedBy ? `@${esc(f.mergedBy)}` : 'maintainers'}</span>
+      </a>`)
+    .join('')
+}
+const methodEl = document.getElementById('oss-method')
+if (methodEl) methodEl.textContent = `Stars and substantive counts as of ${oss.asOf}. ${oss.method}`
 
 // ── merged PRs per month (from the first active month through now) ──
 const chartEl = document.getElementById('merge-chart')

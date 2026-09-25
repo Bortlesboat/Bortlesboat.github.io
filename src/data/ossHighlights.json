@@ -1,0 +1,136 @@
+{
+  "asOf": "2026-09-25",
+  "method": "Substantive = at least 10 changed lines; curated link lists (awesome-*, public-apis, and similar) excluded. Star counts from the GitHub API on the as-of date.",
+  "substantive20k": {
+    "prs": 77,
+    "repos": 51
+  },
+  "featured": [
+    {
+      "project": "Ghidra (NSA)",
+      "repo": "NationalSecurityAgency/ghidra",
+      "stars": 79657,
+      "title": "PyGhidra: keep bean properties out of script-globals iteration",
+      "url": "https://github.com/NationalSecurityAgency/ghidra/pull/9642",
+      "mergedBy": "ryanmkurtz"
+    },
+    {
+      "project": "Ruff",
+      "repo": "astral-sh/ruff",
+      "stars": 49788,
+      "title": "Implement the delattr-with-constant lint rule (B043)",
+      "url": "https://github.com/astral-sh/ruff/pull/23737",
+      "mergedBy": "amyreese"
+    },
+    {
+      "project": "vLLM",
+      "repo": "vllm-project/vllm",
+      "stars": 92676,
+      "title": "6 merged PRs: config registration and ROCm kernel fixes",
+      "url": "https://github.com/vllm-project/vllm/pulls?q=is%3Apr+author%3ABortlesboat+is%3Amerged",
+      "mergedBy": null
+    },
+    {
+      "project": "Unsloth",
+      "repo": "unslothai/unsloth",
+      "stars": 76773,
+      "title": "Fix a Windows subprocess crash during dataset map",
+      "url": "https://github.com/unslothai/unsloth/pull/4507",
+      "mergedBy": "danielhanchen"
+    },
+    {
+      "project": "rust-bitcoin",
+      "repo": "rust-bitcoin/rust-bitcoin",
+      "stars": 2681,
+      "title": "Implement From<Infallible> for all public error types",
+      "url": "https://github.com/rust-bitcoin/rust-bitcoin/pull/5781",
+      "mergedBy": "apoelstra"
+    },
+    {
+      "project": "rust-lightning",
+      "repo": "lightningdevkit/rust-lightning",
+      "stars": 1373,
+      "title": "Expose current dust exposure in ChannelDetails",
+      "url": "https://github.com/lightningdevkit/rust-lightning/pull/4470",
+      "mergedBy": "TheBlueMatt"
+    },
+    {
+      "project": "OpenBB",
+      "repo": "OpenBB-finance/OpenBB",
+      "stars": 73461,
+      "title": "Remove unsafe eval() calls from the script parser",
+      "url": "https://github.com/OpenBB-finance/OpenBB/pull/7403",
+      "mergedBy": "deeleeramone"
+    },
+    {
+      "project": "Microsoft winget",
+      "repo": "microsoft/winget-cli",
+      "stars": 26453,
+      "title": "Sort and deduplicate exported packages",
+      "url": "https://github.com/microsoft/winget-cli/pull/6438",
+      "mergedBy": "JohnMcPMS"
+    }
+  ],
+  "names": [
+    {
+      "name": "Microsoft",
+      "url": "https://github.com/microsoft/winget-cli/pull/6438"
+    },
+    {
+      "name": "Google",
+      "url": "https://github.com/googleworkspace/cli/pulls?q=is%3Apr+author%3ABortlesboat+is%3Amerged"
+    },
+    {
+      "name": "NSA Ghidra",
+      "url": "https://github.com/NationalSecurityAgency/ghidra/pull/9642"
+    },
+    {
+      "name": "CPython",
+      "url": "https://github.com/python/cpython/pull/145538"
+    },
+    {
+      "name": "vLLM",
+      "url": "https://github.com/vllm-project/vllm/pulls?q=is%3Apr+author%3ABortlesboat+is%3Amerged"
+    },
+    {
+      "name": "Ruff",
+      "url": "https://github.com/astral-sh/ruff/pull/23737"
+    },
+    {
+      "name": "Docker",
+      "url": "https://github.com/moby/moby/pull/53322"
+    },
+    {
+      "name": "pytest",
+      "url": "https://github.com/pytest-dev/pytest/pulls?q=is%3Apr+author%3ABortlesboat+is%3Amerged"
+    },
+    {
+      "name": "ByteDance",
+      "url": "https://github.com/bytedance/deer-flow/pulls?q=is%3Apr+author%3ABortlesboat+is%3Amerged"
+    },
+    {
+      "name": "Unsloth",
+      "url": "https://github.com/unslothai/unsloth/pull/4507"
+    },
+    {
+      "name": "OpenBB",
+      "url": "https://github.com/OpenBB-finance/OpenBB/pulls?q=is%3Apr+author%3ABortlesboat+is%3Amerged"
+    },
+    {
+      "name": "rust-bitcoin",
+      "url": "https://github.com/rust-bitcoin/rust-bitcoin/pull/5781"
+    },
+    {
+      "name": "rust-lightning",
+      "url": "https://github.com/lightningdevkit/rust-lightning/pull/4470"
+    },
+    {
+      "name": "LiveKit",
+      "url": "https://github.com/livekit/agents/pull/6568"
+    },
+    {
+      "name": "OpenAI",
+      "url": "https://github.com/openai/privacy-filter/pull/1"
+    }
+  ]
+}
