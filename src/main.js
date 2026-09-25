@@ -75,3 +75,28 @@ if (caseStudyEl) {
     `)
     .join('')
 }
+
+const motionVideo = document.getElementById('motion-video')
+const motionSound = document.getElementById('motion-sound')
+if (motionVideo && motionSound) {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  let userPaused = reduceMotion
+
+  // Autoplay muted only while on screen; reduced-motion visitors start from the poster.
+  new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting && !userPaused) motionVideo.play().catch(() => {})
+    else motionVideo.pause()
+  }, { threshold: 0.35 }).observe(motionVideo)
+
+  motionSound.addEventListener('click', () => {
+    const unmute = motionVideo.muted
+    motionVideo.muted = !unmute
+    if (unmute) {
+      userPaused = false
+      motionVideo.currentTime = 0
+      motionVideo.play().catch(() => {})
+    }
+    motionSound.textContent = unmute ? 'Mute' : 'Play with sound'
+    motionSound.setAttribute('aria-pressed', String(unmute))
+  })
+}

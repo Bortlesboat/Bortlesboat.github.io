@@ -186,6 +186,37 @@
         </div>
       </section>
 
+      <section id="motion-study" class="artifact-section motion-section" aria-labelledby="motion-title">
+        <div class="section-intro section-intro-split">
+          <div>
+            <p class="kicker">Motion study</p>
+            <h2 id="motion-title">Proof of work, rendered in code.</h2>
+          </div>
+          <p>
+            A 15-second reel covering Bitcoin, options flow, FP&A, and open source. Every frame
+            is drawn with canvas 2D, and the soundtrack is synthesized from the same timing math.
+            There are no templates or stock footage.
+          </p>
+        </div>
+
+        <figure class="artifact-shot motion-shot">
+          <div class="motion-frame">
+            <video id="motion-video" src="/reel/reel-720.mp4" poster="/reel/poster.jpg" muted loop playsinline preload="metadata" aria-label="Proof of Work motion study: genesis block, mempool to block, options whale flow, FP&A waterfall, git merge graph, and signature."></video>
+          </div>
+          <figcaption>
+            <span>Craft</span>
+            <strong>Canvas renderer, deterministic Playwright frame capture, numpy soundtrack, ffmpeg. Figures in the reel are illustrative.</strong>
+            <button id="motion-sound" class="motion-sound" type="button" aria-pressed="false">Play with sound</button>
+          </figcaption>
+        </figure>
+
+        <div class="hero-actions motion-actions">
+          <a class="button button-primary" href="/reel/" data-analytics-event="proof_link_clicked" data-analytics-location="motion_study">Watch it render live</a>
+          <a class="button button-secondary" href="/reel/reel-1080.mp4">1080p60 with sound</a>
+          <a class="button button-secondary" href="https://github.com/Bortlesboat/Bortlesboat.github.io/blob/main/public/reel/index.html" target="_blank" rel="noopener">View source</a>
+        </div>
+      </section>
+
       <section id="case-ledger" class="case-section" aria-labelledby="case-title">
         <div class="section-intro section-intro-split">
           <div>
