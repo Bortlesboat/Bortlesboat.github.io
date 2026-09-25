@@ -700,3 +700,6 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
 }
+
+// Portfolio links use ?demo so first-time visitors land on a populated example.
+if (new URLSearchParams(window.location.search).has("demo")) elements.sampleButton.click();

@@ -48,8 +48,8 @@
           Andrew Barnes
         </a>
         <nav class="nav-links" aria-label="Primary">
-          <a href="#work">Work</a>
           <a href="#open-source">Open source</a>
+          <a href="#work">Work</a>
           <a href="#contact">Contact</a>
           <a class="nav-gh" href="https://github.com/Bortlesboat" target="_blank" rel="noopener me">GitHub <span aria-hidden="true">↗</span></a>
         </nav>
@@ -70,7 +70,7 @@
             Google, CPython, vLLM, and the NSA's Ghidra.
           </p>
           <div class="actions reveal">
-            <a class="btn btn-primary" href="#work">See the work</a>
+            <a class="btn btn-primary" href="#open-source">See the work</a>
             <a class="btn" href="mailto:bortstheboat@gmail.com">Email me</a>
           </div>
 
@@ -106,72 +106,11 @@
         </div>
       </section>
 
-      <!-- 3 · What I've built -->
-      <section id="work" class="section">
-        <div class="wrap">
-          <header class="section-head reveal">
-            <p class="eyebrow">Selected work</p>
-            <h2>Tools I've <em>built.</em></h2>
-            <p>Finance first. Then AI agents and Bitcoin, where money moves through code.</p>
-          </header>
+      
 
-          <div class="bento">
-            <a class="card card-lg reveal" href="/variance-memo/">
-              <div class="card-shot"><img src="/evidence/finance-file-triage.jpg" alt="Finance File Triage with a demo P&amp;L loaded: mapped fields, material variances, and driver notes" loading="lazy" /></div>
-              <div class="card-body">
-                <span class="tag tag-fpa">FP&A</span>
-                <h3>Finance File Triage</h3>
-                <p>Turns a messy budget-vs-actual export into a row-linked review agenda: material variances, driver notes, and what the file can't prove. It runs in the browser, so nothing is uploaded.</p>
-              </div>
-              <span class="card-arrow" aria-hidden="true">↗</span>
-            </a>
+      
 
-            <a class="card card-lg reveal" href="https://github.com/Bortlesboat/bitcoin-api" target="_blank" rel="noopener">
-              <div class="card-shot"><img src="/evidence/satoshi-api-home.png" alt="Satoshi API homepage showing fee recommendation, mempool pressure and next-block forecast" loading="lazy" /></div>
-              <div class="card-body">
-                <span class="tag tag-btc">Bitcoin</span>
-                <h3>Satoshi API</h3>
-                <p>Self-hostable Bitcoin fee intelligence: fee recommendations, mempool context, and x402-payable routes. The hosted service is paused; the source and tests are public.</p>
-              </div>
-              <span class="card-arrow" aria-hidden="true">↗</span>
-            </a>
-
-            <a class="card reveal" href="https://github.com/Bortlesboat/Bortlesboat/blob/main/case-studies.md#8-finance-dashboard-private-fpa-automation" target="_blank" rel="noopener">
-              <span class="tag tag-fpa">FP&A</span>
-              <h3>Finance Dashboard</h3>
-              <p>One intake point for portals, emails, PDFs, and CSVs, with manual review built in.</p>
-              <span class="facts">Streamlit · SQLite · 126 tests</span>
-              <span class="card-arrow" aria-hidden="true">↗</span>
-            </a>
-
-            <a class="card reveal" href="https://github.com/Bortlesboat/bitcoin-mcp" target="_blank" rel="noopener">
-              <span class="tag tag-ai">AI agents</span>
-              <h3>bitcoin-mcp</h3>
-              <p>Gives AI agents Bitcoin context without scraping explorers or hand-wiring RPC.</p>
-              <span class="facts">50 tools · 6 prompts · 180 tests</span>
-              <span class="card-arrow" aria-hidden="true">↗</span>
-            </a>
-
-            <a class="card reveal" href="https://bortlesboat.github.io/x402-insights/launch.html" target="_blank" rel="noopener">
-              <span class="tag tag-ai">AI agents</span>
-              <h3>AgentOps Ledger</h3>
-              <p>A readable run log for agent approvals, retries, errors, and payment events.</p>
-              <span class="facts">Demo · case study · Splunk HEC proof</span>
-              <span class="card-arrow" aria-hidden="true">↗</span>
-            </a>
-
-            <a class="card reveal" href="/agent-payments/signal-ledger/" data-analytics-event="proof_link_clicked" data-analytics-location="work_grid">
-              <span class="tag tag-pay">Payments</span>
-              <h3>Agent Payment Ledger</h3>
-              <p>A sourced ledger of live x402 and L402 endpoints, with pricing hints and proof status.</p>
-              <span class="facts">x402 · L402 · sourced</span>
-              <span class="card-arrow" aria-hidden="true">↗</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- 4 · Open source -->
+      <!-- 3 · Open source -->
       <section id="open-source" class="section">
         <div class="wrap">
           <header class="section-head reveal">
@@ -201,6 +140,46 @@
               <div id="merge-chart" class="chart" role="img" aria-label="Bar chart of merged pull requests per month"></div>
               <p class="method" id="oss-method"></p>
             </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 · What I've built -->
+      <section id="work" class="section">
+        <div class="wrap">
+          <header class="section-head reveal">
+            <p class="eyebrow">Selected work</p>
+            <h2>Tools I've <em>built.</em></h2>
+            <p>A finance tool for FP&A teams, and open-source infrastructure for developers building Bitcoin-aware AI agents.</p>
+          </header>
+
+          <div class="bento">
+            <a class="card card-lg card-feature reveal" href="/variance-memo/?demo">
+              <div class="card-shot"><img src="/evidence/finance-file-triage.jpg" alt="Finance File Triage with a demo P&amp;L loaded: mapped fields, material variances, and driver notes" loading="lazy" /></div>
+              <div class="card-body">
+                <span class="tag tag-fpa">FP&A</span>
+                <h3>Finance File Triage</h3>
+                <p>Turns a messy budget-vs-actual export into a row-linked review agenda: material variances, driver notes, and what the file can't prove. It runs in the browser, so nothing is uploaded.</p>
+                <span class="facts">Try it with the demo P&amp;L · CSV and XLSX · no upload</span>
+              </div>
+              <span class="card-arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a class="card card-side reveal" href="https://github.com/Bortlesboat/bitcoin-mcp" target="_blank" rel="noopener">
+              <span class="tag tag-ai">AI agents</span>
+              <h3>bitcoin-mcp</h3>
+              <p>An MCP server that gives AI agents Bitcoin context (fees, mempool, blocks, transactions) straight from your own node.</p>
+              <span class="facts">50 tools · 6 prompts · 8 resources · MIT</span>
+              <span class="card-arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a class="card card-side reveal" href="https://github.com/Bortlesboat/bitcoin-api" target="_blank" rel="noopener">
+              <span class="tag tag-btc">Bitcoin</span>
+              <h3>Satoshi API</h3>
+              <p>Self-hostable Bitcoin fee intelligence with optional MCP and x402 integrations. The hosted service is paused; the source and tests are public.</p>
+              <span class="facts">FastAPI · Docker · Apache-2.0</span>
+              <span class="card-arrow" aria-hidden="true">↗</span>
+            </a>
           </div>
         </div>
       </section>

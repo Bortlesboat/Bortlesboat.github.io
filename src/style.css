@@ -396,6 +396,15 @@ em {
   padding: 0;
 }
 
+.card-feature {
+  grid-column: span 8;
+  grid-row: span 2;
+}
+
+.card-side {
+  grid-column: span 4;
+}
+
 .card-shot {
   position: relative;
   aspect-ratio: 16 / 9;
@@ -745,7 +754,8 @@ em {
 /* ── responsive ──────────────────────────────────── */
 @media (max-width: 960px) {
   .card { grid-column: span 6; }
-  .card-lg { grid-column: span 12; }
+  .card-lg,
+  .card-feature { grid-column: span 12; grid-row: auto; }
   .oss-grid { grid-template-columns: 1fr; }
 }
 
