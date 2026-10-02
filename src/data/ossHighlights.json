@@ -1,11 +1,19 @@
 {
   "asOf": "2026-09-25",
-  "method": "Substantive = at least 10 changed lines; curated link lists (awesome-*, public-apis, and similar) excluded. Star counts from the GitHub API on the as-of date.",
+  "method": "Substantive = at least 10 changed lines; curated link lists (awesome-*, public-apis, and similar) excluded. Star counts from the GitHub API on the as-of date. Featured examples are selected separately from the substantive count.",
   "substantive20k": {
     "prs": 77,
     "repos": 51
   },
   "featured": [
+    {
+      "project": "OpenAI Python SDK",
+      "repo": "openai/openai-python",
+      "title": "Expose the response-format helper through the public SDK",
+      "url": "https://github.com/openai/openai-python/pull/2993",
+      "mergedBy": "marcuswood-oai",
+      "mergedAt": "2026-10-02"
+    },
     {
       "project": "Ghidra (NSA)",
       "repo": "NationalSecurityAgency/ghidra",
@@ -130,7 +138,7 @@
     },
     {
       "name": "OpenAI",
-      "url": "https://github.com/openai/privacy-filter/pull/1"
+      "url": "https://github.com/openai/openai-python/pull/2993"
     }
   ]
 }
