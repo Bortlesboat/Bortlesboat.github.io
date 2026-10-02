@@ -311,13 +311,18 @@
       "name": "OSS Contribution Graph",
       "status": "active-public-record",
       "statusLabel": "Dated public merged-PR evidence",
-      "lastVerified": "2026-09-07",
-      "summary": "231 authored, merged PRs across 152 external public repositories in the September 25, 2025 to September 25, 2026 window; repeat contributions to 35 repositories.",
+      "lastVerified": "2026-10-02",
+      "summary": "240 authored, merged PRs across 160 external public repositories in the October 2, 2025 to October 2, 2026 window; repeat contributions to 36 repositories. Includes OpenAI's Python SDK public response-format helper.",
       "proofLinks": [
         {
           "label": "GitHub contribution map",
           "url": "https://github.com/Bortlesboat/Bortlesboat/blob/main/github-contributions.md",
           "type": "portfolio-doc"
+        },
+        {
+          "label": "OpenAI Python SDK public helper",
+          "url": "https://github.com/openai/openai-python/pull/2993",
+          "type": "merged-pr"
         },
         {
           "label": "OpenAI privacy-filter PR",
@@ -342,7 +347,7 @@
       ],
       "machineLinks": [
         {
-          "label": "Dated profile snapshot (September 25, 2026)",
+          "label": "Dated profile snapshot (October 2, 2026)",
           "url": "https://raw.githubusercontent.com/Bortlesboat/Bortlesboat/main/oss-contributions.json",
           "type": "json"
         },

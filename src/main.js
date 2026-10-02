@@ -33,7 +33,7 @@ if (featuredEl) {
   featuredEl.innerHTML = oss.featured
     .map((f) => `
       <a class="pr" href="${esc(f.url)}" target="_blank" rel="noopener">
-        <span class="pr-project">${esc(f.project)}<small>★ ${kStars(f.stars)}</small></span>
+        <span class="pr-project">${esc(f.project)}${Number.isFinite(f.stars) ? `<small>★ ${kStars(f.stars)}</small>` : ''}</span>
         <strong>${esc(f.title)}</strong>
         <span class="pr-by">${f.mergedBy ? `@${esc(f.mergedBy)}` : 'maintainers'}</span>
       </a>`)

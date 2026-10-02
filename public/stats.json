@@ -2,17 +2,16 @@
   "username": "Bortlesboat",
   "scope": "Authored, merged pull requests in public repositories outside Bortlesboat, by merge date",
   "window": {
-    "start": "2025-09-25",
-    "end": "2026-09-25"
+    "start": "2025-10-02",
+    "end": "2026-10-02"
   },
-  "query": "author:Bortlesboat is:pr is:merged is:public -user:Bortlesboat merged:2025-09-25..2026-09-25",
-  "source_url": "https://github.com/search?q=author%3ABortlesboat%20is%3Apr%20is%3Amerged%20is%3Apublic%20-user%3ABortlesboat%20merged%3A2025-09-25..2026-09-25&type=pullrequests",
-  "fetched_at": "2026-09-25T18:56:59.338Z",
-  "merged_prs": 231,
-  "repos_contributed_to": 152,
-  "repeat_repositories": 35,
+  "query": "author:Bortlesboat is:pr is:merged is:public -user:Bortlesboat merged:2025-10-02..2026-10-02",
+  "source_url": "https://github.com/search?q=author%3ABortlesboat%20is%3Apr%20is%3Amerged%20is%3Apublic%20-user%3ABortlesboat%20merged%3A2025-10-02..2026-10-02&type=pullrequests",
+  "fetched_at": "2026-10-02T21:02:35.510Z",
+  "merged_prs": 240,
+  "repos_contributed_to": 160,
+  "repeat_repositories": 36,
   "monthly": {
-    "2025-09": 0,
     "2025-10": 0,
     "2025-11": 0,
     "2025-12": 0,
@@ -24,7 +23,8 @@
     "2026-06": 22,
     "2026-07": 40,
     "2026-08": 17,
-    "2026-09": 24
+    "2026-09": 29,
+    "2026-10": 4
   },
   "items": [
     {
@@ -149,8 +149,8 @@
     },
     {
       "title": "[BugFix] Remove unnecessary eval() calls in script_parser.py",
-      "url": "https://github.com/OpenBB-finance/OpenBB/pull/7403",
-      "repo": "OpenBB-finance/OpenBB",
+      "url": "https://github.com/openbq-org/OpenBB/pull/7403",
+      "repo": "openbq-org/OpenBB",
       "merged_at": "2026-03-13T05:01:33Z"
     },
     {
@@ -305,8 +305,8 @@
     },
     {
       "title": "test: add coverage for CLI utility functions",
-      "url": "https://github.com/OpenBB-finance/OpenBB/pull/7422",
-      "repo": "OpenBB-finance/OpenBB",
+      "url": "https://github.com/openbq-org/OpenBB/pull/7422",
+      "repo": "openbq-org/OpenBB",
       "merged_at": "2026-03-24T16:49:27Z"
     },
     {
@@ -1412,6 +1412,60 @@
       "url": "https://github.com/NationalSecurityAgency/ghidra/pull/9642",
       "repo": "NationalSecurityAgency/ghidra",
       "merged_at": "2026-09-24T09:52:14Z"
+    },
+    {
+      "title": "Guard direct GhosttyKit setup against incompatible Zig",
+      "url": "https://github.com/manaflow-ai/cmux/pull/4706",
+      "repo": "manaflow-ai/cmux",
+      "merged_at": "2026-09-25T20:22:35Z"
+    },
+    {
+      "title": "Fix StackOverflowError for services that return their own type",
+      "url": "https://github.com/cashapp/zipline/pull/1841",
+      "repo": "cashapp/zipline",
+      "merged_at": "2026-09-28T14:46:35Z"
+    },
+    {
+      "title": "Server: keep a paid reply when the phone disconnects",
+      "url": "https://github.com/emir/AIKON/pull/2",
+      "repo": "emir/AIKON",
+      "merged_at": "2026-09-29T02:28:38Z"
+    },
+    {
+      "title": "fix(ci): recognize GUI token acquisition failures",
+      "url": "https://github.com/manaflow-ai/cmux/pull/15449",
+      "repo": "manaflow-ai/cmux",
+      "merged_at": "2026-09-29T15:38:07Z"
+    },
+    {
+      "title": "fix(scan): preserve Unicode in Steam game discovery",
+      "url": "https://github.com/rehan-remade/universal-modder/pull/1",
+      "repo": "rehan-remade/universal-modder",
+      "merged_at": "2026-09-30T21:37:21Z"
+    },
+    {
+      "title": "Keep library scans quiet by default",
+      "url": "https://github.com/bee-san/RustScan/pull/916",
+      "repo": "bee-san/RustScan",
+      "merged_at": "2026-10-01T10:52:04Z"
+    },
+    {
+      "title": "Return numeric flags from spell-targeting predicates",
+      "url": "https://github.com/samwhosung/benilla/pull/764",
+      "repo": "samwhosung/benilla",
+      "merged_at": "2026-10-02T06:45:17Z"
+    },
+    {
+      "title": "fix(postgrest): preserve text search negation",
+      "url": "https://github.com/supabase/supabase-py/pull/1624",
+      "repo": "supabase/supabase-py",
+      "merged_at": "2026-10-02T14:40:58Z"
+    },
+    {
+      "title": "feat(lib): export type_to_response_format_param publicly",
+      "url": "https://github.com/openai/openai-python/pull/2993",
+      "repo": "openai/openai-python",
+      "merged_at": "2026-10-02T20:13:14Z"
     }
   ]
 }
