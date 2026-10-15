@@ -105,6 +105,7 @@ export function parseCsv(text) {
 
   row.push(cell.trim());
   pushCsvRow(rows, row);
+  while (rows.length && rows.at(-1).every((value) => !String(value).trim())) rows.pop();
   return rows;
 }
 
@@ -115,16 +116,17 @@ export function rowsToObjects(rows) {
 
   const headerIndex = findHeaderRowIndex(rows);
   const headers = inferHeaders(rows, headerIndex);
+  if (duplicateHeaderErrors(headers).length) return [];
   return rows
     .slice(headerIndex + 1)
-    .filter((row) => row.some((cell) => String(cell ?? "").trim().length > 0))
     .map((row, rowIndex) => {
+      if (!row.some((cell) => String(cell ?? "").trim().length > 0)) return null;
       const record = { __sourceRow: headerIndex + rowIndex + 2 };
       for (let index = 0; index < headers.length; index += 1) {
         record[headers[index]] = row[index] ?? "";
       }
       return record;
-    });
+    }).filter(Boolean);
 }
 
 export async function parseWorkbook(input) {
@@ -137,6 +139,8 @@ export async function parseWorkbook(input) {
 
   const rels = parseRelationships(files.get("xl/_rels/workbook.xml.rels") ?? "");
   const sharedStrings = parseSharedStrings(files.get("xl/sharedStrings.xml") ?? "");
+  const styles = parseNumberStyles(files.get("xl/styles.xml") ?? "");
+  const date1904 = /<workbookPr\b[^>]*\bdate1904="(?:1|true)"/.test(workbookXml);
   const sheets = parseWorkbookSheets(workbookXml);
   const parsedSheets = [];
 
@@ -149,7 +153,7 @@ export async function parseWorkbook(input) {
     }
     parsedSheets.push({
       name: sheet.name || `Sheet ${parsedSheets.length + 1}`,
-      rows: parseWorksheetRows(sheetXml, sharedStrings),
+      ...parseWorksheetRows(sheetXml, sharedStrings, styles, date1904),
     });
   }
 
@@ -174,7 +178,7 @@ export function normalizeFinancialRecords(records) {
   if (!fieldMap.account) {
     return [];
   }
-  const hasVerticalShape = Boolean(fieldMap.period && (fieldMap.actual || fieldMap.budget || fieldMap.forecast || fieldMap.priorYear));
+  const hasVerticalShape = Boolean(fieldMap.actual || fieldMap.budget || fieldMap.forecast || fieldMap.priorYear);
 
   if (hasVerticalShape) {
     return normalizeVerticalRecords(records, fieldMap);
@@ -183,7 +187,66 @@ export function normalizeFinancialRecords(records) {
   return normalizeWideRecords(records, headers, fieldMap);
 }
 
-export function inspectRows(rows, sourceSheet = "") {
+export function inspectRows(rows, sourceSheet = "", sourceErrors = []) {
+  rows = Array.isArray(rows) ? rows : [];
+  const report = inspectRowShape(rows, sourceSheet);
+  const errors = [...sourceErrors, ...duplicateHeaderErrors(report.headers)];
+  const warnings = [];
+  const amountFields = new Set(["actual", "budget", "forecast", "priorYear", "amount", "debit", "credit", "balance", "currentValue", "costBasisTotal", "totalGainLossDollar", "todayGainLossDollar", "openAmount"]);
+  const amountColumns = new Set(Object.entries(report.mappedFields).filter(([key]) => amountFields.has(key)).map(([, column]) => column));
+  if (report.mode === "fpna_variance") {
+    for (const header of report.headers) if (parseMeasureHeader(header)) amountColumns.add(header);
+    if (!report.mappedFields.period && report.headers.some((header) => ["actual", "actuals", "budget", "plan"].includes(normalizeHeader(header)))) {
+      warnings.push("Period is not supplied; amounts are compared within each row using Unspecified period.");
+    }
+    warnings.push("Favorability assumes positive expenses and positive revenue; negative expense budgets require review of the sign convention. Amounts retain their original signs.");
+  }
+  rows.slice(report.headerRowIndex + 1).forEach((row, index) => {
+    const rowNumber = report.headerRowNumber + index + 1;
+    for (const column of amountColumns) {
+      const value = String(row[report.headers.indexOf(column)] ?? "");
+      if (value.includes("%") || /\b(percent|ratio|margin|bps)\b/i.test(column)) {
+        errors.push(`[row ${rowNumber}] ${column} uses a percentage or ratio; dollar analysis requires monetary values in one currency and unit.`);
+      }
+    }
+    const category = row[report.headers.indexOf(report.mappedFields.category)];
+    if (report.mode === "fpna_variance" && /\b(ratio|percent|percentage|margin)\b/i.test(String(category ?? ""))) {
+      errors.push(`[row ${rowNumber}] Ratio measures are unsupported; provide monetary actual and budget amounts.`);
+    }
+    if (report.mode === "invoice_aging" && ["amount", "invoice amount"].includes(normalizeHeader(report.mappedFields.openAmount))) {
+      const status = String(row[report.headers.indexOf(report.mappedFields.status)] ?? "").trim();
+      if (!/^(unpaid|open|outstanding)$/i.test(status)) {
+        errors.push(`[row ${rowNumber}] Invoice amount does not establish the outstanding balance; supply Open Amount or an explicit Unpaid/Open status.`);
+      }
+    }
+  });
+  return {
+    ...report,
+    mode: errors.length ? "unsupported_financial_file" : report.mode,
+    canAnalyze: report.canAnalyze && errors.length === 0,
+    errors: [...new Set(errors)],
+    warnings,
+  };
+}
+
+function duplicateHeaderErrors(headers) {
+  const seen = new Set();
+  const measures = new Set();
+  const errors = [];
+  for (const header of headers) {
+    const normalized = normalizeHeader(header);
+    if (seen.has(normalized)) errors.push(`Duplicate header ${header}; use unique columns before analysis.`);
+    seen.add(normalized);
+    const vertical = Object.entries(FIELD_SYNONYMS).find(([field, synonyms]) => ["actual", "budget", "forecast", "priorYear"].includes(field) && synonyms.includes(normalized));
+    const wide = parseMeasureHeader(header);
+    const key = vertical ? vertical[0] : wide ? `${wide.measure}:${normalizeHeader(wide.period)}` : null;
+    if (key && measures.has(key)) errors.push(`Ambiguous measure ${header}; multiple columns map to the same measure and period.`);
+    if (key) measures.add(key);
+  }
+  return errors;
+}
+
+function inspectRowShape(rows, sourceSheet = "") {
   if (!Array.isArray(rows) || rows.length === 0) {
     return {
       mode: "fpna_variance",
@@ -219,7 +282,8 @@ export function inspectRows(rows, sourceSheet = "") {
   }
 
   const transactionFieldMap = buildTransactionFieldMap(headers);
-  if (isTransactionFieldMap(transactionFieldMap)) {
+  const invoiceFieldMap = buildInvoiceFieldMap(headers);
+  if (isTransactionFieldMap(transactionFieldMap) && !isInvoiceFieldMap(invoiceFieldMap)) {
     const missingRequiredFields = requiredTransactionFieldGaps(transactionFieldMap);
     return {
       mode: "financial_transactions",
@@ -235,7 +299,6 @@ export function inspectRows(rows, sourceSheet = "") {
     };
   }
 
-  const invoiceFieldMap = buildInvoiceFieldMap(headers);
   if (isInvoiceFieldMap(invoiceFieldMap)) {
     const missingRequiredFields = requiredInvoiceFieldGaps(invoiceFieldMap);
     return {
@@ -294,8 +357,8 @@ export function analyzeVariance(rows, options = {}) {
     }
 
     const lineType = classifyLineType(row);
-    const comparableActual = comparableValue(row.actual, lineType);
-    const comparableBudget = comparableValue(row.budget, lineType);
+    const comparableActual = row.actual;
+    const comparableBudget = row.budget;
     const variance = comparableActual - comparableBudget;
     const variancePct = comparableBudget === 0 ? null : variance / Math.abs(comparableBudget);
     const material = Math.abs(variance) >= dollarThreshold || (variancePct !== null && Math.abs(variancePct) >= percentThreshold);
@@ -303,7 +366,8 @@ export function analyzeVariance(rows, options = {}) {
       continue;
     }
 
-    const favorability = lineType === "expense" ? (variance <= 0 ? "favorable" : "unfavorable") : variance >= 0 ? "favorable" : "unfavorable";
+    const uncertain = lineType === "unknown" || row.budget < 0;
+    const favorability = uncertain ? "needs review" : lineType === "expense" ? (variance <= 0 ? "favorable" : "unfavorable") : variance >= 0 ? "favorable" : "unfavorable";
 
     variances.push({
       rowRef: row.sourceRow,
@@ -319,7 +383,7 @@ export function analyzeVariance(rows, options = {}) {
       variancePct,
       favorability,
       lineType,
-      confidence: confidenceFor(row, lineType, variancePct),
+      confidence: uncertain ? "review" : confidenceFor(row, lineType, variancePct),
       sourceColumns: row.sourceColumns ?? {},
     });
   }
@@ -383,6 +447,7 @@ export function buildBoardMemo(analysis) {
 
   lines.push("");
   lines.push("## Needs context before sending");
+  lines.push("- Favorability assumes positive expenses and positive revenue. Negative budgets or unknown line types need sign convention and category review; original signed amounts are preserved.");
   lines.push("- Confirm whether each variance is timing, volume/rate, mix, accrual/classification, or one-time activity.");
   lines.push("- Commentary is generated from mapped rows only; it does not know contracts, invoices, headcount changes, or management decisions.");
   lines.push("- Rows without account, actual, and budget values are excluded from material variance ranking.");
@@ -437,6 +502,11 @@ export function buildDiagnosticPacket(result) {
   ];
 
   appendBullets(lines, diagnosticFileBasis(importReport, analysis));
+  const importMessages = [...(importReport.errors ?? []), ...(importReport.warnings ?? [])];
+  if (importMessages.length) {
+    lines.push("", "## Import checks");
+    appendBullets(lines, importMessages);
+  }
   lines.push("", "## What the file supports");
   appendBullets(lines, diagnostic.supports);
   lines.push("", "## Rows to use next");
@@ -452,6 +522,13 @@ export function buildDiagnosticPacket(result) {
   lines.push("", "## Automation questions to ask");
   appendBullets(lines, diagnostic.automationQuestions);
   lines.push("", "## Caveated anonymized summary", diagnostic.anonymizedSummary);
+  lines.push("", "## Redaction checklist");
+  appendBullets(lines, [
+    "Remove company names, subsidiaries, business units, and customer or vendor names.",
+    "Remove account numbers, invoice numbers, transaction IDs, security tickers, payment IDs, and other account identifiers.",
+    "Remove exact dollar amounts, balances, rates, quantities, dates, and department-owner details unless they are synthetic or approved for sharing.",
+    "Remove local file paths, workbook tabs, saved filters, and export usernames.",
+  ]);
   lines.push("", "## Sharing boundary");
   appendBullets(lines, [
     "Before sharing externally, remove company names, account identifiers, counterparties, transaction descriptions, security names, amounts, departments, and local file paths.",
@@ -464,6 +541,7 @@ export function buildDiagnosticPacket(result) {
 }
 
 function withDiagnosticMode(result) {
+  const messages = [...(result.importReport.errors ?? []), ...(result.importReport.warnings ?? [])];
   const diagnosticMode = buildDiagnosticMode(result.analysis, result.importReport);
   const diagnosticPacket = buildDiagnosticPacket({ ...result, diagnosticMode });
   return {
@@ -472,7 +550,7 @@ function withDiagnosticMode(result) {
     diagnosticPacket,
     memo: {
       ...result.memo,
-      markdown: `${result.memo.markdown}\n\n${diagnosticMode.markdown}`,
+      markdown: `${messages.length ? `## Import checks\n${messages.map((message) => `- ${message}`).join("\n")}\n\n` : ""}${result.memo.markdown}\n\n${diagnosticMode.markdown}`,
     },
   };
 }
@@ -495,12 +573,13 @@ export async function analyzeFile(file, options = {}) {
 
 export function analyzeWorkbook(workbook, options = {}) {
   const sheets = workbook?.sheets ?? [];
-  const sheetReports = sheets.map((sheet) => inspectRows(sheet.rows, sheet.name));
+  const sheetReports = sheets.map((sheet) => inspectRows(sheet.rows, sheet.name, sheet.errors));
   const bestReport = sheetReports.toSorted((a, b) => b.score - a.score)[0] ?? inspectRows([], "");
   const sheet = sheets.find((candidate) => candidate.name === bestReport.sourceSheet) ?? sheets[0] ?? { rows: [] };
   return analyzeRows(sheet.rows, options, {
     sourceSheet: sheet.name ?? "",
     sheetReports,
+    sourceErrors: sheet.errors,
   });
 }
 
@@ -509,11 +588,14 @@ export function analyzeCsvText(text, options = {}) {
 }
 
 export function analyzeRows(rows, options = {}, context = {}) {
-  const importReport = inspectRows(rows, context.sourceSheet ?? "");
+  const importReport = inspectRows(rows, context.sourceSheet ?? "", context.sourceErrors);
   const records = rowsToObjects(rows);
   if (importReport.mode === "portfolio_positions") {
     const positions = normalizePortfolioPositions(records, importReport.mappedFields);
     const analysis = analyzePortfolioPositions(positions, options);
+    if (positions.length && (analysis.summary.totalGainLossDollar === null || analysis.summary.costBasisTotal === null)) {
+      importReport.warnings.push("Portfolio totals for gain/loss or cost basis are unavailable when any position omits the corresponding value.");
+    }
     return withDiagnosticMode({
       rows,
       records,
@@ -534,6 +616,9 @@ export function analyzeRows(rows, options = {}, context = {}) {
   if (importReport.mode === "financial_transactions") {
     const transactions = normalizeFinancialTransactions(records, importReport.mappedFields);
     const analysis = analyzeFinancialTransactions(transactions, options);
+    if (transactions.length && !analysis.summary.dateRange.start) {
+      importReport.warnings.push("Date range unavailable: every row needs a valid YYYY-MM-DD or MM/DD/YYYY date.");
+    }
     return withDiagnosticMode({
       rows,
       records,
@@ -554,6 +639,9 @@ export function analyzeRows(rows, options = {}, context = {}) {
   if (importReport.mode === "invoice_aging") {
     const invoices = normalizeInvoices(records, importReport.mappedFields);
     const analysis = analyzeInvoices(invoices, options);
+    if (invoices.some((invoice) => invoiceAgingStatus(invoice) === "unknown")) {
+      importReport.warnings.push("Some invoices have unknown aging. Supply days past due or an aging bucket; due dates alone do not establish aging without an as-of date.");
+    }
     return withDiagnosticMode({
       rows,
       records,
@@ -590,12 +678,15 @@ export function analyzeRows(rows, options = {}, context = {}) {
 
   const normalizedRows = normalizeFinancialRecords(records);
   const analysis = analyzeVariance(normalizedRows, options);
+  const comparableRows = normalizedRows.filter((row) => Number.isFinite(row.actual) && Number.isFinite(row.budget));
+  if (!comparableRows.length) importReport.warnings.push("No rows contain both monetary actual and budget values; no variance analysis is available.");
   return withDiagnosticMode({
     rows,
     records,
     normalizedRows,
     importReport: {
       ...importReport,
+      canAnalyze: importReport.canAnalyze && comparableRows.length > 0,
       normalizedRowCount: normalizedRows.length,
       varianceCount: analysis.variances.length,
       sheetReports: context.sheetReports ?? [],
@@ -706,8 +797,8 @@ function analyzePortfolioPositions(positions) {
   const sortedPositions = [...positions].sort((a, b) => Math.abs(b.currentValue) - Math.abs(a.currentValue));
   const totalValue = positions.reduce((sum, position) => sum + position.currentValue, 0);
   const cashValue = positions.filter(isCashPosition).reduce((sum, position) => sum + position.currentValue, 0);
-  const costBasisTotal = sumFinite(positions.map((position) => position.costBasisTotal));
-  const totalGainLossDollar = sumFinite(positions.map((position) => position.totalGainLossDollar));
+  const costBasisTotal = sumComplete(positions.map((position) => position.costBasisTotal));
+  const totalGainLossDollar = sumComplete(positions.map((position) => position.totalGainLossDollar));
   const summary = {
     positionCount: positions.length,
     accountCount: countDistinct(positions.map((position) => position.accountName || position.accountNumber).filter(Boolean)),
@@ -716,7 +807,7 @@ function analyzePortfolioPositions(positions) {
     cashPercent: totalValue === 0 ? null : cashValue / totalValue,
     costBasisTotal,
     totalGainLossDollar,
-    totalGainLossPercent: costBasisTotal ? totalGainLossDollar / costBasisTotal : null,
+    totalGainLossPercent: costBasisTotal && totalGainLossDollar !== null ? totalGainLossDollar / costBasisTotal : null,
   };
   const assetMix = groupPositions(positions, "type", totalValue);
   const accountMix = groupPositions(positions, "accountName", totalValue);
@@ -758,6 +849,8 @@ function buildPortfolioMemo(analysis) {
     }
     if (Number.isFinite(summary.totalGainLossDollar) && summary.costBasisTotal > 0) {
       lines.push(`- Rows with cost basis show total gain/loss of ${formatCurrency(summary.totalGainLossDollar)}${summary.totalGainLossPercent === null ? "" : ` (${formatPercent(summary.totalGainLossPercent)})`}.`);
+    } else {
+      lines.push("- Total gain/loss and return percentage are unavailable unless every position supplies gain/loss and a comparable cost basis.");
     }
   }
 
@@ -856,8 +949,10 @@ function analyzeFinancialTransactions(transactions) {
 function buildTransactionMemo(analysis) {
   const summary = analysis.summary;
   const lines = [];
-
   lines.push("## Cash Activity Snapshot");
+  if (summary.transactionCount && !summary.dateRange.start) {
+    lines.push("- Date range unavailable: use valid YYYY-MM-DD or MM/DD/YYYY dates on every transaction row.");
+  }
   if (summary.transactionCount === 0) {
     lines.push("- No transactions were detected from the uploaded file.");
   } else {
@@ -922,7 +1017,7 @@ function normalizeInvoices(records, fieldMap) {
         invoiceDate: cleanValue(record[fieldMap.invoiceDate]) || "Unspecified invoice date",
         dueDate: cleanValue(record[fieldMap.dueDate]) || "Unspecified due date",
         openAmount,
-        daysPastDue: Number.isFinite(daysPastDue) ? daysPastDue : inferDaysPastDue(record[fieldMap.agingBucket]),
+        daysPastDue: Number.isFinite(daysPastDue) ? daysPastDue : null,
         agingBucket: cleanValue(record[fieldMap.agingBucket]) || "Unbucketed",
         status: cleanValue(record[fieldMap.status]) || "Unspecified status",
       };
@@ -933,13 +1028,15 @@ function normalizeInvoices(records, fieldMap) {
 function analyzeInvoices(invoices) {
   const openAmount = invoices.reduce((sum, invoice) => sum + invoice.openAmount, 0);
   const overdueAmount = invoices.filter(isOverdueInvoice).reduce((sum, invoice) => sum + invoice.openAmount, 0);
-  const currentAmount = openAmount - overdueAmount;
+  const currentAmount = invoices.filter((invoice) => invoiceAgingStatus(invoice) === "current").reduce((sum, invoice) => sum + invoice.openAmount, 0);
+  const unknownAgingAmount = invoices.filter((invoice) => invoiceAgingStatus(invoice) === "unknown").reduce((sum, invoice) => sum + invoice.openAmount, 0);
   const summary = {
     invoiceCount: invoices.length,
     counterpartyCount: countDistinct(invoices.map((invoice) => invoice.counterparty)),
     openAmount,
     overdueAmount,
     currentAmount,
+    unknownAgingAmount,
     disputedAmount: invoices.filter((invoice) => /\b(dispute|disputed|hold)\b/i.test(invoice.status)).reduce((sum, invoice) => sum + invoice.openAmount, 0),
   };
   const largestInvoices = [...invoices].sort((a, b) => Math.abs(b.openAmount) - Math.abs(a.openAmount)).slice(0, 10);
@@ -970,6 +1067,9 @@ function buildInvoiceMemo(analysis) {
   } else {
     lines.push(`- The file maps ${summary.invoiceCount} invoice${summary.invoiceCount === 1 ? "" : "s"} across ${summary.counterpartyCount} counterparty bucket${summary.counterpartyCount === 1 ? "" : "s"}.`);
     lines.push(`- Open amount totals ${formatCurrency(summary.openAmount)}; ${formatCurrency(summary.overdueAmount)} appears overdue and ${formatCurrency(summary.currentAmount)} appears current.`);
+    if (analysis.invoices.some((invoice) => invoiceAgingStatus(invoice) === "unknown")) {
+      lines.push(`- ${formatCurrency(summary.unknownAgingAmount)} has unknown aging. Supply days past due or an aging bucket; a due date alone requires an explicit as-of date.`);
+    }
     if (summary.disputedAmount > 0) {
       lines.push(`- Disputed/on-hold rows total ${formatCurrency(summary.disputedAmount)} based on parsed status fields.`);
     }
@@ -1626,13 +1726,13 @@ function parseAmount(value) {
   }
 
   const raw = String(value).trim();
-  if (!raw || raw === "-" || raw.toLowerCase() === "n/a") {
+  if (!raw || raw === "-" || raw.toLowerCase() === "n/a" || raw.includes("%")) {
     return null;
   }
 
   const isParenthetical = /^\(.*\)$/.test(raw);
   const cleaned = raw
-    .replace(/[,$%]/g, "")
+    .replace(/[,$]/g, "")
     .replace(/[()]/g, "")
     .replace(/\s+/g, "");
   const number = Number(cleaned);
@@ -1647,7 +1747,7 @@ function parsePercent(value) {
     return null;
   }
   const raw = String(value).trim();
-  const amount = parseAmount(raw);
+  const amount = parseAmount(raw.replace(/%/g, ""));
   if (amount === null) {
     return null;
   }
@@ -1667,21 +1767,15 @@ function transactionAmount(record, fieldMap) {
 }
 
 function classifyLineType(row) {
-  const haystack = `${row.category ?? ""} ${row.account ?? ""}`.toLowerCase();
-  if (/\b(revenue|sales|income|arr|mrr|bookings)\b/.test(haystack)) {
-    return "revenue";
-  }
-  if (/\b(cogs|cost|expense|opex|payroll|hosting|marketing|spend|software|contractor)\b/.test(haystack)) {
-    return "expense";
+  for (const value of [row.category, row.account]) {
+    const text = String(value ?? "").toLowerCase();
+    const revenue = /\b(revenue|sales|income|arr|mrr|bookings)\b/.test(text);
+    const expense = /\b(cogs|cost|costs|expense|expenses|opex|payroll|hosting|marketing|spend|software|contractor)\b/.test(text);
+    if (revenue && expense) return "unknown";
+    if (expense) return "expense";
+    if (revenue) return "revenue";
   }
   return "unknown";
-}
-
-function comparableValue(value, lineType) {
-  if (lineType === "expense" && value < 0) {
-    return Math.abs(value);
-  }
-  return value;
 }
 
 function confidenceFor(row, lineType, variancePct) {
@@ -1698,9 +1792,9 @@ function generateDriverNotes(variances) {
   const notes = [];
 
   for (const variance of variances) {
+    if (variance.favorability === "needs review") continue;
     if (Number.isFinite(variance.forecast) && Number.isFinite(variance.budget)) {
-      const comparableForecast = comparableValue(variance.forecast, variance.lineType);
-      const forecastVariance = comparableForecast - variance.budget;
+      const forecastVariance = variance.forecast - variance.budget;
       const isRisk =
         (variance.lineType === "revenue" && forecastVariance < 0) ||
         (variance.lineType === "expense" && forecastVariance > 0) ||
@@ -1972,31 +2066,39 @@ function groupTransactions(transactions, field) {
 }
 
 function transactionDateRange(transactions) {
-  const dates = transactions.map((transaction) => transaction.date).filter((date) => date && date !== "Unspecified date").sort();
+  const dates = transactions.map((transaction) => ({ value: transaction.date, time: calendarDateTime(transaction.date) }));
+  if (dates.some((date) => date.time === null)) return { start: "", end: "" };
+  dates.sort((a, b) => a.time - b.time);
   return {
-    start: dates[0] ?? "",
-    end: dates.at(-1) ?? "",
+    start: dates[0]?.value ?? "",
+    end: dates.at(-1)?.value ?? "",
   };
 }
 
+function calendarDateTime(value) {
+  const text = String(value ?? "").trim();
+  const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!iso && !us) return null;
+  const [year, month, day] = iso ? iso.slice(1).map(Number) : [Number(us[3]), Number(us[1]), Number(us[2])];
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day ? date.getTime() : null;
+}
+
+function invoiceAgingStatus(invoice) {
+  if (Number.isFinite(invoice.daysPastDue)) return invoice.daysPastDue > 0 ? "overdue" : "current";
+  const bucket = cleanValue(invoice.agingBucket).toLowerCase();
+  if (/^(current|not due|not yet due)$/.test(bucket)) return "current";
+  if (/^(past due|overdue|[1-9]\d*\s*[-–]\s*\d+(?:\s*days)?|[1-9]\d*\s*\+(?:\s*days)?)$/.test(bucket)) return "overdue";
+  return "unknown";
+}
+
 function isOverdueInvoice(invoice) {
-  if (Number.isFinite(invoice.daysPastDue) && invoice.daysPastDue > 0) {
-    return true;
-  }
-  return /\b(past|overdue|1-30|31-60|61-90|90|\+)\b/i.test(invoice.agingBucket);
+  return invoiceAgingStatus(invoice) === "overdue";
 }
 
-function inferDaysPastDue(value) {
-  const bucket = cleanValue(value).toLowerCase();
-  if (!bucket || /\bcurrent\b/.test(bucket)) {
-    return 0;
-  }
-  const match = bucket.match(/\d+/);
-  return match ? Number(match[0]) : null;
-}
-
-function sumFinite(values) {
-  return values.reduce((sum, value) => (Number.isFinite(value) ? sum + value : sum), 0);
+function sumComplete(values) {
+  return values.length && values.every(Number.isFinite) ? values.reduce((sum, value) => sum + value, 0) : null;
 }
 
 function countDistinct(values) {
@@ -2064,7 +2166,8 @@ function inferCategory(account) {
   if (!accountName) {
     return "Uncategorized";
   }
-  return classifyLineType({ account: accountName, category: "" }) === "revenue" ? "Revenue" : "Expense";
+  const lineType = classifyLineType({ account: accountName, category: "" });
+  return lineType === "revenue" ? "Revenue" : lineType === "expense" ? "Expense" : "Uncategorized";
 }
 
 function cleanValue(value) {
@@ -2084,9 +2187,7 @@ function omitNullish(object) {
 }
 
 function pushCsvRow(rows, row) {
-  if (row.some((cell) => String(cell ?? "").trim().length > 0)) {
-    rows.push(row);
-  }
+  rows.push(row);
 }
 
 function detectDelimiter(line) {
@@ -2222,18 +2323,61 @@ function parseSharedStrings(xml) {
   });
 }
 
-function parseWorksheetRows(xml, sharedStrings) {
+function parseNumberStyles(xml) {
+  const customFormats = new Map([...xml.matchAll(/<numFmt\b([^>]*)\/?>/g)].map((match) => {
+    const attrs = parseAttributes(match[1]);
+    return [Number(attrs.numFmtId), attrs.formatCode ?? ""];
+  }));
+  const cellFormats = xml.match(/<cellXfs\b[^>]*>([\s\S]*?)<\/cellXfs>/)?.[1] ?? "";
+  return [...cellFormats.matchAll(/<xf\b([^>]*)\/?>/g)].map((match) => {
+    const id = Number(parseAttributes(match[1]).numFmtId ?? 0);
+    const rawCode = customFormats.get(id) ?? "";
+    const code = rawCode.replace(/"[^"]*"|\\.|\[[^\]]*\]/g, "");
+    if ((id >= 18 && id <= 21) || /\[[hms]+\]/i.test(rawCode)) return "unsupported-time";
+    if ((id >= 14 && id <= 17) || id === 22 || /[yd]/i.test(code)) return "date";
+    if (id === 9 || id === 10 || code.includes("%")) return "percent";
+    if ((id >= 45 && id <= 47) || /[hs]/i.test(code)) return "unsupported-time";
+    return "number";
+  });
+}
+
+function parseWorksheetRows(xml, sharedStrings, styles, date1904) {
   const rows = [];
-  for (const rowMatch of xml.matchAll(/<row\b[^>]*>([\s\S]*?)<\/row>/g)) {
+  const errors = [];
+  for (const rowMatch of xml.matchAll(/<row\b([^>]*)>([\s\S]*?)<\/row>/g)) {
+    const rowNumber = Number(parseAttributes(rowMatch[1]).r ?? rows.length + 1);
+    if (!Number.isInteger(rowNumber) || rowNumber < 1 || rowNumber > 1048576) throw new Error("Invalid worksheet row number.");
     const row = [];
-    for (const cellMatch of rowMatch[1].matchAll(/<c\b([^>]*)>([\s\S]*?)<\/c>/g)) {
+    for (const cellMatch of rowMatch[2].matchAll(/<c\b([^>]*)>([\s\S]*?)<\/c>/g)) {
       const attrs = parseAttributes(cellMatch[1]);
       const column = columnIndexFromRef(attrs.r ?? "");
-      row[column] = parseCellValue(cellMatch[2], attrs.t, sharedStrings);
+      const cellXml = cellMatch[2];
+      const reference = attrs.r ?? `row ${rowNumber}, column ${column + 1}`;
+      if (/<f\b/.test(cellXml) && !/<v\b[^>]*>\s*[^<\s]/.test(cellXml)) {
+        errors.push(`${reference}: formula has no cached value. Recalculate and save the workbook in a spreadsheet app, or export values as CSV.`);
+      }
+      if (attrs.t === "e") errors.push(`${reference}: spreadsheet error; correct the source cell before analysis.`);
+      let value = parseCellValue(cellXml, attrs.t, sharedStrings);
+      const style = styles[Number(attrs.s ?? 0)];
+      if (typeof value === "number" && style === "date") {
+        const wholeDays = Math.floor(value);
+        if (!Number.isFinite(value) || value < 0 || (!date1904 && wholeDays === 60) || value > 2958465) {
+          errors.push(`${reference}: unsupported Excel date value; export a valid calendar date.`);
+          value = "";
+        } else {
+          const epoch = Date.UTC(date1904 ? 1904 : 1899, date1904 ? 0 : 11, date1904 ? 1 : 31);
+          value = new Date(epoch + (wholeDays - (!date1904 && wholeDays > 60 ? 1 : 0)) * 86400000).toISOString().slice(0, 10);
+        }
+      } else if (typeof value === "number" && style === "percent") {
+        value = `${value * 100}%`;
+      } else if (typeof value === "number" && style === "unsupported-time") {
+        errors.push(`${reference}: time-only or duration formatting is unsupported; export explicit dates or monetary values.`);
+      }
+      row[column] = value;
     }
-    rows.push(row.map((cell) => cell ?? ""));
+    rows[rowNumber - 1] = Array.from(row, (cell) => cell ?? "");
   }
-  return rows;
+  return { rows, errors };
 }
 
 function parseCellValue(xml, type, sharedStrings) {
@@ -2241,14 +2385,16 @@ function parseCellValue(xml, type, sharedStrings) {
     return [...xml.matchAll(/<t\b[^>]*>([\s\S]*?)<\/t>/g)].map((match) => decodeXml(match[1])).join("");
   }
 
-  const valueMatch = xml.match(/<v>([\s\S]*?)<\/v>/);
+  const valueMatch = xml.match(/<v\b[^>]*>([\s\S]*?)<\/v>/);
   if (!valueMatch) {
     return "";
   }
   const raw = decodeXml(valueMatch[1]);
+  if (!raw.trim()) return "";
   if (type === "s") {
     return sharedStrings[Number(raw)] ?? "";
   }
+  if (type === "str" || type === "e" || type === "d") return raw;
   const number = Number(raw);
   return Number.isFinite(number) ? number : raw;
 }

@@ -1,4 +1,4 @@
-import { analyzeCsvText, analyzeFile } from "./variance.js?v=financial-triage-v03-20260521";
+import { analyzeCsvText, analyzeFile } from "./variance.js?v=financial-triage-v05-20261015";
 
 const sampleCsv = `Account,Department,Category,Period,Actual,Budget,Forecast,Prior Year
 SaaS recurring revenue,Sales,Revenue,Jan 2026,"$120,000","$100,000","$245,000","$92,000"
@@ -12,6 +12,7 @@ const state = {
   fileName: "",
   sourceMode: "empty",
   currentFile: null,
+  analysisId: 0,
 };
 
 const elements = {
@@ -48,6 +49,7 @@ const elements = {
 };
 
 elements.chooseFileButton.addEventListener("click", () => {
+  state.analysisId += 1;
   state.result = null;
   state.fileName = "";
   state.sourceMode = "upload";
@@ -82,12 +84,14 @@ elements.sampleButton.addEventListener("click", async () => {
 });
 
 elements.clearButton.addEventListener("click", () => {
+  state.analysisId += 1;
   state.result = null;
   state.fileName = "";
   state.sourceMode = "empty";
   state.currentFile = null;
   elements.fileInput.value = "";
   render();
+  setStatus("Ready");
 });
 
 elements.copyButton.addEventListener("click", async () => {
@@ -161,12 +165,18 @@ for (const input of [elements.dollarThreshold, elements.percentThreshold]) {
 render();
 
 async function runAnalysis(action) {
+  const analysisId = ++state.analysisId;
+  state.result = null;
+  render();
   setStatus("Analyzing");
   try {
-    state.result = await action();
+    const result = await action();
+    if (analysisId !== state.analysisId) return;
+    state.result = result;
     render();
-    setStatus("Ready");
+    setStatus(result.importReport.canAnalyze ? "Ready for review" : "Check import");
   } catch (error) {
+    if (analysisId !== state.analysisId) return;
     state.result = null;
     render();
     setStatus(error instanceof Error ? error.message : "Analysis failed");
@@ -281,7 +291,9 @@ function renderImportAudit(report) {
   const unmapped = unmappedColumns(report);
   const missing = report.missingRequiredFields?.length
     ? `<p class="audit-warning">Missing required mapping: ${report.missingRequiredFields.map(escapeHtml).join(", ")}. No commentary should be used until this maps.</p>`
-    : `<p class="audit-good">${mappedMessage(report.mode)}</p>`;
+    : report.canAnalyze ? `<p class="audit-good">${mappedMessage(report.mode)}</p>` : "";
+  const messages = [...(report.errors ?? []), ...(report.warnings ?? [])]
+    .map((message) => `<p class="audit-warning">${escapeHtml(message)}</p>`).join("");
   const unmappedList = unmapped.length
     ? `<p class="audit-muted"><strong>Unmapped columns:</strong> ${unmapped.slice(0, 12).map(escapeHtml).join(", ")}${unmapped.length > 12 ? ", ..." : ""}</p>`
     : `<p class="audit-muted"><strong>Unmapped columns:</strong> none detected.</p>`;
@@ -302,6 +314,7 @@ function renderImportAudit(report) {
     <p><strong>File basis:</strong> ${escapeHtml(state.fileName || "Upload")} ${report.sourceSheet ? `- sheet ${escapeHtml(report.sourceSheet)}` : ""} - header row ${report.headerRowNumber || "not found"}</p>
     <div class="mapped-fields">${mapped || "<span>No fields mapped</span>"}</div>
     ${missing}
+    ${messages}
     ${unmappedList}
     ${sheets}
   `;
@@ -335,10 +348,12 @@ function renderDiagnosticSummary(report) {
 }
 
 function confidenceLabel(report) {
+  if (report?.errors?.length) return "Needs correction";
   if (!report?.canAnalyze) {
     return report?.mode === "unsupported_financial_file" ? "Unsupported" : "Needs mapping";
   }
 
+  if (report.warnings?.length) return "Review assumptions";
   const mappedCount = Object.keys(report.mappedFields ?? {}).length;
   if ((report.score ?? 0) >= 8 && mappedCount >= 3 && !report.missingRequiredFields?.length) {
     return "High";
@@ -700,6 +715,3 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
 }
-
-// Portfolio links use ?demo so first-time visitors land on a populated example.
-if (new URLSearchParams(window.location.search).has("demo")) elements.sampleButton.click();
