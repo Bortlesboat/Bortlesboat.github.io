@@ -7,12 +7,13 @@
   },
   "featured": [
     {
-      "project": "OpenAI Python SDK",
-      "repo": "openai/openai-python",
-      "title": "Expose the response-format helper through the public SDK",
-      "url": "https://github.com/openai/openai-python/pull/2993",
-      "mergedBy": "marcuswood-oai",
-      "mergedAt": "2026-10-02"
+      "project": "Claude Agent SDK (Anthropic)",
+      "repo": "anthropics/claude-agent-sdk-python",
+      "stars": 8355,
+      "title": "Wait for the CLI to exit gracefully before SIGTERM",
+      "url": "https://github.com/anthropics/claude-agent-sdk-python/pull/642",
+      "mergedBy": "qing-ant",
+      "mergedAt": "2026-03-19"
     },
     {
       "project": "Ghidra (NSA)",
@@ -31,28 +32,20 @@
       "mergedBy": "amyreese"
     },
     {
+      "project": "go-github (Google)",
+      "repo": "google/go-github",
+      "stars": 11328,
+      "title": "Add stacked pull request endpoints",
+      "url": "https://github.com/google/go-github/pull/4436",
+      "mergedBy": "gmlewis"
+    },
+    {
       "project": "vLLM",
       "repo": "vllm-project/vllm",
       "stars": 92676,
       "title": "6 merged PRs: config registration and ROCm kernel fixes",
       "url": "https://github.com/vllm-project/vllm/pulls?q=is%3Apr+author%3ABortlesboat+is%3Amerged",
       "mergedBy": null
-    },
-    {
-      "project": "Unsloth",
-      "repo": "unslothai/unsloth",
-      "stars": 76773,
-      "title": "Fix a Windows subprocess crash during dataset map",
-      "url": "https://github.com/unslothai/unsloth/pull/4507",
-      "mergedBy": "danielhanchen"
-    },
-    {
-      "project": "rust-bitcoin",
-      "repo": "rust-bitcoin/rust-bitcoin",
-      "stars": 2681,
-      "title": "Implement From<Infallible> for all public error types",
-      "url": "https://github.com/rust-bitcoin/rust-bitcoin/pull/5781",
-      "mergedBy": "apoelstra"
     },
     {
       "project": "rust-lightning",
@@ -81,12 +74,16 @@
   ],
   "names": [
     {
+      "name": "Anthropic",
+      "url": "https://github.com/anthropics/claude-agent-sdk-python/pull/642"
+    },
+    {
       "name": "Microsoft",
       "url": "https://github.com/microsoft/winget-cli/pull/6438"
     },
     {
       "name": "Google",
-      "url": "https://github.com/googleworkspace/cli/pulls?q=is%3Apr+author%3ABortlesboat+is%3Amerged"
+      "url": "https://github.com/google/go-github/pull/4436"
     },
     {
       "name": "NSA Ghidra",
@@ -123,10 +120,6 @@
     {
       "name": "OpenBB",
       "url": "https://github.com/OpenBB-finance/OpenBB/pulls?q=is%3Apr+author%3ABortlesboat+is%3Amerged"
-    },
-    {
-      "name": "rust-bitcoin",
-      "url": "https://github.com/rust-bitcoin/rust-bitcoin/pull/5781"
     },
     {
       "name": "rust-lightning",
